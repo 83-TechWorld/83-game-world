@@ -4,6 +4,13 @@ node_modules/
 /.pnp
 .pnp.js
 
+# dist
+/dist
+/*/dist
+alphabet_adventure/dist/
+/alphabet_adventure/dist
+/dist
+
 # macOS system files
 .DS_Store
 .DS_Store?
