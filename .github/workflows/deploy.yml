@@ -4,6 +4,23 @@ on:
     branches: [ main ]
     paths:
       - 'alphabet_adventure/**'
+  # Add manual trigger
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Project to deploy'
+        required: true
+        type: choice
+        options:
+          - alphabet_adventure
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
 
 permissions:
   contents: read
@@ -11,7 +28,11 @@ permissions:
 
 jobs:
   build-alphabet-adventure:
-    if: contains(github.event.head_commit.modified, 'alphabet_adventure/')
+    # Modified condition to handle both auto and manual triggers
+    if: >-
+      contains(github.event.head_commit.modified, 'alphabet_adventure/') ||
+      github.event_name == 'workflow_dispatch' &&
+      (github.event.inputs.project == 'alphabet_adventure' || github.event.inputs.project == 'all')
     runs-on: ubuntu-latest
     defaults:
       run:
