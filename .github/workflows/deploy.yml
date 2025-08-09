@@ -1,0 +1,34 @@
+name: Build and Deploy Projects
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'alphabet_adventure/**'
+
+permissions:
+  contents: read
+  pages: write
+
+jobs:
+  build-alphabet-adventure:
+    if: contains(github.event.head_commit.modified, 'alphabet_adventure/')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./alphabet_adventure
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./alphabet_adventure/dist
+          destination_dir: alphabet_adventure
