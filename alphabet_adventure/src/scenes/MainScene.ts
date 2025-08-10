@@ -157,7 +157,7 @@ export default class MainScene extends Phaser.Scene {
       });
   }
   private resetGame() {
-    this.sound.stopAll();
+    this.scene.resume();
     this.sound.stopAll();
     this.scene.restart();
   }
@@ -247,24 +247,30 @@ export default class MainScene extends Phaser.Scene {
     if (remaining <= 0) {
       this.sound.play('error');
 
+      // Create overlay group to manage time's up elements
+      const overlay = this.add.group();
+
       // Add semi-transparent background
       const bgRect = this.add.rectangle(512, 288, 600, 300, 0x000000, 0.8)
         .setOrigin(0.5);
+      overlay.add(bgRect);
 
       // Add Time's Up message
-      this.add.text(512, 238, 'Time\'s Up!', {
+      const timeUpText = this.add.text(512, 238, 'Time\'s Up!', {
         fontSize: '64px',
         color: '#ff0000',
         align: 'center',
         fontStyle: 'bold'
       }).setOrigin(0.5);
+      overlay.add(timeUpText);
 
       // Add encouraging message
-      this.add.text(512, 308, 'Keep practicing! You can do it!', {
+      const encourageText = this.add.text(512, 308, 'Keep practicing! You can do it!', {
         fontSize: '32px',
         color: '#ffffff',
         align: 'center'
       }).setOrigin(0.5);
+      overlay.add(encourageText);
 
       // Add Try Again button
       const tryAgainButton = this.add.text(512, 378, '🔄 Try Again', {
@@ -275,9 +281,16 @@ export default class MainScene extends Phaser.Scene {
       })
         .setInteractive({ useHandCursor: true })
         .setOrigin(0.5)
-        .on('pointerdown', () => this.resetGame());
+        .on('pointerdown', () => {
+          // Remove overlay before resetting
+          overlay.destroy(true);
+          this.resetGame();
+        });
+      overlay.add(tryAgainButton);
 
-      this.scene.pause();
+      // Disable letter interactions
+      this.letters.forEach(letter => letter.disableInteractive());
+
       return;
     }
 
