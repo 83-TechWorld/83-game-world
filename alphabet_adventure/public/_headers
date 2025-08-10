@@ -1,38 +1,26 @@
 /*
-  Content-Type: text/html; charset=UTF-8
+  Content-Type: text/html; charset=utf-8
 
-/assets/*.js
-  Content-Type: application/javascript
-
-/assets/*.json
-  Content-Type: application/json
-
-/assets/*.mp3
-  Content-Type: audio/mpeg
-
-/assets/audio/*.mp3
-  Content-Type: audio/mpeg  
-
-/assets/*.png
-  Content-Type: image/png
-
-/assets/images/*.png
-  Content-Type: image/png
-
-/assets/audio/*.mp3
-  Content-Type: audio/mpeg
-
-/assets/images/*.svg
-  Content-Type: image/svg+xml
-
-/*
-  Content-Type: application/javascript
+/*.js
+  Content-Type: application/javascript; charset=utf-8
 
 /*.ts
-  Content-Type: application/javascript
+  Content-Type: application/javascript; charset=utf-8
 
-/*.qm
-  Content-Type: application/octet-stream
+/*.json
+  Content-Type: application/json; charset=utf-8
 
-/*.ogg
-  Content-Type: audio/ogg
+/*.mp3
+  Content-Type: audio/mpeg; charset=utf-8
+
+/*.jpg
+  Content-Type: image/jpeg; charset=utf-8
+
+/*.jpeg
+  Content-Type: image/jpeg; charset=utf-8
+
+/*.png
+  Content-Type: image/png; charset=utf-8
+
+/*.ico
+  Content-Type: image/x-icon; charset=utf-8
