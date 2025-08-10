@@ -157,10 +157,69 @@ export default class MainScene extends Phaser.Scene {
       });
   }
   private resetGame() {
+    // Reset timer
+    this.startTime = undefined;
+    if (this.timeText) {
+        this.timeText.setText('Time: 3:00');
+    }
+
+    // Re-enable letter interactions
+    this.letters.forEach(letter => {
+        letter.setInteractive({ draggable: true });
+        letter.clearTint();
+        letter.setColor('#000'); // Reset to black color
+        
+        // Reset to original position
+        const originalPos = letter.getData('originalPosition');
+        letter.setPosition(originalPos.x, originalPos.y);
+    });
+
+    // Re-attach drag events
+    this.input.off('drag');
+    this.input.off('dragstart');
+    this.input.off('dragend');
+    
+    this.input.on('dragstart', (_: any, gameObject: Phaser.GameObjects.Text) => {
+        if (!this.startTime) {
+            this.startTime = this.time.now;
+            this.updateTimer();
+        }
+        gameObject.setTint(0x00ff00);
+    });
+
+    this.input.on('drag', (_: any, gameObject: Phaser.GameObjects.Text, dragX: number, dragY: number) => {
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+    });
+
+    this.input.on('dragend', (_: any, gameObject: Phaser.GameObjects.Text) => {
+        const dropZone = this.findDropZone(gameObject);
+        if (dropZone) {
+            const targetPos = dropZone.getData('originalPosition');
+            const currentPos = gameObject.getData('originalPosition');
+
+            gameObject.setPosition(targetPos.x, targetPos.y);
+            dropZone.setPosition(currentPos.x, currentPos.y);
+
+            gameObject.setData('originalPosition', targetPos);
+            dropZone.setData('originalPosition', currentPos);
+
+            this.sound.play('ding');
+
+            this.time.delayedCall(100, () => {
+                this.checkAlphabetOrder();
+            });
+        } else {
+            const originalPos = gameObject.getData('originalPosition');
+            gameObject.setPosition(originalPos.x, originalPos.y);
+        }
+        gameObject.clearTint();
+    });
+
+    // Resume scene
     this.scene.resume();
     this.sound.stopAll();
-    this.scene.restart();
-  }
+}
 
   private checkAlphabetOrder() {
     const sortedLetters = [...this.letters].sort((a, b) => {
