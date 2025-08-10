@@ -25,4 +25,14 @@
 /assets/images/*.svg
   Content-Type: image/svg+xml
 
-      
+/*
+  Content-Type: application/javascript
+
+/*.ts
+  Content-Type: application/javascript
+
+/*.qm
+  Content-Type: application/octet-stream
+
+/*.ogg
+  Content-Type: audio/ogg
