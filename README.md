@@ -5,11 +5,15 @@ This is a Phaser 3 starter game where kids can learn the alphabet interactively.
 ## How to run locally
 1. Download and unzip the project.
 2. Open a terminal inside the folder.
-3. Run a local server:
+3. Install dependencies:
    ```bash
-   python3 -m http.server 8080
+   npm install
    ```
-4. Visit [http://localhost:8080](http://localhost:8080) in your browser.
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+5. Visit the URL shown in your terminal (typically http://localhost:5173) in your browser.
 
 ## Deployment with GitHub Actions
 1. Create a new repository on GitHub.
