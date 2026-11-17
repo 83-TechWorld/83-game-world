@@ -37,6 +37,7 @@ export const GAMES: GameEntry[] = [
   { id: 'stick-spy-ops', title: 'Stick Spy Ops', emoji: '🕵️', description: '20-mission stick-figure spy shooter. Name your hero & enemies!', url: '/games/stick-spy-ops/index.html', group: 'action', color: '#0891b2', motion: 'pulse', tagline: 'Shh… sneak up on the spies!', available: true, ageRange: '8+' },
   { id: 'stick-cycle-race', title: 'Stick Cycle Race', emoji: '🚴', description: '20-level cycle race. Pick your color, grab boosters, outrun the ghost!', url: '/games/stick-cycle-race/index.html', group: 'action', color: '#f59e0b', motion: 'bounce', tagline: 'Pedal fast! The ghost is coming!', available: true, ageRange: '6+' },
   { id: 'zombie-block-siege', title: 'Zombie Block Siege', emoji: '🧟', description: '15 levels. Hide behind bricks, pick your gun, beat the fire-breathing boss!', url: '/games/zombie-block-siege/index.html', group: 'action', color: '#16a34a', motion: 'shake', tagline: 'Hide behind the bricks and shoot!', available: true, ageRange: '10+' },
+  { id: 'rough-note-showdown', title: 'Rough Note Showdown', emoji: '🎲', description: 'The old notebook dice game! Draw your stickman, grab a gun, be the last one standing. 2-6 players or CPU!', url: '/games/rough-note-showdown/index.html', group: 'action', color: '#dc2626', motion: 'wiggle', tagline: 'Roll the dice and shoot your friends on paper!', available: true, ageRange: '6+', isNew: true },
 ];
 
 export const availableGames = () => GAMES.filter(g => g.available);

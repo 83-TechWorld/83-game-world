@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Rough Note Showdown · D-Games</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:'Segoe Print','Bradley Hand','Chalkboard SE','Comic Sans MS',cursive;background:#6b4a2f;
+ background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.06) 0 3px,transparent 3px 9px),radial-gradient(ellipse at 50% 0,#8a6340,#4d3220);
+ color:#1c2a55;display:flex;flex-direction:column;height:100dvh;overflow:hidden;user-select:none}
+button{font-family:inherit;cursor:pointer}
+.top{display:flex;align-items:center;gap:8px;padding:6px 10px;color:#fff3d6}
+.top a{color:#fff3d6;text-decoration:none;font-size:13px;background:rgba(0,0,0,.25);padding:5px 10px;border-radius:14px}
+.top h1{flex:1;margin:0;font-size:clamp(15px,3.6vw,22px);text-align:center;letter-spacing:.5px;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+.ib{background:rgba(0,0,0,.25);border:0;color:#fff3d6;border-radius:50%;width:34px;height:34px;font-size:16px}
+#notebook{flex:1;min-height:0;margin:0 8px;background:#fffdf6;border-radius:6px 10px 10px 6px;position:relative;display:flex;flex-direction:column;
+ box-shadow:0 8px 20px rgba(0,0,0,.5),inset 10px 0 14px -10px rgba(0,0,0,.35);
+ background-image:repeating-linear-gradient(transparent 0 27px,#bcd6f2 27px 28px);padding:6px 8px 8px 26px;overflow:hidden}
+#notebook:before{content:"";position:absolute;left:20px;top:0;bottom:0;width:2px;background:#f08a8a}
+#notebook:after{content:"";position:absolute;left:5px;top:0;bottom:0;width:10px;background:radial-gradient(circle,#5b3d27 0 4px,transparent 5px) 0 10px/10px 46px repeat-y}
+#banner{background:#fff6b8;border:2px dashed #c9a400;border-radius:8px;padding:5px 10px;font-size:clamp(12px,2.8vw,16px);min-height:34px;display:flex;align-items:center;gap:8px;position:relative;z-index:2}
+#banner b{color:#c01818}
+#log{font-size:11px;color:#667;max-height:0;overflow:hidden}
+#turn{font-size:clamp(13px,3vw,17px);margin:4px 2px;display:flex;align-items:center;gap:8px;font-weight:bold;position:relative;z-index:2}
+#turn .dot{width:14px;height:14px;border-radius:50%;display:inline-block}
+#sheetWrap{flex:1;min-height:0;overflow:auto;position:relative;z-index:1}
+#sheet{display:grid;justify-content:center;position:relative;min-height:100%;height:100%;min-width:min-content}
+.hd{border-bottom:3px solid #777;border-left:2px solid #888;text-align:center;font-size:clamp(12px,2.8vw,17px);padding:2px;display:flex;align-items:center;justify-content:center;gap:3px;font-weight:bold;word-break:break-word;transition:.3s}
+.hd.cur{background:rgba(255,230,120,.55);transform:scale(1.04)}
+.hd.out{text-decoration:line-through;opacity:.4}
+.hd small{font-size:12px}
+.rn{border-bottom:2px solid #999;display:flex;align-items:center;justify-content:center;font-size:clamp(16px,4vw,26px);color:#555;transition:.2s}
+.rn.hot{background:#ffe27a;color:#c01818;transform:scale(1.2);border-radius:8px}
+.cell{border-bottom:2px solid #999;border-left:2px solid #888;position:relative;min-height:64px;transition:background .3s}
+.cell svg{width:100%;height:100%;display:block}
+.cell.flash{animation:fl .6s}
+@keyframes fl{0%{background:rgba(255,220,80,.9)}100%{background:transparent}}
+.cell.target{cursor:crosshair;background:rgba(255,60,60,.14);animation:tg .7s infinite alternate}
+.cell.target:after{content:"🎯";position:absolute;right:2px;top:2px;font-size:clamp(14px,3vw,22px)}
+@keyframes tg{to{background:rgba(255,60,60,.38)}}
+.cell.dead{background:repeating-linear-gradient(135deg,rgba(0,0,0,.05) 0 4px,transparent 4px 8px)}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:dr .55s ease-out forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.armed{font-size:12px;fill:#d11;font-weight:bold;animation:pop .5s}
+@keyframes pop{0%{opacity:0}100%{opacity:1}}
+.bullet{position:absolute;width:18px;height:6px;border-radius:3px;background:#222;box-shadow:-10px 0 8px rgba(255,120,0,.8),0 0 8px #ff0;z-index:5;transition:transform .45s cubic-bezier(.3,0,.8,1)}
+#dock{display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 10px 10px;color:#fff3d6}
+#die{width:64px;height:64px;background:#fff;border-radius:14px;border:3px solid #222;color:#c01818;font-size:38px;font-weight:bold;display:flex;align-items:center;justify-content:center;
+ box-shadow:0 5px 0 #bbb,0 8px 12px rgba(0,0,0,.5);font-family:'Comic Sans MS',cursive;position:relative}
+#die.roll{animation:tumble .35s linear infinite}
+#die.land{animation:land .45s}
+@keyframes tumble{0%{transform:rotate(0) translateY(0)}25%{transform:rotate(90deg) translateY(-14px)}50%{transform:rotate(180deg) translateY(0)}75%{transform:rotate(270deg) translateY(-10px)}100%{transform:rotate(360deg)}}
+@keyframes land{0%{transform:scale(1.5) rotate(-15deg)}60%{transform:scale(.9) rotate(5deg)}100%{transform:none}}
+#dieInfo{font-size:13px;min-width:130px}
+#rollBtn{background:#e8362b;color:#fff;border:0;border-bottom:5px solid #9b1d16;border-radius:14px;padding:12px 22px;font-size:clamp(15px,3.6vw,20px);font-weight:bold;box-shadow:0 4px 8px rgba(0,0,0,.4)}
+#rollBtn:disabled{background:#8d8d8d;border-bottom-color:#666;opacity:.7;cursor:default}
+#rollBtn:not(:disabled):active{transform:translateY(3px);border-bottom-width:2px}
+.ov{position:fixed;inset:0;background:rgba(20,10,0,.72);display:flex;align-items:center;justify-content:center;z-index:50;padding:10px}
+.card{background:#fffdf6;border-radius:14px;padding:18px 20px;max-width:560px;width:100%;max-height:94vh;overflow:auto;border:3px solid #333;box-shadow:0 10px 30px #000;
+ background-image:repeating-linear-gradient(transparent 0 27px,#bcd6f2 27px 28px)}
+.card h2{margin:0 0 6px;text-align:center;font-size:26px;color:#1d3fb8}
+.card p,.card li{font-size:14px;line-height:1.5}
+.sub{text-align:center;color:#555;margin:0 0 10px;font-size:13px}
+.prow{display:flex;gap:6px;align-items:center;margin:6px 0}
+.prow input{flex:1;font:inherit;font-size:16px;padding:6px 8px;border:2px solid #555;border-radius:8px;min-width:0;background:#fff;color:#1c2a55;user-select:text}
+.prow .sw{width:14px;height:34px;border-radius:5px}
+.tg{border:2px solid #555;background:#fff;border-radius:8px;padding:6px 9px;font-size:15px}
+.tg.cpu{background:#d7efff}
+.btn{background:#1d3fb8;color:#fff;border:0;border-bottom:4px solid #0f2477;border-radius:10px;padding:10px 16px;font-size:16px;font-weight:bold}
+.btn.alt{background:#fff;color:#1d3fb8;border:2px solid #1d3fb8}
+.btn.go{background:#e8362b;border-bottom-color:#9b1d16;font-size:20px;width:100%;margin-top:10px}
+.modes{display:flex;gap:8px;margin-bottom:6px}
+.modes .btn{flex:1;font-size:14px;opacity:.55}
+.modes .btn.on{opacity:1}
+.rank{display:flex;gap:8px;align-items:center;padding:5px 4px;border-bottom:1px dashed #889;font-size:15px}
+.rank .n{width:26px;font-size:20px}
+.rank .nm{flex:1;font-weight:bold}
+.rank small{color:#555}
+.map{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:14px;background:#fff6b8;border-radius:8px;padding:8px;margin:6px 0}
+.big{font-size:60px;text-align:center}
+@media (max-width:520px){#dock{gap:8px}#die{width:54px;height:54px;font-size:32px}#dieInfo{min-width:0;font-size:11px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+ <filter id="rough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3"/></filter>
+</defs></svg>
+
+<div class="top"><a href="/">← D-GAMES</a><h1>🎲 Rough Note Showdown</h1><button class="ib" id="helpBtn" title="How to play">?</button><button class="ib" id="fastBtn" title="Speed">⏩</button><button class="ib" id="muteBtn" title="Sound">🔊</button></div>
+<div id="notebook">
+  <div id="banner"><span id="bannerTxt">Welcome!</span></div>
+  <div id="turn"></div>
+  <div id="sheetWrap"><div id="sheet"></div></div>
+</div>
+<div id="dock">
+  <div id="die">?</div>
+  <div id="dieInfo">Roll the dice!</div>
+  <button id="rollBtn" disabled>🎲 Roll Dice</button>
+</div>
+<div id="modal"></div>
+
+<script>
+(function(){
+'use strict';
+const ROWS=[1,3,5,7,9];
+const INKS=['#1d3fb8','#222222','#0f766e','#7c3aed','#b45309','#be185d'];
+const DEF=['Dhakshith','sathish','praba','nishanth','adheera','manvitha'];
+const STAGE=['','Head','Body','Left arm','Right arm','Left leg','Right leg','Gun'];
+const PARTS=[
+ c=>`<circle class="${c}" pathLength="1" cx="45" cy="24" r="11"/>`,
+ c=>`<path class="${c}" pathLength="1" d="M45 35 L45 70"/>`,
+ c=>`<path class="${c}" pathLength="1" d="M45 46 L26 60"/>`,
+ c=>`<path class="${c}" pathLength="1" d="M45 46 L63 52"/>`,
+ c=>`<path class="${c}" pathLength="1" d="M45 70 L31 98"/>`,
+ c=>`<path class="${c}" pathLength="1" d="M45 70 L61 98"/>`,
+ c=>`<path class="${c}" pathLength="1" d="M62 52 L62 43 L96 43 L96 49 L72 49 L72 59 L66 59 L66 52 Z"/>`
+];
+const $=id=>document.getElementById(id);
+let SP=1;const sleep=ms=>new Promise(r=>setTimeout(r,ms*SP));const rawSleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ---------- sound ---------- */
+let AC=null,muted=false;try{muted=localStorage.getItem('rns_mute')==='1'}catch(e){}
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function noise(dur,type,f0,f1,vol,when){const a=ac();if(!a||muted)return;try{
+ const n=Math.floor(a.sampleRate*dur),b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+ const s=a.createBufferSource();s.buffer=b;const f=a.createBiquadFilter();f.type=type;const t=a.currentTime+(when||0);f.frequency.setValueAtTime(f0,t);f.frequency.exponentialRampToValueAtTime(f1,t+dur);
+ const g=a.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(a.destination);s.start(t)}catch(e){}}
+function tone(fr,dur,vol,type,when,slide){const a=ac();if(!a||muted)return;try{const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(when||0);
+ o.type=type||'sine';o.frequency.setValueAtTime(fr,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+ o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+.02)}catch(e){}}
+const sfx={
+ flip(){noise(.35,'highpass',500,5000,.35)},
+ dice(){for(let i=0;i<9;i++)noise(.05,'bandpass',1500+Math.random()*1500,900,.4,i*.075)},
+ pen(){for(let i=0;i<5;i++)noise(.07,'bandpass',2600+Math.random()*1200,2200,.3,i*.06)},
+ shot(){noise(.35,'lowpass',3000,200,.9);tone(140,.3,.6,'square',0,40)},
+ miss(){tone(160,.35,.3,'sawtooth',0,90)},
+ pick(){tone(700,.08,.25,'triangle');tone(950,.1,.25,'triangle',.08)},
+ win(){[523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,.28,.3,'triangle',i*.14))},
+ bullet(){tone(880,.1,.3,'square');tone(1320,.18,.3,'square',.1)}
+};
+function setMute(m){muted=m;$('muteBtn').textContent=m?'🔇':'🔊';try{localStorage.setItem('rns_mute',m?'1':'0')}catch(e){}}
+setMute(muted);
+$('fastBtn').onclick=()=>{SP=SP===1?.35:1;$('fastBtn').style.background=SP===1?'':'#e8a400';say(SP===1?'Normal speed':'⏩ Fast mode ON')};
+$('muteBtn').onclick=()=>{setMute(!muted);if(!muted)sfx.pick()};
+
+/* ---------- state ---------- */
+let setup={mode:'cpu',players:[{name:DEF[0],cpu:false},{name:DEF[1],cpu:true}]};
+let S=null,gen=0,logLines=[];
+
+/* ---------- modal helpers ---------- */
+function modal(html){$('modal').innerHTML=`<div class="ov"><div class="card">${html}</div></div>`}
+function closeModal(){$('modal').innerHTML=''}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function help(){modal(`<h2>How to Play</h2>
+<p class="sub">The old Tamil notebook game, now with a dice!</p>
+<div class="map"><b>Dice shows</b><b>Row you hit</b><span>0 or 1</span><span>Row 1</span><span>2 or 3</span><span>Row 3</span><span>4 or 5</span><span>Row 5</span><span>6 or 7</span><span>Row 7</span><span>8 or 9</span><span>Row 9</span></div>
+<ol>
+<li>Everyone has 5 rows (1, 3, 5, 7, 9). Roll the dice on your turn.</li>
+<li>The row you hit draws your stickman: head, body, left arm, right arm, left leg, right leg, then a <b>gun</b> (ARMED!).</li>
+<li>Every hit after the gun earns a <b>bullet</b>. Pick any other player's live row and shoot it: that row is crossed out for good.</li>
+<li>If your rolled row is already dead, it is a miss and the turn passes.</li>
+<li>A player with no live rows is out. <b>The last player standing wins.</b> The top shooter can still lose, so stay alive!</li></ol>
+<button class="btn go" id="hClose">Got it!</button>`);$('hClose').onclick=closeModal;sfx.pick()}
+$('helpBtn').onclick=help;
+
+/* ---------- setup screen ---------- */
+function showSetup(){
+ gen++;S=null;$('sheet').innerHTML='';$('turn').innerHTML='';$('rollBtn').disabled=true;$('die').textContent='?';$('dieInfo').textContent='Roll the dice!';
+ say('Set up the players and start the game!');
+ const pl=setup.players;
+ let rows='';pl.forEach((p,i)=>{rows+=`<div class="prow"><span class="sw" style="background:${INKS[i]}"></span><input maxlength="14" value="${esc(p.name)}" data-i="${i}" placeholder="${DEF[i]}">
+ <button class="tg ${p.cpu?'cpu':''}" data-t="${i}" title="Human or computer">${p.cpu?'🤖 CPU':'🧑 Human'}</button>
+ ${pl.length>2?`<button class="tg" data-d="${i}">✕</button>`:''}</div>`});
+ modal(`<h2>🎲 Rough Note Showdown</h2><p class="sub">Roll the dice. Draw your stickman. Get a gun. Be the last one standing!</p>
+ <div class="modes"><button class="btn ${setup.mode==='cpu'?'on':''}" id="mCpu">Player vs CPU</button><button class="btn ${setup.mode==='multi'?'on':''}" id="mMulti">Friends (2-6)</button></div>
+ <div id="plist">${rows}</div>
+ ${setup.mode==='multi'&&pl.length<6?'<button class="btn alt" id="addP" style="width:100%">+ Add player</button>':''}
+ <button class="btn go" id="startBtn">▶ Start Game</button>
+ <button class="btn alt" id="helpB2" style="width:100%;margin-top:8px">How to play</button>`);
+ $('mCpu').onclick=()=>{setup.mode='cpu';setup.players=[{name:pl[0].name,cpu:false},{name:pl[1]?pl[1].name:DEF[1],cpu:true}];showSetup()};
+ $('mMulti').onclick=()=>{setup.mode='multi';if(pl.length<3)setup.players.push({name:DEF[2],cpu:false});setup.players.forEach((p,i)=>{if(i>0)p.cpu=false});showSetup()};
+ document.querySelectorAll('#plist input').forEach(el=>el.oninput=()=>{setup.players[+el.dataset.i].name=el.value});
+ document.querySelectorAll('[data-t]').forEach(el=>el.onclick=()=>{const p=setup.players[+el.dataset.t];p.cpu=!p.cpu;sfx.pick();showSetup()});
+ document.querySelectorAll('[data-d]').forEach(el=>el.onclick=()=>{setup.players.splice(+el.dataset.d,1);showSetup()});
+ const add=$('addP');if(add)add.onclick=()=>{const i=setup.players.length;setup.players.push({name:DEF[i],cpu:false});showSetup()};
+ $('startBtn').onclick=()=>{ac();startGame()};
+ $('helpB2').onclick=()=>{help();$('hClose').onclick=showSetup};
+}
+
+/* ---------- messaging ---------- */
+function say(msg){logLines.push(msg);if(logLines.length>40)logLines.shift();$('bannerTxt').innerHTML=msg}
+
+/* ---------- build ---------- */
+function startGame(){
+ closeModal();gen++;
+ const n=setup.players.length;
+ S={players:setup.players.map((p,i)=>({name:(p.name||'').trim()||DEF[i],cpu:p.cpu,ink:INKS[i],rows:ROWS.map(()=>({hits:0,alive:true})),shots:0,rolls:0,out:false})),
+  cur:0,phase:'roll',turns:0,over:false,outOrder:[],pick:null};
+ const sh=$('sheet');sh.style.gridTemplateColumns=`34px repeat(${n},minmax(${n>4?88:96}px,${n>2?"1fr":"240px"}))`;sh.style.gridTemplateRows=`auto repeat(5,minmax(70px,1fr))`;
+ let h='<div></div>';
+ S.players.forEach((p,i)=>h+=`<div class="hd" id="h${i}" style="color:${p.ink}">${esc(p.name)}${p.cpu?' <small>🤖</small>':''}</div>`);
+ ROWS.forEach((rn,r)=>{h+=`<div class="rn" id="rn${r}">${rn}</div>`;S.players.forEach((p,i)=>h+=`<div class="cell" id="c${i}_${r}" data-p="${i}" data-r="${r}"></div>`)});
+ sh.innerHTML=h;
+ S.players.forEach((p,i)=>ROWS.forEach((_,r)=>renderCell(i,r,0)));
+ $('die').textContent='?';$('dieInfo').textContent='Roll the dice!';
+ say('Game on! Roll the dice and draw your stickman.');
+ beginTurn(true);
+}
+function renderCell(pi,r,newStage,newDead){
+ const p=S.players[pi],row=p.rows[r],h=Math.min(row.hits,7);
+ let s=`<svg viewBox="0 0 110 110" preserveAspectRatio="xMidYMid meet"><g filter="url(#rough)" stroke="${p.ink}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${row.alive?1:.4}">`;
+ for(let i=0;i<h;i++)s+=PARTS[i](newStage===i+1?'draw':'');
+ s+='</g>';
+ if(row.hits>=7&&row.alive)s+=`<text class="armed" x="58" y="22" transform="rotate(-8 80 20)" font-family="inherit">ARMED!</text>`;
+ if(row.hits>7)s+=`<text x="4" y="106" font-size="11" fill="#d11" font-family="inherit">🔫×${row.hits-7}</text>`;
+ if(!row.alive)s+=`<g filter="url(#rough)" stroke="#d11" stroke-width="5" stroke-linecap="round" fill="none"><path class="${newDead?'draw':''}" pathLength="1" d="M10 10 L100 100"/><path class="${newDead?'draw':''}" pathLength="1" d="M100 10 L10 100" style="animation-delay:.2s"/></g>`;
+ s+='</svg>';
+ const c=$('c'+pi+'_'+r);c.innerHTML=s;c.classList.toggle('dead',!row.alive);
+}
+function flash(pi,r){const c=$('c'+pi+'_'+r);c.classList.remove('flash');void c.offsetWidth;c.classList.add('flash')}
+
+/* ---------- turns ---------- */
+function updUI(){
+ if(!S)return;const p=S.players[S.cur];
+ $('turn').innerHTML=S.over?'':`<span class="dot" style="background:${p.ink}"></span><span style="color:${p.ink}">${esc(p.name)}'s turn</span>${p.cpu?' 🤖':''}`;
+ S.players.forEach((q,i)=>{const h=$('h'+i);h.classList.toggle('cur',i===S.cur&&!S.over);h.classList.toggle('out',q.out)});
+ $('rollBtn').disabled=!(S.phase==='roll'&&!p.cpu&&!S.over);
+}
+function beginTurn(first){
+ updUI();const g=gen,p=S.players[S.cur];
+ if(!first)say(`<b>${esc(p.name)}</b>, your turn!`);
+ if(p.cpu){(async()=>{await sleep(900);if(g!==gen||S.phase!=='roll'||S.over)return;doRoll()})()}
+}
+function endTurn(g){
+ if(g!==gen||S.over)return;
+ let n=S.cur;do{n=(n+1)%S.players.length}while(S.players[n].out);
+ S.cur=n;S.phase='roll';beginTurn(false);
+}
+function animateDice(final){
+ const die=$('die');die.classList.remove('land');die.classList.add('roll');
+ return new Promise(res=>{let k=0;const iv=setInterval(()=>{die.textContent=Math.floor(Math.random()*10);if(++k>=12){clearInterval(iv);die.classList.remove('roll');die.textContent=final;void die.offsetWidth;die.classList.add('land');res()}},75*Math.max(SP,.3))});
+}
+async function doRoll(force){
+ if(!S||S.phase!=='roll'||S.over)return;
+ const g=gen;S.phase='busy';updUI();
+ const pi=S.cur,p=S.players[pi];p.rolls++;S.turns++;
+ sfx.flip();sfx.dice();
+ const d=(force!=null)?force:Math.floor(Math.random()*10);
+ $('dieInfo').textContent=`${p.name} rolls...`;
+ await animateDice(d);if(g!==gen)return;
+ const r=Math.floor(d/2);
+ $('dieInfo').innerHTML=`${d} means <b>Row ${ROWS[r]}</b>`;
+ const rn=$('rn'+r);rn.classList.add('hot');setTimeout(()=>rn.classList.remove('hot'),1400);
+ const row=p.rows[r];
+ if(!row.alive){
+  say(`${esc(p.name)} rolled ${d}: Row ${ROWS[r]} is dead! <b>Missed!</b> ✗`);sfx.miss();
+  await sleep(1100);return endTurn(g);
+ }
+ row.hits++;const h=row.hits;
+ renderCell(pi,r,h<=7?h:0);flash(pi,r);sfx.pen();
+ if(h<7)say(`${esc(p.name)} rolled ${d}: Row ${ROWS[r]} draws the <b>${STAGE[h]}</b> (${h}/7)`);
+ else if(h===7)say(`${esc(p.name)} rolled ${d}: Row ${ROWS[r]} grabs a <b>GUN</b>. ARMED! 🔫`);
+ else{
+  say(`${esc(p.name)} rolled ${d}: Row ${ROWS[r]} is armed and earns a <b>BULLET!</b> 🔫`);sfx.bullet();
+  await sleep(700);if(g!==gen)return;
+  const ok=await shootPhase(g,pi,r);if(g!==gen)return;
+  if(S.over)return;
+ }
+ await sleep(900);endTurn(g);
+}
+function targetsFor(pi){const t=[];S.players.forEach((q,i)=>{if(i===pi||q.out)return;q.rows.forEach((rw,r)=>{if(rw.alive)t.push({p:i,r})})});return t}
+function cpuPick(pi,ts){
+ let best=null,bs=-1;
+ ts.forEach(t=>{const q=S.players[t.p],rw=q.rows[t.r];const alive=q.rows.filter(x=>x.alive).length;
+  const tot=q.rows.reduce((a,x)=>a+(x.alive?Math.min(x.hits,8):0),0);
+  const sc=rw.hits*10+(rw.hits>=7?40:0)+tot*1.5+(alive<=2?20:0)+Math.random()*4;
+  if(sc>bs){bs=sc;best=t}});
+ return best;
+}
+async function shootPhase(g,pi,fromRow){
+ const ts=targetsFor(pi);if(!ts.length)return false;
+ const p=S.players[pi];S.phase='shoot';
+ let t;
+ if(p.cpu){say(`🤖 ${esc(p.name)} is aiming...`);await sleep(1100);if(g!==gen)return;t=cpuPick(pi,ts)}
+ else{
+  say(`🎯 <b>${esc(p.name)}</b>, tap any live row to shoot it!`);
+  ts.forEach(x=>$('c'+x.p+'_'+x.r).classList.add('target'));
+  t=await new Promise(res=>{S.pick=res});if(g!==gen)return;
+  document.querySelectorAll('.cell.target').forEach(c=>c.classList.remove('target'));
+ }
+ S.phase='busy';
+ await fire(g,pi,fromRow,t);return true;
+}
+async function fire(g,pi,fromRow,t){
+ const p=S.players[pi],q=S.players[t.p];
+ const sh=$('sheet'),a=$('c'+pi+'_'+fromRow),b=$('c'+t.p+'_'+t.r);
+ const ax=a.offsetLeft+a.offsetWidth/2,ay=a.offsetTop+a.offsetHeight/2,bx=b.offsetLeft+b.offsetWidth/2,by=b.offsetTop+b.offsetHeight/2;
+ const bl=document.createElement('div');bl.className='bullet';const ang=Math.atan2(by-ay,bx-ax)*180/Math.PI;
+ bl.style.left=(ax-9)+'px';bl.style.top=(ay-3)+'px';bl.style.transform=`rotate(${ang}deg)`;sh.appendChild(bl);
+ sfx.shot();void bl.offsetWidth;
+ bl.style.transform=`translate(${bx-ax}px,${by-ay}px) rotate(${ang}deg)`;
+ await rawSleep(480);if(g!==gen)return;
+ bl.remove();
+ q.rows[t.r].alive=false;p.shots++;
+ renderCell(t.p,t.r,0,true);flash(t.p,t.r);sfx.miss();
+ say(`💥 <b>${esc(p.name)}</b> shot <b>${esc(q.name)}</b>'s Row ${ROWS[t.r]}! Crossed out.`);
+ await sleep(900);if(g!==gen)return;
+ if(!q.rows.some(x=>x.alive)){
+  q.out=true;S.outOrder.push(t.p);updUI();
+  say(`☠️ <b>${esc(q.name)}</b> is OUT of the game!`);await sleep(1100);if(g!==gen)return;
+ }
+ const left=S.players.map((x,i)=>i).filter(i=>!S.players[i].out);
+ if(left.length<=1)gameOver(left[0]!=null?left[0]:pi);
+}
+$('sheet').addEventListener('click',e=>{
+ const c=e.target.closest('.cell.target');if(!c||!S||S.phase!=='shoot'||!S.pick)return;
+ const f=S.pick;S.pick=null;sfx.pick();f({p:+c.dataset.p,r:+c.dataset.r});
+});
+$('rollBtn').onclick=()=>{ac();doRoll()};
+
+function gameOver(w){
+ S.over=true;S.phase='over';updUI();sfx.win();
+ const order=[w].concat(S.outOrder.slice().reverse());
+ const medals=['🥇','🥈','🥉'];
+ let rk='';order.forEach((i,k)=>{const q=S.players[i];const alive=q.rows.filter(x=>x.alive).length;
+  rk+=`<div class="rank"><span class="n">${medals[k]||(k+1)+'.'}</span><span class="nm" style="color:${q.ink}">${esc(q.name)}${q.cpu?' 🤖':''}</span><small>🔫 ${q.shots} shots · ${alive} rows left</small></div>`});
+ const top=S.players.reduce((a,q)=>q.shots>a.shots?q:a,S.players[0]);
+ const totalShots=S.players.reduce((a,q)=>a+q.shots,0);
+ say(`🏆 <b>${esc(S.players[w].name)}</b> stayed alive till the end and WINS!`);
+ modal(`<div class="big">🏆</div><h2>${esc(S.players[w].name)} wins!</h2>
+ <p class="sub">The last one standing wins${top!==S.players[w]&&top.shots>S.players[w].shots?`. ${esc(top.name)} shot the most (${top.shots}) but did not survive!`:'.'}</p>
+ ${rk}<p class="sub" style="margin-top:8px">Total dice rolls: <b>${S.turns}</b> · Total shots fired: <b>${totalShots}</b></p>
+ <button class="btn go" id="again">▶ Play Again</button><button class="btn alt" id="chg" style="width:100%;margin-top:8px">Change players</button>`);
+ $('again').onclick=()=>startGame();$('chg').onclick=showSetup;
+}
+
+window.__rns={get S(){return S},roll:doRoll,setup:s=>{setup=s},speed:v=>{SP=v},start:startGame,showSetup};
+showSetup();
+})();
+</script>
+</body>
+</html>
