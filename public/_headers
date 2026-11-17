@@ -1,26 +1,6 @@
-/*
-  Content-Type: text/html; charset=utf-8
-
-/*.js
-  Content-Type: application/javascript; charset=utf-8
-
-/*.ts
-  Content-Type: application/javascript; charset=utf-8
-
-/*.json
-  Content-Type: application/json; charset=utf-8
-
-/*.mp3
-  Content-Type: audio/mpeg; charset=utf-8
-
-/*.jpg
-  Content-Type: image/jpeg; charset=utf-8
-
-/*.jpeg
-  Content-Type: image/jpeg; charset=utf-8
-
-/*.png
-  Content-Type: image/png; charset=utf-8
-
-/*.ico
-  Content-Type: image/x-icon; charset=utf-8
+# Netlify already sends correct Content-Type for every file type, so we do not override it.
+# (A blanket "/*  Content-Type: text/html" rule used to make the CSS file load as HTML and get blocked.)
+/index.html
+  Cache-Control: no-cache
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
