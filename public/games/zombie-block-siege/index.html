@@ -486,7 +486,7 @@ function buildMenu(){
 }
 function isUnlocked(g,l){return WEAP[g].unlock<=l;}
 function previewLevel(n){SAVE.gun=isUnlocked(SAVE.gun,n)?SAVE.gun:'pistol';buildLevel(n);showMenu(true);}
-function showMenu(keep){state='menu';menuEl.classList.remove('hidden');if(!keep){sel=clamp(sel,1,SAVE.unlocked);buildLevel(sel);state='menu';}buildMenu();}
+function showMenu(keep){state='menu';menuEl.classList.remove('hidden');if(!keep){sel=clamp(sel,1,SAVE.unlocked);buildLevel(sel);state='menu';menuEl.classList.remove('hidden');}buildMenu();}
 document.getElementById('start').onclick=()=>{audioInit();readNames();if(!isUnlocked(SAVE.gun,sel))SAVE.gun='pistol';save();buildLevel(sel);};
 [heroIn,znIn].forEach(e=>e.addEventListener('keydown',ev=>ev.stopPropagation()));
 // ---------- input ----------
