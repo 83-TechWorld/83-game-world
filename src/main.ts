@@ -53,10 +53,15 @@ addEventListener('pointermove', e => {
 // ---- hero title ----
 const hero = h('header', 'hero')
 const COLORS = ['#ff5a6a', '#ff9a3a', '#ffc61a', '#3fcf6a', '#3ea0ff', '#a45cff', '#ff5aa5']
-const h1 = h('h1')
-'D-GAMES'.split('').forEach((ch, i) => { const s = h('span', '', ch); s.style.setProperty('--i', String(i)); s.style.setProperty('--c', COLORS[i % COLORS.length]); s.onpointerenter = () => blip(400 + i * 90, 700 + i * 90); h1.appendChild(s) })
+const h1 = h('h1'); h1.setAttribute('aria-label', 'Kids Games 4u')
+let li = 0
+'KIDS GAMES 4U'.split(' ').forEach(word => {
+  const w = h('span', 'word'); w.setAttribute('aria-hidden', 'true')
+  word.split('').forEach(ch => { const s = h('span', '', ch); const i = li++; s.style.setProperty('--i', String(i)); s.style.setProperty('--c', COLORS[i % COLORS.length]); s.onpointerenter = () => blip(400 + i * 90, 700 + i * 90); w.appendChild(s) })
+  h1.appendChild(w)
+})
 hero.appendChild(h1)
-hero.appendChild(h('div', 'tag', '🎮 Play · Learn · Have fun!'))
+hero.appendChild(h('div', 'tag', '🎮 Free games for kids · Play · Learn · Have fun!'))
 app.appendChild(hero)
 
 // ---- stars + filter chips ----
@@ -129,7 +134,7 @@ for (const [grp, title] of SHELVES) {
   const sec = h('section', 'shelf', `<h2>${title}</h2>`), grid = h('div', 'grid')
   list.forEach(g => {
     const p = progress(g.id)
-    const card = h('div', 'card', `
+    const card = h('a', 'card', `
       ${g.isNew ? '<div class="ribbon">NEW</div>' : ''}
       <div class="ico m-${g.motion}"><i>${g.emoji}</i></div>
       <h3>${g.title}</h3><p>${g.description}</p>
@@ -137,17 +142,25 @@ for (const [grp, title] of SHELVES) {
       ${p ? `<div class="pb"><i style="width:${Math.min(100, Math.round((100 * p.s) / p.max))}%"></i></div><div class="pt">⭐ ${p.s} / ${p.max}</div>` : '<div class="pt">&nbsp;</div>'}`)
     const cw = h('div', 'cw'); cw.style.setProperty('--n', String(n++)); cw.appendChild(card)
     card.style.setProperty('--c', g.color)
-    card.tabIndex = 0; card.setAttribute('role', 'link'); card.setAttribute('aria-label', 'Play ' + g.title)
+    card.setAttribute('href', g.url); card.setAttribute('aria-label', 'Play ' + g.title + ' - free kids game')
     card.onpointerenter = () => { hovering = true; say(g.tagline); blip(520, 780, 0.1, 0.05) }
     card.onpointerleave = () => { hovering = false; card.style.transform = ''; card.style.transition = 'transform .3s' }
     card.onpointermove = e => {
       const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5
       card.style.transition = 'none'; card.style.transform = `perspective(700px) rotateY(${x * 14}deg) rotateX(${-y * 12}deg) translateY(-6px)`
     }
-    card.onclick = () => openGame(g, card)
+    card.onclick = e => { e.preventDefault(); openGame(g, card) }
     card.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openGame(g, card) } }
     grid.appendChild(cw)
   })
   sec.appendChild(grid); app.appendChild(sec); shelves.push([grp, sec])
 }
+;(() => {
+  const f = h('footer', 'about', `<h2>Free Online Learning Games for Kids</h2>
+    <p><b>Kids Games 4u</b> is a free collection of fun, safe browser games where children learn while they play: the alphabet and phonics, counting and adding numbers, shapes and colours, English words, the solar system and planets, and how to tell time on a clock. No sign-up and no downloads: just tap and play on a tablet, phone or computer.</p>
+    <h3>Learn &amp; play games</h3><ul>${GAMES.filter(g => g.available && g.group === 'learn').map(g => `<li><a href="${g.url}">${g.emoji} ${g.title}</a> <span>${g.description}</span></li>`).join('')}</ul>
+    <h3>Action games for bigger kids</h3><ul>${GAMES.filter(g => g.available && g.group === 'action').map(g => `<li><a href="${g.url}">${g.emoji} ${g.title}</a> <span>${g.description}</span></li>`).join('')}</ul>
+    <p class="cp">&copy; ${new Date().getFullYear()} Kids Games 4u &middot; Free educational games for children</p>`)
+  app.appendChild(f)
+})()
 ;(window as any).__hub = { openGame, GAMES }

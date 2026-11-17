@@ -1,4 +1,4 @@
-/* D-Games shared kids library: shell (level map, HUD, results), sounds, speech, drag/tap placement, confetti. */
+/* Kids Games 4u shared kids library: shell (level map, HUD, results), sounds, speech, drag/tap placement, confetti. */
 (function(){
 'use strict';
 const h=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;};
@@ -65,7 +65,7 @@ function start(cfg){
   const save=Object.assign({unlocked:1,stars:{}},load(cfg.id)||{});save.max=cfg.levels.length*3;
   const persist=()=>{try{localStorage.setItem('dg_'+cfg.id,JSON.stringify({unlocked:save.unlocked,stars:save.stars,max:save.max}));}catch(e){}};
   const app=document.getElementById('app'),bg=h('div');bg.id='bg';app.appendChild(bg);
-  const header=h('header','',`<a class="back" href="/index.html">← D-GAMES</a><div class="ttl">${cfg.emoji} ${cfg.title}</div><div class="chip" id="tot">⭐ 0</div><button class="snd" id="snd">${muted?'🔇':'🔊'}</button>`);app.appendChild(header);
+  const header=h('header','',`<a class="back" href="/index.html">← KIDS GAMES 4U</a><h1 class="ttl">${cfg.emoji} ${cfg.title}</h1><div class="chip" id="tot">⭐ 0</div><button class="snd" id="snd">${muted?'🔇':'🔊'}</button>`);app.appendChild(header);
   const main=h('main');app.appendChild(main);
   const coach=h('div','coach','<div class="owl">🦉</div><div class="bub"></div>');document.body.appendChild(coach);
   let coachT=null;function coachSay(t,speak,cb){const b=coach.querySelector('.bub');b.textContent=t;b.classList.add('show');clearTimeout(coachT);coachT=setTimeout(()=>b.classList.remove('show'),cb?6000:2600);if(speak!==false)say(t,undefined,cb);else if(cb)setTimeout(cb,1200);}
@@ -81,6 +81,7 @@ function start(cfg){
     for(const w of worlds){const W=(cfg.worlds||{})[w.k]||{label:w.k,deco:['⭐']};const box=h('div','world',`<h2>${W.deco[0]} ${W.label}</h2>`),lvls=h('div','lvls');
       for(const i of w.items){const L=cfg.levels[i],unlocked=i<save.unlocked,s=save.stars[i]||0,b=h('button','lv'+(i===save.unlocked-1&&!s?' next':''),`<b>${unlocked?i+1:'🔒'}</b><small>${L.name}</small><span class="st">${'⭐'.repeat(s)}${'☆'.repeat(unlocked?3-s:0)}</span>`);b.disabled=!unlocked;b.onclick=()=>{audio();sfx.whoosh();play(i);};lvls.appendChild(b);}
       box.appendChild(lvls);wrap.appendChild(box);}
+    const ad=document.getElementById('about-data');if(ad){try{const d=JSON.parse(ad.textContent);main.appendChild(h('section','about-game',`<h2>About ${d.name}: a free game for kids ${d.ages}</h2><p>${d.intro}</p>${d.skills&&d.skills.length?`<h3>What kids learn</h3><ul>${d.skills.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}<h3>How to play</h3><p>${d.how}</p><h3>More free games</h3><p>${d.related.map(r=>`<a href="${r.url}">${r.name}</a>`).join(' &middot; ')} &middot; <a href="/">All Kids Games 4u games</a></p>`));}catch(e){}}
     const nxt=Math.min(save.unlocked,cfg.levels.length);coachSay(save.unlocked>1?'Welcome back! Ready for level '+nxt+'?':'Hi! Let us start with level 1!');}
   function play(i){stopTimer();const L=cfg.levels[i];main.innerHTML='';setWorld(L.world);let mistakes=0,over=false;
     const hud=h('div','hud',`<span class="lt">${i+1}. ${L.name}</span><div class="prog"><i></i></div><span class="tm" style="display:none"></span><button>🗺 Levels</button>`);

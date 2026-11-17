@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /games/_template/
+Disallow: /games/_shared/
+
+Sitemap: https://kidsgames4u.com/sitemap.xml

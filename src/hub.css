@@ -16,7 +16,7 @@ body{background:linear-gradient(180deg,#7cc6ff 0%,#bfe9ff 55%,#fff4d6 100%) fixe
 .hill svg{display:block;width:100%}
 /* ---- hero ---- */
 .hero{position:relative;z-index:2;text-align:center;padding:26px 16px 6px}
-.hero h1{margin:0;font-size:clamp(54px,11vw,118px);line-height:1;letter-spacing:2px;display:flex;justify-content:center;flex-wrap:wrap;gap:0 4px}
+.hero h1{margin:0;font-size:clamp(44px,8.6vw,104px);line-height:1;letter-spacing:2px;display:flex;justify-content:center;flex-wrap:wrap;gap:0 .32em}.hero h1 .word{display:flex}
 .hero h1 span{display:inline-block;color:#fff;-webkit-text-stroke:0;text-shadow:0 5px 0 var(--c),0 9px 0 rgba(0,0,0,.18);animation:wave 2.4s ease-in-out infinite;animation-delay:calc(var(--i)*.14s);cursor:default}
 .hero h1 span:hover{animation:jump .5s}
 @keyframes wave{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(3deg)}}
@@ -75,3 +75,13 @@ body{background:linear-gradient(180deg,#7cc6ff 0%,#bfe9ff 55%,#fff4d6 100%) fixe
 @keyframes sp{to{transform:translate(var(--dx),var(--dy)) scale(.4) rotate(240deg);opacity:0}}
 @media (prefers-reduced-motion:reduce){.cw,.hero h1 span,.cloud,.fly,.kid,.card::after{animation:none!important;opacity:1}}
 @media (max-width:1000px){.mascot{display:none}}@media (max-width:560px){.sun{width:80px;height:80px}}
+
+a.card{text-decoration:none;color:inherit;display:block}
+.about{position:relative;z-index:2;max-width:980px;margin:30px auto 60px;padding:22px 26px;background:#ffffffcc;border-radius:26px;box-shadow:0 6px 0 rgba(0,0,0,.08);color:#27315a}
+.about h2{margin:0 0 8px;font-size:clamp(20px,3vw,28px)}.about h3{margin:16px 0 6px;font-size:18px}.about p{line-height:1.55;font-weight:600}
+.about ul{margin:0;padding-left:20px;line-height:1.6}.about li span{opacity:.75;font-size:14px}.about a{color:#3b5bdb;font-weight:800;text-decoration:none}.about a:hover{text-decoration:underline}
+.about .cp{opacity:.6;font-size:13px;margin:16px 0 0}
+/* Kids Games 4u title is longer: keep it clear of the mascot, the sun chip and the stars badge */
+@media (min-width:1100px){.hero{padding-top:56px}.hero h1{padding:0 150px 0 390px;font-size:clamp(44px,5.4vw,84px)}}
+@media (max-width:1099px) and (min-width:701px){.hero{padding-top:40px}.hero h1{font-size:clamp(44px,8vw,84px)}}
+@media (max-width:700px){.hero{padding-top:60px}.hero h1{font-size:clamp(44px,13vw,72px)}.hero .tag{font-size:14px;padding:6px 14px}}

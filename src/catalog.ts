@@ -1,5 +1,5 @@
 /**
- * D-Games — single registry of every game shown on the dashboard.
+ * Kids Games 4u — single registry of every game shown on the dashboard.
  *
  * Every game is a standalone folder under public/games/<slug>/ (index.html + assets).
  * Vite copies public/ into dist/, so games deploy with the hub and open at

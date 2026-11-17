@@ -78,3 +78,7 @@ main{position:relative;z-index:2;flex:1;min-height:0;display:flex;flex-direction
  .coach .owl{font-size:34px}.coach .bub{font-size:12px;padding:5px 10px;margin-bottom:8px;max-width:46vw}.coach{bottom:2px}
  .modal .card{padding:14px 22px}.modal .stars{font-size:40px}.modal h1{font-size:26px}
 }
+
+h1.ttl{margin:0}
+.about-game{width:min(900px,100%);margin:6px auto 20px;background:#ffffffcc;border-radius:22px;padding:14px 20px;font-size:15px;line-height:1.5;font-weight:600}
+.about-game h2{margin:0 0 6px;font-size:19px}.about-game h3{margin:10px 0 2px;font-size:16px}.about-game p{margin:2px 0}.about-game ul{margin:2px 0;padding-left:20px}.about-game a{color:#3b5bdb;font-weight:800;text-decoration:none}

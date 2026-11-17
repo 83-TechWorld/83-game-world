@@ -1,4 +1,4 @@
-/* D-Games shared touch controls. Turns on-screen buttons into keyboard events and canvas touches into mouse events,
+/* Kids Games 4u shared touch controls. Turns on-screen buttons into keyboard events and canvas touches into mouse events,
    so the existing desktop games work on phones/tablets without changing their game code. */
 (function(){
   window.DTouch={init:function(cfg){

@@ -1,0 +1,27 @@
+{
+  "name": "Kids Games 4u",
+  "short_name": "KidsGames4u",
+  "description": "Free kids games online: learn the alphabet, numbers, shapes, English words, planets and how to tell time. Safe, fun, no sign-up. Play on phone, tablet or computer.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#bfe9ff",
+  "theme_color": "#7cc6ff",
+  "categories": [
+    "education",
+    "games",
+    "kids"
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

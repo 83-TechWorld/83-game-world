@@ -1,4 +1,4 @@
-# D-Games
+# Kids Games 4u
 
 A growing collection of browser games — one hub, many games. Goal: **50 games**, all deployed from this single repo.
 
@@ -52,7 +52,7 @@ npm run preview    # serve dist/ locally
 
 ### Option A — standalone game (any engine, vanilla JS, canvas…)
 1. Copy `public/games/_template/` to `public/games/<slug>/`.
-2. Build the game inside that folder (keep it self-contained; keep the `← 83GAMEWORLD` home link).
+2. Build the game inside that folder (keep it self-contained; keep the `← KIDS GAMES 4U` home link).
 3. Register it in `src/catalog.ts`:
    ```ts
    { id: '<slug>', title: 'My Game', emoji: '🎮', description: 'One line',
