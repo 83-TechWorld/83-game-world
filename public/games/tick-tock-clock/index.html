@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Tick Tock Clock — D-Games</title><link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.ckrow{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ck{position:relative;touch-action:none}
+.ck svg{display:block;width:min(78vw,42vh,340px);height:auto;touch-action:none}
+.ck.mini svg{width:min(40vw,150px)}
+.ctl{display:flex;flex-direction:column;align-items:center;gap:8px}
+.hsel{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.hsel button{border:3px solid transparent;border-radius:16px;background:#fff;padding:6px 12px;font-weight:800;font-size:15px;box-shadow:0 4px 0 rgba(0,0,0,.15);display:flex;align-items:center;gap:6px}
+.hsel button i{display:inline-block;width:14px;height:14px;border-radius:50%}
+.hsel button.on{border-color:#ffb703;transform:translateY(-2px)}
+.dig{font-family:'Courier New',monospace;font-weight:900;font-size:clamp(28px,6vw,44px);background:#1b2a4a;color:#8ff7c5;border-radius:14px;padding:2px 18px;letter-spacing:3px;box-shadow:inset 0 0 12px #000a,0 4px 0 rgba(0,0,0,.2);min-width:140px;text-align:center}
+.dig.q{opacity:.5}
+.words{font-weight:800;opacity:.85;margin:-2px 0 2px;text-align:center}
+.tgt{font-weight:900;font-size:clamp(26px,5.5vw,42px);background:#fff;border-radius:18px;padding:2px 18px;box-shadow:0 5px 0 rgba(0,0,0,.15)}
+.scene{font-size:clamp(20px,4vw,30px);font-weight:800;text-align:center}
+.go{border:0;border-radius:18px;padding:12px 26px;font-size:20px;font-weight:800;background:linear-gradient(180deg,#7dff9a,#2fc76a);box-shadow:0 5px 0 rgba(0,0,0,.2);color:#06361a}
+.cc{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:8px}
+.cc button{border:0;background:#fff;border-radius:22px;padding:8px;box-shadow:0 6px 0 rgba(0,0,0,.2);transition:transform .12s}
+.cc button:hover{transform:translateY(-4px)}.cc button.good{background:#b9f3c9;animation:pop .4s}.cc button.wrong{background:#ffc5cb;animation:shake .35s}
+.pair{display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap}.pair b{display:block;text-align:center;font-weight:800;margin-top:2px}
+.hand.tap{cursor:pointer}.hl{animation:pulse .7s 2}
+.choice.ap{font-size:34px;min-width:150px}
+@media (max-height:520px) and (orientation:landscape){
+ .ckrow.set{flex-direction:row;align-items:center;gap:20px}.ck svg{width:min(56vh,250px)}.prompt{font-size:20px;margin:0 0 2px}.tgt{font-size:24px}.dig{font-size:26px}.choice{min-height:60px;font-size:30px}.go{padding:8px 18px;font-size:17px}.cc button .ck.mini svg{width:110px}
+ main{padding-bottom:50px}}
+</style></head>
+<body><div id="app"></div><script src="../_shared/kids.js"></script>
+<script>
+const pad=n=>String(n).padStart(2,'0');
+const rnd=(a,b)=>a+(Math.random()*(b-a+1)|0);
+// ---------- clock drawing ----------
+const COL={hour:'#2563eb',minute:'#16a34a',second:'#e11d48'};
+function clockEl(o){o=o||{};
+ let s='<svg viewBox="-12 -12 224 224"><circle cx="100" cy="100" r="98" fill="#fff" stroke="#f59e0b" stroke-width="7"/><circle cx="100" cy="100" r="90" fill="none" stroke="#fde68a" stroke-width="2"/>';
+ for(let i=0;i<60;i++){const a=i*6*Math.PI/180,big=i%5===0,r1=big?80:85,r2=90;s+=`<line x1="${100+Math.sin(a)*r1}" y1="${100-Math.cos(a)*r1}" x2="${100+Math.sin(a)*r2}" y2="${100-Math.cos(a)*r2}" stroke="${big?'#334155':'#94a3b8'}" stroke-width="${big?3:1.4}" stroke-linecap="round"/>`;}
+ for(let i=1;i<=12;i++){const a=i*30*Math.PI/180;s+=`<text x="${100+Math.sin(a)*64}" y="${100-Math.cos(a)*64+7}" text-anchor="middle" font-size="19" font-weight="800" fill="#1e293b" font-family="inherit">${i}</text>`;
+  if(o.minNums)s+=`<text x="${100+Math.sin(a)*106}" y="${100-Math.cos(a)*106+4}" text-anchor="middle" font-size="11" font-weight="800" fill="#16a34a" font-family="inherit">${i*5}</text>`;}
+ const hand=(n,len,w,tail)=>`<g class="hand h-${n}" data-h="${n}"><line x1="100" y1="${100+tail}" x2="100" y2="${100-len}" stroke="${COL[n]}" stroke-width="${w}" stroke-linecap="round"/><line class="hit" x1="100" y1="100" x2="100" y2="${100-len}" stroke="transparent" stroke-width="30" stroke-linecap="round"/></g>`;
+ s+=hand('hour',44,9,0)+hand('minute',72,6,0);if(o.second)s+=hand('second',80,2.6,16);
+ s+='<circle cx="100" cy="100" r="7" fill="#334155"/><circle cx="100" cy="100" r="3" fill="#f59e0b"/></svg>';
+ const e=K.h('div','ck'+(o.mini?' mini':''),s);
+ const set=(h,m,sec)=>{const g=n=>e.querySelector('.h-'+n);g('hour').setAttribute('transform',`rotate(${h} 100 100)`);g('minute').setAttribute('transform',`rotate(${m} 100 100)`);const q=g('second');if(q)q.setAttribute('transform',`rotate(${sec||0} 100 100)`);};
+ e.setTime=(H,M,S)=>set((H%12)*30+M*.5+(S||0)/120,M*6+(S||0)*.1,(S||0)*6);e.setAng=set;return e;}
+const hourAng=(H,M)=>(H%12)*30+M*.5;
+const angDiff=(a,b)=>Math.abs(((a-b+540)%360+360)%360-180);
+const T=(h,m,s)=>({h,m,s:s||0});
+const fmtT=(t,sec)=>`${t.h}:${pad(t.m)}${sec?':'+pad(t.s):''}`;
+function words(t){const h=t.h,n=h%12+1;if(t.m===0)return `${h} o'clock`;if(t.m===15)return `quarter past ${h}`;if(t.m===30)return `half past ${h}`;if(t.m===45)return `quarter to ${n}`;return t.m<30?`${t.m} past ${h}`:`${60-t.m} to ${n}`;}
+function genT(L){const h=rnd(1,12);let m=0;if(L.mins)m=K.pick(L.mins);else if(L.step)m=rnd(0,59/L.step|0)*L.step;let s=0;if(L.sec)s=rnd(0,11)*5;if(h===12&&m===0&&!L.sec)return genT(L);return T(h,m,s);}
+function plus(t,mins){let tot=(t.h%12)*60+t.m+mins;tot=((tot%720)+720)%720;let h=Math.floor(tot/60)||12;return T(h,tot%60);}
+function distract(t,L,sec){const set=new Map();const add=x=>{if(x.h>=1&&x.h<=12&&x.m>=0&&x.m<60)set.set(fmtT(x,sec),x);};
+ const swap=T((t.m/5|0)||12,(t.h*5)%60,t.s);if(t.m%5===0&&!(swap.h===t.h&&swap.m===t.m))add(swap);
+ add(T(t.h%12+1,t.m,t.s));add(T((t.h+10)%12+1,t.m,t.s));
+ const pool=L.mins||null;let g=0;while(set.size<6&&g++<40){const m=pool?K.pick(pool):(L.step?rnd(0,59/L.step|0)*L.step:rnd(0,59));add(T(rnd(1,12),m,sec?rnd(0,11)*5:0));add(T(t.h,m,t.s));}
+ set.delete(fmtT(t,sec));return K.sample([...set.values()],3);}
+const sayT=(t,sec)=>`${t.h} ${t.m===0?"o'clock":t.m<10?'oh '+t.m:t.m}${sec?' and '+t.s+' seconds':''}`;
+// ---------- rounds ----------
+function ctx(L,api,box,done){return{L,api,box,done};}
+const R={};
+function choiceRow(box,c,opts,cls){const row=K.h('div',cls||'choices');box.appendChild(row);
+ K.shuffle(opts).forEach(o=>{const b=K.h('button',cls?'':'choice'+(o.cls?' '+o.cls:''),o.html);if(o.good)b.dataset.good=1;row.appendChild(b);
+  b.onclick=()=>{K.audio();if(o.good){b.classList.add('good');K.sfx.ok();row.querySelectorAll('button').forEach(x=>x.disabled=true);c.api.coach(o.tell||K.pick(K.PRAISE));setTimeout(c.done,1100);}else{b.classList.add('wrong');K.sfx.bad();c.api.bad(o.hint||'Look again at the hands!');}};});
+ c.solve=()=>{const b=box.querySelector('[data-good]:not(:disabled)');if(b)b.click();};}
+R.tap=(c)=>{const{L,api,box}=c;const t=genT(L),hs=L.hands,want=K.pick(hs);
+ const desc={hour:'the short blue HOUR hand',minute:'the long green MINUTE hand',second:'the thin red SECOND hand'};
+ box.appendChild(K.h('div','prompt',`Tap ${desc[want]}!`));const el=clockEl({second:hs.includes('second'),minNums:false});el.setTime(t.h,t.m,t.s);box.appendChild(el);
+ api.say(`Tap ${desc[want].replace(/the|short|long|thin|blue|green|red/g,'')}`);
+ el.querySelectorAll('.hand').forEach(g=>{g.classList.add('tap');g.querySelector('.hit').addEventListener('pointerdown',e=>{e.stopPropagation();K.audio();const n=g.dataset.h;
+  if(n===want){K.sfx.ok();g.classList.add('hl');api.coach({hour:'Yes! The hour hand is short. It tells the hour.',minute:'Yes! The minute hand is long. It counts minutes.',second:'Yes! The second hand is thin and fast.'}[n]);el.querySelectorAll('.hit').forEach(x=>x.style.pointerEvents='none');setTimeout(c.done,1500);}
+  else{K.sfx.bad();api.bad(n==='hour'?'That is the hour hand. It is short!':n==='minute'?'That is the minute hand. It is long!':'That is the second hand. It is thin!');}});});
+ c.solve=()=>{const g=el.querySelector('.h-'+want+' .hit');g.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));};};
+R.read=(c)=>{const{L,api,box}=c;const t=genT(L),sec=!!L.sec;box.appendChild(K.h('div','prompt','What time does the clock show?'));
+ const el=clockEl({second:sec,minNums:L.minNums});el.setTime(t.h,t.m,t.s);box.appendChild(el);api.say('What time does the clock show?');
+ const opts=distract(t,L,sec).map(x=>({html:fmtT(x,sec),hint:'Check the short hour hand first, then the long minute hand.'}));
+ opts.push({html:fmtT(t,sec),good:1,tell:`${fmtT(t,sec)}. That is ${words(t)}.`});choiceRow(box,c,opts);};
+R.match=(c)=>{const{L,api,box}=c;const t=genT(L);box.appendChild(K.h('div','prompt','Which clock shows this time?'));box.appendChild(K.h('div','tgt',fmtT(t)));box.appendChild(K.h('div','words',`(${words(t)})`));api.say(`Which clock shows ${sayT(t)}?`);
+ const opts=distract(t,L,false).concat(t).map(x=>{const e=clockEl({mini:true,minNums:L.minNums});e.setTime(x.h,x.m,0);return{html:e.outerHTML,good:x===t?1:0,tell:`Yes! ${fmtT(t)} is ${words(t)}.`,hint:'Check the short hour hand and the long minute hand.'};});
+ choiceRow(box,c,opts,'cc');};
+R.later=(c)=>{const{L,api,box}=c;const t=genT(L),d=K.pick(L.add);box.appendChild(K.h('div','prompt',`It is ${fmtT(t)} now. What time will it be in ${d>=60?(d/60)+' hour'+(d>60?'s':''):d+' minutes'}?`));
+ const el=clockEl({minNums:L.minNums});el.setTime(t.h,t.m,0);box.appendChild(el);api.say(`It is ${sayT(t)}. What time will it be in ${d} minutes?`);
+ const ans=plus(t,d),opts=[T(ans.h%12+1,ans.m),plus(t,-d),plus(t,d+(L.step||15)),plus(t,d+60)].filter(x=>fmtT(x)!==fmtT(ans));const seen=new Set([fmtT(ans)]),o=[];opts.forEach(x=>{if(!seen.has(fmtT(x))){seen.add(fmtT(x));o.push({html:fmtT(x),hint:'Count the minutes forward on the clock.'});}});
+ while(o.length<3){const x=T(rnd(1,12),K.pick(L.mins||[0,15,30,45]));if(!seen.has(fmtT(x))){seen.add(fmtT(x));o.push({html:fmtT(x)});}}
+ o.length=3;o.push({html:fmtT(ans),good:1,tell:`${fmtT(t)} plus ${d} minutes is ${fmtT(ans)}.`});choiceRow(box,c,o);};
+R.dur=(c)=>{const{L,api,box}=c;const h1=rnd(6,11),n=rnd(1,5),h2=((h1+n-1)%12)+1;const s=T(h1,0),e=T(h2,0);
+ box.appendChild(K.h('div','prompt',L.story||'How many hours go by?'));const p=K.h('div','pair');
+ const mk=(lab,t)=>{const w=K.h('div');const el=clockEl({mini:true});el.setTime(t.h,t.m,0);w.appendChild(el);w.appendChild(K.h('b',null,lab+' '+fmtT(t)));return w;};
+ p.appendChild(mk(L.a||'Start',s));p.appendChild(K.h('div','scene','➡️'));p.appendChild(mk(L.b||'End',e));box.appendChild(p);api.say(`From ${s.h} o'clock to ${e.h} o'clock. How many hours go by?`);
+ const o=K.sample([1,2,3,4,5,6].filter(x=>x!==n),3).map(x=>({html:x+(x===1?' hour':' hours'),hint:'Count the hours from the start to the end.'}));o.push({html:n+(n===1?' hour':' hours'),good:1,tell:`From ${s.h} to ${e.h} is ${n} hour${n>1?'s':''}.`});choiceRow(box,c,o);};
+const ACT=[['🌅 Wake up',T(6,30),'AM'],['🍳 Breakfast',T(7,30),'AM'],['🏫 School starts',T(8,30),'AM'],['🍎 Lunch time',T(12,30),'PM'],['⚽ Play outside',T(4,0),'PM'],['🍽️ Dinner',T(7,0),'PM'],['📚 Story time',T(8,0),'PM'],['😴 Bedtime',T(9,0),'PM'],['🌙 Stars out',T(10,30),'PM'],['🐓 Rooster crows',T(5,30),'AM'],['🥛 Snack time',T(4,30),'PM'],['🚌 School bus',T(7,45),'AM']];
+R.ampm=(c)=>{const{api,box}=c;const a=K.pick(ACT);box.appendChild(K.h('div','prompt',`${a[0]} at ${fmtT(a[1])}`));box.appendChild(K.h('div','hint','Is this in the morning/day (AM) or evening/night (PM)?'));
+ const el=clockEl({});el.setTime(a[1].h,a[1].m,0);box.appendChild(el);api.say(`${a[0].replace(/[^\w\s]/g,'')} at ${sayT(a[1])}. Is it AM or PM?`);
+ choiceRow(box,c,[{html:'☀️ AM',cls:'ap',good:a[2]==='AM',tell:a[2]==='AM'?'AM is from midnight until noon.':'',hint:'Think: is it dark or bright outside?'},{html:'🌙 PM',cls:'ap',good:a[2]==='PM',tell:'PM is from noon until midnight.',hint:'Think: is it dark or bright outside?'}].map(o=>(o.good?o:Object.assign(o,{good:0}))));};
+R.set=(c)=>{const{L,api,box}=c;const row=K.h('div','ckrow set');
+ let t,scene=null;if(L.scenes){scene=K.pick(ACT.filter(x=>x[1].m%(L.step||5)===0));t=scene[1];}else t=genT(L);
+ const hands=L.hands||['hour','minute'];const left=K.h('div','ckrow');
+ left.appendChild(K.h('div','prompt',scene?`${scene[0]}`:'Set the clock to:'));
+ left.appendChild(K.h('div','tgt',fmtT(t,L.sec)));if(scene||true)left.appendChild(K.h('div','words',`(${words(t)}${L.sec?` and ${t.s} seconds`:''})`));
+ const el=clockEl({second:hands.includes('second'),minNums:L.minNums});box.appendChild(row);
+ const ctl=K.h('div','ctl');row.appendChild(left);const mid=K.h('div','ckrow');mid.appendChild(el);row.appendChild(mid);row.appendChild(ctl);
+ const ang={hour:0,minute:0,second:0};let active=hands[0];
+ const snap={minute:(L.step||1)*6,second:(L.secStep||5)*6,hour:L.hourSnap||1};
+ const draw=()=>{el.setAng(ang.hour,ang.minute,ang.second);upd();};
+ const mv=()=>Math.round(ang.minute/6)%60,sv=()=>Math.round(ang.second/6)%60;
+ const dig=K.h('div','dig'+(L.digital?'':' q'),'');
+ function upd(){const m=mv();let h=Math.round((ang.hour-m*.5)/30);h=((h%12)+12)%12||12;dig.textContent=L.digital?`${h}:${pad(m)}${hands.includes('second')?':'+pad(sv()):''}`:'?:??';}
+ const sel=K.h('div','hsel');const btns={};hands.forEach(n=>{const b=K.h('button',n===active?'on':'',`<i style="background:${COL[n]}"></i>${{hour:'Hour',minute:'Minute',second:'Second'}[n]}`);b.onclick=()=>{active=n;K.sfx.pop();mark();};btns[n]=b;sel.appendChild(b);});
+ function mark(){for(const n in btns)btns[n].classList.toggle('on',n===active);}
+ if(hands.length>1)ctl.appendChild(sel);ctl.appendChild(dig);
+ const go=K.h('button','go','✅ Check');ctl.appendChild(go);
+ // dragging
+ const svgEl=el.querySelector('svg');let drag=false;
+ function pointer(ev){const r=svgEl.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=ev.clientX-cx,dy=ev.clientY-cy;return{a:(Math.atan2(dx,-dy)*180/Math.PI+360)%360,r:Math.hypot(dx,dy)/(r.width/224)};}
+ function setAngle(n,a){const g=snap[n];if(n==='hour')ang.hour=Math.round(a/g)*g%360;else ang[n]=(Math.round(a/g)*g)%360;draw();}
+ svgEl.addEventListener('pointerdown',e=>{e.preventDefault();K.audio();const p=pointer(e);
+  let best=null,bd=40;hands.forEach(n=>{const len={hour:44,minute:72,second:80}[n],a=ang[n]*Math.PI/180,tx=Math.sin(a)*len,ty=-Math.cos(a)*len,pr=p.r,pa=p.a*Math.PI/180,px=Math.sin(pa)*pr,py=-Math.cos(pa)*pr,d=Math.hypot(px-tx,py-ty);if(d<bd){bd=d;best=n;}});
+  if(best){active=best;mark();}drag=true;try{svgEl.setPointerCapture(e.pointerId);}catch(_){}setAngle(active,p.a);K.sfx.tick();});
+ svgEl.addEventListener('pointermove',e=>{if(!drag)return;const p=pointer(e),old=active==='minute'?mv():0;setAngle(active,p.a);if(active==='minute'&&mv()!==old)K.sfx.tick();});
+ const stop=()=>{drag=false;};svgEl.addEventListener('pointerup',stop);svgEl.addEventListener('pointercancel',stop);
+ draw();api.say(`Set the clock to ${sayT(t,L.sec)}`);
+ let ok=false;
+ go.onclick=()=>{if(ok)return;K.audio();const tolH=L.tolH||14;const mOk=mv()===t.m,hOk=angDiff(ang.hour,hourAng(t.h,t.m))<=tolH,sOk=!hands.includes('second')||sv()===t.s;
+  if(mOk&&hOk&&sOk){ok=true;K.sfx.ok();api.coach(K.pick(K.PRAISE)+' '+fmtT(t,L.sec)+' is '+words(t)+'.');el.classList.add('hl');setTimeout(c.done,1300);}
+  else{const msg=!hOk?(t.m===0?`The short hour hand should point right at ${t.h}.`:t.m===30?`At half past, the hour hand sits halfway between ${t.h} and ${t.h%12+1}.`:`Check the short hour hand near ${t.h}.`):!mOk?`Check the long minute hand. It should point to ${t.m===0?'12':t.m/5%1===0?t.m/5:'the '+t.m+' minute mark'}.`:`Check the thin second hand: ${t.s} seconds.`;api.bad(msg);}};
+ c.solve=()=>{ang.hour=hourAng(t.h,t.m)%360;ang.minute=t.m*6;ang.second=t.s*6;draw();go.click();};
+};
+R.mix=(c)=>{const m=K.pick(c.L.mix);const sub=Object.assign({},c.L,m.p||{});c.L=sub;R[m.m](c);};
+// ---------- levels ----------
+const worlds={hour:{label:'Hour Town',bg:['#d6f5ff','#5bb4e8'],deco:['🕐','☁️','🏡','🌞']},minute:{label:'Minute Meadow',bg:['#e1ffd6','#5cc46a'],deco:['🕒','🌼','🦋','🌳']},exact:{label:'Exact Time Land',bg:['#ffeccc','#f59e42'],deco:['🕓','⭐','🎯','🧭']},second:{label:'Second Springs',bg:['#ffd9e4','#e0507a'],deco:['⏱️','⚡','🕔','💨']},day:{label:'Daily Routine',bg:['#e6ddff','#6a4fc2'],deco:['🌅','🌙','⭐','😴']},master:{label:'Clock Master',bg:['#c9d5ff','#1c2457'],deco:['🏆','⏰','🕰️','👑']}};
+const HOURS=[0],HALF=[0,30],QTR=[0,15,30,45],FIVE=[0,5,10,15,20,25,30,35,40,45,50,55];
+const levels=[
+ {name:'Clock Hands',world:'hour',mode:'tap',q:6,hands:['hour','minute']},
+ {name:'O\'Clock',world:'hour',mode:'read',q:6,mins:HOURS},
+ {name:'Set O\'Clock',world:'hour',mode:'set',q:4,mins:HOURS,hands:['hour','minute'],digital:true,tolH:14},
+ {name:'Half Past',world:'hour',mode:'read',q:6,mins:HALF},
+ {name:'Set Half Past',world:'hour',mode:'set',q:4,mins:HALF,digital:true,step:30,tolH:11},
+ {name:'Quarter Time',world:'minute',mode:'read',q:6,mins:QTR,minNums:true},
+ {name:'Set Quarters',world:'minute',mode:'set',q:4,mins:QTR,digital:true,step:5,minNums:true,tolH:11},
+ {name:'5-Minute Jumps',world:'minute',mode:'read',q:6,mins:FIVE,minNums:true},
+ {name:'Set 5 Minutes',world:'minute',mode:'set',q:5,mins:FIVE,digital:true,step:5,minNums:true,tolH:10},
+ {name:'Match Clock',world:'minute',mode:'match',q:5,mins:FIVE},
+ {name:'Any Minute',world:'exact',mode:'read',q:6,step:1,minNums:true},
+ {name:'Set Any Minute',world:'exact',mode:'set',q:5,step:1,digital:true,minNums:true,tolH:10},
+ {name:'Hide the Hint',world:'exact',mode:'set',q:5,step:1,digital:false,tolH:9},
+ {name:'Minutes Later',world:'exact',mode:'later',q:6,mins:QTR,add:[15,30,45,60]},
+ {name:'How Many Hours',world:'exact',mode:'dur',q:6,story:'How many hours go by?',a:'Starts',b:'Ends'},
+ {name:'Second Hand',world:'second',mode:'tap',q:6,hands:['hour','minute','second']},
+ {name:'Read Seconds',world:'second',mode:'read',q:6,mins:FIVE,sec:true,minNums:true},
+ {name:'Set Seconds',world:'second',mode:'set',q:4,mins:FIVE,sec:true,hands:['hour','minute','second'],step:5,digital:true,minNums:true,tolH:10},
+ {name:'AM or PM',world:'day',mode:'ampm',q:6},
+ {name:'My Day',world:'day',mode:'set',q:5,scenes:true,step:5,digital:true,minNums:true,tolH:10},
+ {name:'Clock Master!',world:'master',mode:'mix',q:10,time:300,step:1,mix:[{m:'read',p:{step:5,mins:FIVE,minNums:true}},{m:'match',p:{mins:FIVE}},{m:'later',p:{mins:FIVE,add:[10,20,30,45]}},{m:'set',p:{mins:FIVE,step:5,digital:false,minNums:true,tolH:10}}]}];
+function build(L,api,stage){
+ const box=K.h('div','');box.style.cssText='display:flex;flex-direction:column;align-items:center;gap:6px;width:100%';stage.appendChild(box);
+ let qi=0,won=false,c;
+ function next(){if(qi>=L.q){won=true;setTimeout(()=>api.win(),400);return;}box.innerHTML='';c={L:L,api,box,done:()=>{qi++;api.progress(qi,L.q);next();}};R[L.mode](c);}
+ api.solve=()=>{const t=setInterval(()=>{if(won||document.querySelector('.modal')){clearInterval(t);return;}if(c&&c.solve)c.solve();},120);};
+ next();if(L.time)api.timer(L.time,'Time is up! Try again, you can do it.');
+ api.coach({tap:'Look closely at the clock hands!',read:'Look at the short hand first, then the long hand.',set:'Drag the hands to make the time. Then press Check!',match:'Find the clock that matches.',later:'Count the minutes forward!',dur:'Count the hours between the two clocks.',ampm:'AM is morning, PM is evening and night.',mix:'Show me everything you have learned!'}[L.mode]);
+}
+K.start({id:'tick-tock-clock',title:'Tick Tock Clock',emoji:'⏰',worlds,levels,build});
+</script></body></html>

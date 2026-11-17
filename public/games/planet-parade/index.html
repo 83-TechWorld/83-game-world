@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Planet Parade — D-Games</title><link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.pbig{margin:2px 0 6px}.pbig svg{animation:bob 3s ease-in-out infinite;filter:drop-shadow(0 8px 10px rgba(0,0,0,.35))}
+.pt{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;gap:2px;font-size:12px;font-weight:800;pointer-events:none}
+.pt svg{display:block}
+.slot .pt{font-size:11px}
+.choice.pc{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:120px;min-height:150px;font-size:18px;padding:8px 12px}
+.choice.pc svg{pointer-events:none}
+.choice.nm{font-size:30px;min-width:150px;min-height:70px}
+.hint{font-weight:800;opacity:.85;margin:0 0 4px;text-align:center;max-width:720px}
+.endl{display:flex;justify-content:space-between;width:min(760px,96%);font-weight:800;font-size:14px;margin:0 0 4px;opacity:.85}
+.fx{font-size:15px;font-weight:700;background:#ffffffcc;border-radius:14px;padding:6px 14px;margin-top:8px;max-width:640px;text-align:center;min-height:34px}
+.orbit .slot.pre{background:#fff3c4;border-color:#ffb703}
+@media (max-height:520px){.pbig svg{width:90px;height:90px}.choice.pc{min-height:110px}.prompt{font-size:20px;margin:0 0 4px}.choice{min-height:60px}}
+</style></head>
+<body><div id="app"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<clipPath id="pc"><circle cx="50" cy="50" r="34"/></clipPath>
+<radialGradient id="shade" cx=".3" cy=".3" r=".85"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
+<radialGradient id="g-Sun" cx=".38" cy=".35" r=".75"><stop offset="0" stop-color="#fff7b0"/><stop offset=".5" stop-color="#ffc400"/><stop offset="1" stop-color="#ff7a00"/></radialGradient>
+<radialGradient id="g-Mercury" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#d6d3cf"/><stop offset="1" stop-color="#8a8580"/></radialGradient>
+<radialGradient id="g-Venus" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffe9b0"/><stop offset="1" stop-color="#d9983a"/></radialGradient>
+<radialGradient id="g-Earth" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#7fd0ff"/><stop offset="1" stop-color="#1769c9"/></radialGradient>
+<radialGradient id="g-Mars" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffb08a"/><stop offset="1" stop-color="#c0431f"/></radialGradient>
+<radialGradient id="g-Jupiter" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffe3c0"/><stop offset="1" stop-color="#c98b52"/></radialGradient>
+<radialGradient id="g-Saturn" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff0c4"/><stop offset="1" stop-color="#d1a95e"/></radialGradient>
+<radialGradient id="g-Uranus" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#d4fbff"/><stop offset="1" stop-color="#4fc3d6"/></radialGradient>
+<radialGradient id="g-Neptune" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#7fa2ff"/><stop offset="1" stop-color="#1d3fb8"/></radialGradient>
+</defs></svg>
+<script src="../_shared/kids.js"></script>
+<script>
+const P={
+ Sun:{order:0,d:1392000,t:5500,dist:0,fact:'The Sun is a star. It is the hottest thing in our solar system!'},
+ Mercury:{order:1,d:4879,t:167,dist:58,fact:'Mercury is the smallest planet and the closest to the Sun.'},
+ Venus:{order:2,d:12104,t:464,dist:108,fact:'Venus is the hottest planet, even hotter than Mercury!'},
+ Earth:{order:3,d:12742,t:15,dist:150,fact:'Earth is our home, with water, air and people.'},
+ Mars:{order:4,d:6779,t:-65,dist:228,fact:'Mars is the red planet. It is cold and dusty.'},
+ Jupiter:{order:5,d:139820,t:-110,dist:778,fact:'Jupiter is the biggest planet, with a giant red storm.'},
+ Saturn:{order:6,d:116460,t:-140,dist:1434,fact:'Saturn has beautiful rings made of ice and rock.'},
+ Uranus:{order:7,d:50724,t:-195,dist:2871,fact:'Uranus spins on its side and is very, very cold.'},
+ Neptune:{order:8,d:49244,t:-200,dist:4495,fact:'Neptune is blue and windy. It is the farthest planet.'}};
+const PL=['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'];
+const fmt=n=>n.toLocaleString('en-US');
+// ---------- planet art (SVG) ----------
+function art(n){
+ const base=`<circle cx="50" cy="50" r="34" fill="url(#g-${n})"/>`,sh='<circle cx="50" cy="50" r="34" fill="url(#shade)"/>';
+ const cl=s=>`<g clip-path="url(#pc)">${s}</g>`;
+ switch(n){
+ case 'Sun':return `<circle cx="50" cy="50" r="48" fill="#ffd54a" opacity=".28"/><circle cx="50" cy="50" r="42" fill="#ffb300" opacity=".3"/>`+`<circle cx="50" cy="50" r="36" fill="url(#g-Sun)"/><circle cx="41" cy="46" r="3" fill="#7a3b00"/><circle cx="59" cy="46" r="3" fill="#7a3b00"/><path d="M40 58 Q50 68 60 58" stroke="#7a3b00" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="35" cy="55" r="4" fill="#ff7a59" opacity=".5"/><circle cx="65" cy="55" r="4" fill="#ff7a59" opacity=".5"/>`;
+ case 'Mercury':return base+cl('<circle cx="40" cy="40" r="6" fill="#74706b" opacity=".55"/><circle cx="60" cy="56" r="8" fill="#74706b" opacity=".5"/><circle cx="44" cy="64" r="4" fill="#74706b" opacity=".55"/><circle cx="64" cy="38" r="3.5" fill="#74706b" opacity=".5"/>')+sh;
+ case 'Venus':return base+cl('<path d="M10 40 Q40 28 60 42 T96 40" stroke="#fff3cf" stroke-width="5" fill="none" opacity=".6"/><path d="M8 58 Q36 48 58 60 T98 56" stroke="#b9732b" stroke-width="5" fill="none" opacity=".4"/><path d="M12 72 Q40 64 64 74 T98 70" stroke="#fff3cf" stroke-width="4" fill="none" opacity=".5"/>')+sh;
+ case 'Earth':return base+cl('<path d="M28 40 Q36 28 48 36 Q54 44 46 52 Q38 56 32 52 Q24 48 28 40Z" fill="#3fbf5f"/><path d="M56 56 Q68 50 72 60 Q70 74 60 76 Q52 70 56 56Z" fill="#3fbf5f"/><path d="M60 30 Q70 28 72 36 Q66 40 60 36Z" fill="#3fbf5f"/><ellipse cx="38" cy="62" rx="12" ry="4" fill="#fff" opacity=".65"/><ellipse cx="62" cy="38" rx="10" ry="3.5" fill="#fff" opacity=".6"/><ellipse cx="50" cy="22" rx="14" ry="4" fill="#fff" opacity=".8"/>')+sh;
+ case 'Mars':return base+cl('<path d="M24 50 Q38 40 50 52 Q44 62 30 62Z" fill="#8f2a10" opacity=".5"/><path d="M58 40 Q72 38 74 52 Q64 58 56 50Z" fill="#8f2a10" opacity=".45"/><ellipse cx="50" cy="19" rx="13" ry="4" fill="#fff" opacity=".85"/><ellipse cx="50" cy="82" rx="9" ry="3" fill="#fff" opacity=".7"/>')+sh;
+ case 'Jupiter':return base+cl('<rect x="10" y="30" width="80" height="7" fill="#f4d9b0" opacity=".8"/><rect x="10" y="42" width="80" height="8" fill="#a8652f" opacity=".6"/><rect x="10" y="55" width="80" height="7" fill="#f4d9b0" opacity=".75"/><rect x="10" y="66" width="80" height="6" fill="#b87a42" opacity=".55"/><ellipse cx="62" cy="58" rx="8" ry="5" fill="#c0392b"/>')+sh;
+ case 'Saturn':return `<g transform="rotate(-18 50 50)"><path d="M2 50 A48 13 0 0 1 98 50" stroke="#caa56a" stroke-width="7" fill="none" opacity=".9"/></g>`+base+cl('<rect x="10" y="34" width="80" height="6" fill="#fff0c4" opacity=".6"/><rect x="10" y="48" width="80" height="6" fill="#b88b45" opacity=".4"/><rect x="10" y="62" width="80" height="5" fill="#fff0c4" opacity=".5"/>')+sh+`<g transform="rotate(-18 50 50)"><path d="M2 50 A48 13 0 0 0 98 50" stroke="#e3c58a" stroke-width="7" fill="none"/></g>`;
+ case 'Uranus':return `<g transform="rotate(75 50 50)"><path d="M2 50 A48 10 0 0 1 98 50" stroke="#bfeef0" stroke-width="3" fill="none" opacity=".8"/></g>`+base+cl('<rect x="10" y="44" width="80" height="6" fill="#fff" opacity=".25"/>')+sh+`<g transform="rotate(75 50 50)"><path d="M2 50 A48 10 0 0 0 98 50" stroke="#e6fbff" stroke-width="3" fill="none"/></g>`;
+ case 'Neptune':return base+cl('<path d="M8 40 Q40 32 60 44 T98 40" stroke="#bcd0ff" stroke-width="4" fill="none" opacity=".5"/><ellipse cx="40" cy="58" rx="9" ry="5" fill="#0f2a85" opacity=".7"/><path d="M10 70 Q40 62 64 72 T98 68" stroke="#bcd0ff" stroke-width="3" fill="none" opacity=".4"/>')+sh;}
+ return '';}
+const svg=(n,px)=>`<svg width="${px}" height="${px}" viewBox="0 0 100 100">${art(n)}</svg>`;
+const scaleOf=n=>n==='Sun'?1:0.42+0.58*Math.pow(P[n].d/139820,0.42);
+const card=(n,px,scaled)=>`<div class="pt">${svg(n,scaled?Math.round(px*scaleOf(n)):px)}<span>${n}</span></div>`;
+// ---------- questions ----------
+const KEYS={size:'d',heat:'t',dist:'dist'};
+const WORDS={size:{max:'BIGGER',min:'SMALLER'},heat:{max:'HOTTER 🔥',min:'COLDER ❄️'},dist:{max:'FARTHER from the Sun',min:'CLOSER to the Sun'}};
+function nameQ(pool){const n=K.pick(pool),opts=K.shuffle(K.sample(PL.filter(x=>x!==n),3).concat(n));
+ return{big:svg(n,150),prompt:'Which planet is this?',nm:true,opts:opts.map(o=>({html:o,good:o===n})),tell:`${n}! ${P[n].fact}`};}
+function cmpQ(kind,dir,pool,scaled){let a,b,k=KEYS[kind];do{a=K.pick(pool);b=K.pick(pool);}while(a===b||P[a][k]===P[b][k]);
+ const win=(dir==='max')===(P[a][k]>P[b][k])?a:b,lose=win===a?b:a;let tell;
+ if(kind==='size')tell=`${win} is ${fmt(P[win].d)} km wide. ${lose} is ${fmt(P[lose].d)} km.`;
+ else if(kind==='heat')tell=win==='Sun'||lose==='Sun'?(win==='Sun'?'The Sun is the hottest! About 5,500°C.':`${lose} is the Sun, so it is hotter. ${win} is only ${P[win].t}°C.`):`${win} is ${P[win].t}°C. ${lose} is ${P[lose].t}°C.`;
+ else tell=`${win} is ${fmt(P[win].dist)} million km from the Sun. ${lose} is ${fmt(P[lose].dist)} million km.`;
+ if(kind==='heat'&&dir==='max'&&(a==='Sun'||b==='Sun'))tell='Choose the Sun for more heat! It is about 5,500°C.';
+ return{prompt:`Which one is ${WORDS[kind][dir]}?`,opts:[a,b].map(o=>({html:card(o,92,scaled&&kind==='size'),good:o===win})),pc:true,tell};}
+const FACTS=[['Which planet has beautiful rings?','Saturn',1],['Which is the red planet?','Mars',1],['Which planet is the biggest?','Jupiter',1],['Which planet do we live on?','Earth',1],['Which planet is the hottest?','Venus',1],['Which planet is closest to the Sun?','Mercury',1],
+ ['Which planet is the smallest?','Mercury',0],['Which planet is the farthest from the Sun?','Neptune',0],['Which planet has a giant red storm spot?','Jupiter',0],['Which planet spins on its side?','Uranus',0],['Which blue planet has super fast winds?','Neptune',0],['Which planet is almost the same size as Earth?','Venus',0],['Which planet has water, air and people?','Earth',1],['Which planet has the tallest volcano?','Mars',0],['Which planet is third from the Sun?','Earth',1],['Which planet is called the ringed planet?','Saturn',1]];
+function factQ(easy){const f=K.pick(FACTS.filter(x=>!easy||x[2])),opts=K.shuffle(K.sample(PL.filter(x=>x!==f[1]),3).concat(f[1]));
+ return{prompt:f[0],opts:opts.map(o=>({html:card(o,76),good:o===f[1]})),pc:true,tell:`${f[1]}! ${P[f[1]].fact}`};}
+function mixQ(){const r=Math.random();if(r<.2)return nameQ(PL);if(r<.4)return factQ(false);const kind=K.pick(['size','heat','dist']),dir=K.pick(['max','min']);return cmpQ(kind,dir,kind==='heat'?PL.concat('Sun'):PL.concat(kind==='dist'?[]:[]),false);}
+function quiz(L,api,stage,gen){
+ const box=K.h('div');stage.appendChild(box);let qi=0,won=false;
+ const info=K.h('div','fx','');stage.appendChild(info);
+ function ask(){box.innerHTML='';info.textContent='';const q=gen();
+  box.appendChild(K.h('div','prompt',q.prompt));if(q.big)box.appendChild(K.h('div','pbig',q.big));
+  const c=K.h('div','choices');box.appendChild(c);api.say(q.prompt.replace(/[^\w\s?']/g,''));
+  q.opts.forEach(o=>{const b=K.h('button','choice '+(q.pc?'pc':q.nm?'nm':''),o.html);if(o.good)b.dataset.good=1;
+   b.onclick=()=>{K.audio();if(o.good){b.classList.add('good');K.sfx.ok();qi++;api.progress(qi,L.q);c.querySelectorAll('button').forEach(x=>x.disabled=true);info.textContent=q.tell;api.coach(q.tell);
+     if(qi>=L.q){won=true;setTimeout(()=>api.win(),1800);}else setTimeout(ask,2300);}else{b.classList.add('wrong');K.sfx.bad();api.bad(q.pc?'Not that one. Look again!':'Try again! Look at the planet.');}};c.appendChild(b);});}
+ ask();api.solve=()=>{const t=setInterval(()=>{const b=stage.querySelector('.choice[data-good]:not(:disabled)');if(b)b.click();else if(won||document.querySelector('.modal'))clearInterval(t);},60);};
+}
+// ---------- ordering ----------
+function order(L,api,stage){
+ const k=KEYS[L.kind];let set=L.set.slice();
+ const dirDesc=L.kind==='dist'?false:L.dir==='desc';
+ const sorted=set.slice().sort((a,b)=>dirDesc?P[b][k]-P[a][k]:P[a][k]-P[b][k]);
+ const ends={size:L.dir==='desc'?['🔝 BIGGEST first','smallest last']:['🔹 SMALLEST first','biggest last'],heat:L.dir==='desc'?['🔥 HOTTEST first','coldest last']:['❄️ COLDEST first','hottest last'],dist:['☀️ NEAREST the Sun','farthest away']}[L.kind];
+ const hintTxt={size:L.dir==='desc'?'Put the planets from the BIGGEST to the SMALLEST!':'Put the planets from the SMALLEST to the BIGGEST!',heat:L.dir==='desc'?'Hottest first! Remember the Sun is the hottest of all.':'Coldest first! Which planet is the coldest?',dist:'Line up the planets starting nearest to the Sun!'}[L.kind];
+ stage.appendChild(K.h('div','prompt',L.title||'Line them up!'));stage.appendChild(K.h('div','hint',hintTxt));
+ stage.appendChild(K.h('div','endl',`<span>${ends[0]}</span><span>${ends[1]}</span>`));api.coach(hintTxt);
+ const box=K.h('div','orbit');stage.appendChild(box);const cell=sorted.length>7?88:96;let done=0,pre=0;
+ const slots=sorted.map((n,i)=>(L.kind==='dist'&&n==='Sun')?(pre++,{key:n,pre:true,html:card(n,54)}):{key:n,ph:String(i+1)});
+ const tiles=sorted.filter(n=>!(L.kind==='dist'&&n==='Sun')).map(n=>({key:n,html:card(n,54,L.scale&&L.kind==='size')}));
+ const total=tiles.length;
+ let busy=false,fin=false;
+ const ctl=K.placement(box,{cell,fs:13,slots,tiles,onCorrect:(t,s)=>{done++;api.progress(done,total);busy=true;box.style.pointerEvents='none';api.coach(`${t.key}. ${P[t.key].fact}`,true,()=>{busy=false;box.style.pointerEvents='';if(fin)setTimeout(()=>api.win(),300);});},onWrong:()=>api.bad(L.kind==='dist'?'Check: which planet is next from the Sun?':'Look again! Which one comes next?'),onDone:()=>{fin=true;if(!busy)api.win();}});
+ api.solve=()=>ctl.solve();if(L.time)api.timer(L.time,'Time is up! You can do it, try again.');
+}
+// ---------- levels ----------
+const worlds={inner:{label:'Inner Planets',bg:['#ffe2c4','#c9774a'],deco:['🪐','☄️','⭐','🌍']},giants:{label:'Giant Planets',bg:['#e6d9ff','#6a4fc2'],deco:['🪐','🌟','✨','🚀']},heat:{label:'Hot & Cold Zone',bg:['#ffd3a8','#2e7bd6'],deco:['🔥','❄️','☀️','🥶']},master:{label:'Space Master',bg:['#b8c4ff','#14183e'],deco:['🌌','🌠','👾','🛸']}};
+const levels=[
+ {name:'Meet Planets',world:'inner',mode:'name',q:6,pool:['Earth','Mars','Jupiter','Saturn']},
+ {name:'All 8 Names',world:'inner',mode:'name',q:8,pool:PL},
+ {name:'Near the Sun',world:'inner',mode:'order',kind:'dist',set:['Sun','Mercury','Venus','Earth','Mars'],title:'The Sun\'s family'},
+ {name:'Hot or Cold?',world:'inner',mode:'cmp',kind:'heat',dir:'max',pool:['Sun','Venus','Earth','Mars','Mercury'],q:6},
+ {name:'Planet Quiz',world:'inner',mode:'fact',q:6,easy:true},
+ {name:'Big or Small',world:'giants',mode:'cmp',kind:'size',dir:'max',pool:PL,q:6,scale:true},
+ {name:'Small to Big',world:'giants',mode:'order',kind:'size',dir:'asc',set:['Mercury','Mars','Earth','Saturn','Jupiter'],scale:true,title:'Smallest to biggest'},
+ {name:'Big to Small',world:'giants',mode:'order',kind:'size',dir:'desc',set:['Jupiter','Saturn','Uranus','Earth','Venus','Mars'],scale:true,title:'Biggest to smallest'},
+ {name:'All 8 In Order',world:'giants',mode:'order',kind:'dist',set:['Sun'].concat(PL),title:'From the Sun outwards'},
+ {name:'Sun is HOT!',world:'heat',mode:'cmp',kind:'heat',dir:'max',pool:['Sun','Venus','Mercury','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'],q:8},
+ {name:'Cold Planets',world:'heat',mode:'cmp',kind:'heat',dir:'min',pool:PL,q:6},
+ {name:'Hot to Cold',world:'heat',mode:'order',kind:'heat',dir:'desc',set:['Sun','Venus','Mercury','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'],title:'Hottest to coldest'},
+ {name:'Near or Far',world:'heat',mode:'cmp',kind:'dist',dir:'min',pool:['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'],q:8},
+ {name:'Size Race',world:'master',mode:'order',kind:'size',dir:'desc',set:PL,title:'All 8: biggest to smallest',time:240},
+ {name:'Cold to Hot',world:'master',mode:'order',kind:'heat',dir:'asc',set:['Sun'].concat(PL),title:'Coldest to hottest',time:240},
+ {name:'Space Boss!',world:'master',mode:'mix',q:12,time:240}];
+function build(L,api,stage){
+ if(L.mode==='order')return order(L,api,stage);
+ const gen={name:()=>nameQ(L.pool),cmp:()=>cmpQ(L.kind,L.dir,L.pool,L.scale),fact:()=>factQ(L.easy),mix:mixQ}[L.mode];
+ quiz(L,api,stage,gen);if(L.time)api.timer(L.time,'Time is up! Try again, you can do it.');
+}
+K.start({id:'planet-parade',title:'Planet Parade',emoji:'🪐',worlds,levels,build});
+</script></body></html>

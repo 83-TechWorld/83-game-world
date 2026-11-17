@@ -67,3 +67,14 @@ main{position:relative;z-index:2;flex:1;min-height:0;display:flex;flex-direction
 .pill{background:#fff;border-radius:999px;padding:5px 14px;font-weight:800;box-shadow:0 3px 0 rgba(0,0,0,.14)}
 @media (max-width:640px){.lv{width:86px;height:92px}.lv b{font-size:28px}.world{padding:10px}}
 .map{width:min(980px,100%);display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;align-items:start}.map .world{margin:0;width:auto}
+/* phones held sideways / very short screens: tighten everything so the game fits */
+@media (max-height:520px){
+ header{padding:4px 10px;gap:8px}.back{padding:5px 12px;font-size:13px}.ttl{font-size:18px}.chip{padding:4px 10px;font-size:13px}.snd{width:34px;height:34px;font-size:16px}
+ .hud{margin-bottom:2px}.hud .lt{font-size:13px;padding:3px 10px}.hud button{padding:3px 10px;font-size:13px}
+ main{padding:2px 10px 56px}.stage{gap:3px;padding-top:2px}
+ .prompt{font-size:20px;margin:0 0 2px}.hint{font-size:13px;margin:0 0 2px}
+ .tray{margin-top:6px;padding:6px;min-height:56px;gap:6px}.choices{gap:8px;margin-top:4px}.choice{min-height:60px;font-size:30px;padding:4px 14px}
+ .big{font-size:84px}.world{padding:8px 12px;margin:4px auto 8px}.lv{width:92px;height:84px}.lv b{font-size:26px}
+ .coach .owl{font-size:34px}.coach .bub{font-size:12px;padding:5px 10px;margin-bottom:8px;max-width:46vw}.coach{bottom:2px}
+ .modal .card{padding:14px 22px}.modal .stars{font-size:40px}.modal h1{font-size:26px}
+}

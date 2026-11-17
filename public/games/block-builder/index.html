@@ -92,7 +92,7 @@ PPPYYPPP
 PPPKKPPP
 PPPKKPPP`),what:'a fort',peek:6,time:300}];
 function build(L,api,stage){
- const art=L.art,H=art.length,W=art[0].length,cs=Math.max(30,Math.min(66,Math.floor(Math.min(760,innerWidth-60)/W),Math.floor((innerHeight-360)/H)));
+ const art=L.art,H=art.length,W=art[0].length,cs=Math.max(30,Math.min(66,Math.floor(Math.min(760,innerWidth-60)/W),Math.floor((innerHeight-(innerHeight<520?200:360))/H)));
  const memory=!!L.peek;let hidden=false,color=null,done=0,total=0;
  stage.appendChild(K.h('div','prompt',memory?'Remember it, then build it!':`Build ${L.what}`));
  const hint=memory?`Look carefully! The picture will disappear in ${L.peek} seconds.`:'Pick a color, then tap the matching box. Wrong color? Try another!';

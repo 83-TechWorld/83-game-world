@@ -9,7 +9,15 @@ let AC=null,muted=false;try{muted=localStorage.getItem('dg_muted')==='1';}catch(
 function audio(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==='suspended')try{AC.resume();}catch(e){}}
 function tone(f,d,type,v,delay,f2){if(muted||!AC)return;try{const t=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v||.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d);}catch(e){}}
 const sfx={pop:()=>tone(520,.12,'sine',.12,0,900),ok:()=>{tone(660,.12,'triangle',.14);tone(880,.18,'triangle',.14,.1);},bad:()=>tone(240,.25,'sawtooth',.06,0,140),cheer:()=>[523,659,784,1046,1318].forEach((f,i)=>tone(f,.22,'triangle',.12,i*.09)),star:()=>tone(900,.15,'sine',.12,0,1500),whoosh:()=>tone(300,.3,'sine',.08,0,900),tick:()=>tone(1000,.04,'square',.04)};
-function say(t,rate){if(muted)return;try{const s=window.speechSynthesis;if(!s)return;s.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=rate||.9;u.pitch=1.15;u.lang='en-US';s.speak(u);}catch(e){}}
+function speakText(t){t=String(t);
+ t=t.replace(/(\d{1,2}):(\d{2}):(\d{2})/g,(a,h,m,sec)=>`${+h} ${+m===0?"o'clock":+m<10?'oh '+(+m):+m} and ${+sec} seconds`);
+ t=t.replace(/(\d{1,2}):(\d{2})/g,(a,h,m)=>`${+h} ${+m===0?"o'clock":+m<10?'oh '+(+m):+m}`);
+ t=t.replace(/(^|[\s(])-(\d)/g,'$1minus $2').replace(/°C/g,' degrees Celsius').replace(/\bkm\b/g,'kilometers');
+ return t.replace(/[^\w\s!?.,']/g,' ');}
+function say(t,rate,cb){let fired=false;const fin=()=>{if(!fired){fired=true;if(cb)cb();}};t=speakText(t);
+ if(muted){if(cb)setTimeout(fin,1400);return;}
+ try{const s=window.speechSynthesis;if(!s){if(cb)setTimeout(fin,1800);return;}s.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=rate||.9;u.pitch=1.15;u.lang='en-US';
+  if(cb){const t0=Date.now(),minMs=Math.min(t.length*40,9000),early=()=>{const w=minMs-(Date.now()-t0);if(w>0)setTimeout(fin,w);else fin();};u.onend=early;u.onerror=early;setTimeout(fin,Math.max(2500,t.length*95)+3500);}s.speak(u);}catch(e){if(cb)setTimeout(fin,1800);}}
 const PRAISE=['Awesome!','Great job!','You rock!','Brilliant!','Super smart!','Well done!','Fantastic!','Wow, amazing!','Perfect!','You are a star!'];
 const TRY=['Oops! Try again!','Almost! You can do it!','Not that one, try again!','Keep going, you are close!','Nice try! Once more!'];
 // ---------- confetti ----------
@@ -60,7 +68,7 @@ function start(cfg){
   const header=h('header','',`<a class="back" href="/index.html">← D-GAMES</a><div class="ttl">${cfg.emoji} ${cfg.title}</div><div class="chip" id="tot">⭐ 0</div><button class="snd" id="snd">${muted?'🔇':'🔊'}</button>`);app.appendChild(header);
   const main=h('main');app.appendChild(main);
   const coach=h('div','coach','<div class="owl">🦉</div><div class="bub"></div>');document.body.appendChild(coach);
-  let coachT=null;function coachSay(t,speak){const b=coach.querySelector('.bub');b.textContent=t;b.classList.add('show');clearTimeout(coachT);coachT=setTimeout(()=>b.classList.remove('show'),2600);if(speak!==false)say(t.replace(/[^\w\s!?.,']/g,''));}
+  let coachT=null;function coachSay(t,speak,cb){const b=coach.querySelector('.bub');b.textContent=t;b.classList.add('show');clearTimeout(coachT);coachT=setTimeout(()=>b.classList.remove('show'),cb?6000:2600);if(speak!==false)say(t,undefined,cb);else if(cb)setTimeout(cb,1200);}
   header.querySelector('#snd').onclick=e=>{muted=!muted;try{localStorage.setItem('dg_muted',muted?'1':'0');}catch(_){}e.target.textContent=muted?'🔇':'🔊';if(muted)try{speechSynthesis.cancel();}catch(_){}audio();sfx.pop();};
   const totalStars=()=>Object.values(save.stars).reduce((a,b)=>a+b,0);
   const refreshTot=()=>{header.querySelector('#tot').textContent='⭐ '+totalStars()+' / '+save.max;};

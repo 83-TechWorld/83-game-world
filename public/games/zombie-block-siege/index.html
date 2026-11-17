@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Zombie Block Siege — 83GameWorld</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <style>
   html,body{margin:0;height:100%;background:#070b10;overflow:hidden;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#fff}
   canvas#c{display:block;margin:0 auto;cursor:none;outline:none}
@@ -516,5 +516,7 @@ buildLevel(1);showMenu(true);
 window.__game={get S(){return{state,lvl,P,Z,zones,zoneIdx,walls,boss,stats,W,camX,B};},buildLevel,update,render,hurtZ,hurtP,keys,mouse,TH,WEAP,SAVE,finishLevel,rebuild,swapGun,startReload,afterEnd,setState:s=>{state=s;},step(n,dt=1/60){for(let i=0;i<n;i++)update(dt);}};
 requestAnimationFrame(frame);
 </script>
+<script src="/games/_shared/touch.js"></script>
+<script>DTouch.init({left:[{l:'◀',k:'KeyA'},{l:'▶',k:'KeyD'},{l:'⬇',k:'KeyS',t:'DUCK'}],right:[{l:'🔁',k:'Tab',t:'GUN'},{l:'🧱',k:'KeyE',t:'BUILD'},{l:'↻',k:'KeyR',t:'RELOAD'}],hint:'Touch the screen to aim & shoot'});</script>
 </body>
 </html>

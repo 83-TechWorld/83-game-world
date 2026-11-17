@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Stick Cycle Race — D-Games</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <style>
   html,body{margin:0;height:100%;background:#0a1222;overflow:hidden;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#fff}
   canvas{display:block;margin:0 auto;outline:none}
@@ -299,5 +299,7 @@ function render(){
 let last=performance.now();function loop(now){const dt=Math.min(.033,(now-last)/1000);last=now;try{update(dt);render();}catch(e){console.error(e);}requestAnimationFrame(loop);}requestAnimationFrame(loop);
 window.__game={get state(){return state},get player(){return player},get racers(){return racers},get ghost(){return ghost},build,get result(){return result},get lvl(){return lvl}};
 </script>
+<script src="/games/_shared/touch.js"></script>
+<script>DTouch.init({left:[{l:'▲',k:'KeyW',t:'LANE'},{l:'▼',k:'KeyS',t:'LANE'}],right:[{l:'⚡',k:'ShiftLeft',t:'SPRINT'},{l:'🚴',k:'Space',t:'PEDAL',big:true}],hint:'Hold PEDAL to go, SPRINT for a boost'});</script>
 </body>
 </html>
