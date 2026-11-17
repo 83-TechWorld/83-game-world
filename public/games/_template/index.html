@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>GAME TITLE — D-Games</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  html,body{margin:0;height:100%;background:#0b1020;color:#fff;font-family:system-ui,sans-serif;overflow:hidden}
+  canvas{display:block;margin:0 auto}
+  #home{position:fixed;top:12px;left:14px;color:#9be7ff;text-decoration:none;font-weight:800;font-size:13px;letter-spacing:1px}
+</style>
+</head>
+<body>
+<a id="home" href="/">← D-GAMES</a>
+<canvas id="c"></canvas>
+<script>
+// ---- Minimal standalone game skeleton (copy this folder to public/games/<slug>/) ----
+// 1. Build your game in this file (or split into js/ files next to it).
+// 2. Register it in src/catalog.ts with kind:'url', url:'/games/<slug>/'.
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const VW=1280,VH=720;let K=1;
+function resize(){const s=Math.min(innerWidth/VW,innerHeight/VH),d=devicePixelRatio||1;cv.width=VW*s*d;cv.height=VH*s*d;cv.style.width=VW*s+'px';cv.style.height=VH*s+'px';cv.style.marginTop=Math.max(0,(innerHeight-VH*s)/2)+'px';K=s*d;}
+addEventListener('resize',resize);resize();
+const keys={};addEventListener('keydown',e=>keys[e.code]=true);addEventListener('keyup',e=>keys[e.code]=false);
+let t=0,last=performance.now();
+function update(dt){t+=dt;}
+function render(){ctx.setTransform(K,0,0,K,0,0);ctx.clearRect(0,0,VW,VH);ctx.fillStyle='#fff';ctx.font='bold 48px system-ui';ctx.textAlign='center';ctx.fillText('GAME TITLE',VW/2,VH/2);ctx.font='20px system-ui';ctx.fillText('Replace this skeleton with your game',VW/2,VH/2+40);}
+function loop(now){const dt=Math.min(.033,(now-last)/1000);last=now;update(dt);render();requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

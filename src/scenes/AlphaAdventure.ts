@@ -388,14 +388,16 @@ export default class AlphabetAdventure extends Phaser.Scene {
             // Stop all sounds
             this.sound.stopAll();
             
-            // Stop current scene
+            // Stop current scene and start HomeScene
             this.scene.stop();
-            
-            // Start HomeScene fresh
             this.scene.start('HomeScene');
             
             // Update browser history
-            history.pushState({ scene: 'HomeScene' }, 'Home');
+            if (history.state?.scene === 'AlphabetAdventure') {
+                history.back();
+            } else {
+                history.pushState({ scene: 'HomeScene' }, 'Home');
+            }
         });
   }
 }

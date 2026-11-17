@@ -3,6 +3,8 @@ import './style.css'
 import HomeScene from './scenes/HomeScene'
 import AlphabetAdventure from './scenes/AlphaAdventure'
 import NumberAdventure from './scenes/NumberAdventure'
+import BuildingBlocksScene from './scenes/BuildingBlocksScene'
+import ShapeMatchScene from './scenes/ShapeMatchScene'
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -14,6 +16,8 @@ const config: Phaser.Types.Core.GameConfig = {
     HomeScene,
     AlphabetAdventure,
     NumberAdventure,
+    BuildingBlocksScene,
+    ShapeMatchScene,
   ],
   scale: {
     mode: Phaser.Scale.FIT,
@@ -43,5 +47,11 @@ const config: Phaser.Types.Core.GameConfig = {
 }
 
 window.addEventListener('load', () => {
-  new Phaser.Game(config)
+  const game = new Phaser.Game(config)
+  // Missing/undecodable audio must never crash a scene or block navigation: stay silent instead.
+  const snd = game.sound as any
+  const origPlay = snd.play.bind(snd)
+  snd.play = (key: string, ...rest: unknown[]) => {
+    try { return game.cache.audio.exists(key) ? origPlay(key, ...rest) : false } catch { return false }
+  }
 })
