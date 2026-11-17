@@ -72,3 +72,12 @@ Push to `main` → Netlify builds `npm run build` and publishes `dist/`. Standal
 
 ## Roadmap to 50
 Track ideas in `src/catalog.ts` as `available: false` entries, so the hub shows what's coming.
+
+
+## Dashboard & kids games (v2)
+
+- The dashboard (`src/main.ts`, `src/hub.css`) is plain DOM/CSS — no Phaser. Add a game by adding one entry to `src/catalog.ts`.
+- Learning games (`alphabet-safari`, `number-rocket`, `block-builder`, `shape-dash`, `word-zoo`) share `public/games/_shared/kids.js` + `kids.css`
+  (level map, stars, praise owl, speech, drag/tap placement, confetti). A new learning game is one `index.html` that calls `K.start({id,title,emoji,worlds,levels,build})`.
+  Progress is stored in `localStorage` key `dg_<id>`; the dashboard shows the stars.
+- The old Phaser scenes in `src/scenes/` are no longer used (kept for reference; safe to delete).

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Block Builder — D-Games</title><link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.grid{display:grid;gap:4px;padding:12px;background:#ffffffaa;border-radius:20px;box-shadow:0 6px 0 rgba(0,0,0,.1)}
+.bc{border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#27315a88;transition:transform .15s,background .25s}
+.bc.t{border:3px dashed #27315a55;cursor:pointer}.bc.t:hover{transform:scale(1.06)}
+.bc.e{background:transparent}
+.bc.d{border:0;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18),inset 0 3px 0 rgba(255,255,255,.35);animation:pop .4s}
+.pal{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:12px;padding:10px 14px;background:#ffffff77;border-radius:22px}
+.sw{width:64px;height:64px;border-radius:16px;border:5px solid #fff;box-shadow:0 5px 0 rgba(0,0,0,.2);cursor:grab;transition:transform .12s}
+.sw.sel{outline:5px solid #ffb703;transform:translateY(-6px) scale(1.06)}
+.hint{font-weight:800;opacity:.75;margin:2px 0 4px;text-align:center}
+.wob{animation:wob .6s 2}@keyframes wob{25%{transform:rotate(-3deg) scale(1.05)}75%{transform:rotate(3deg) scale(1.05)}}
+</style></head>
+<body><div id="app"></div><script src="../_shared/kids.js"></script>
+<script>
+const COL={R:'#ff5a6a',B:'#3ea0ff',Y:'#ffd23b',G:'#4cd964',O:'#ff9a3a',P:'#b46bff',W:'#ffffff',K:'#a0714f',N:'#3a3f5a',S:'#8ad8ff'};
+const worlds={toy:{label:'Toy Town',bg:['#ffe9a8','#ffb36b'],deco:['🧸','🏠','🚂','🎈']},castle:{label:'Castle Kingdom',bg:['#d6e4ff','#6b8ff0'],deco:['🏰','👑','🛡️','🐉']},space:{label:'Space Builders',bg:['#cdbfff','#4a38b0'],deco:['🚀','🤖','🪐','⭐']},boss:{label:'Memory Master',bg:['#ffd1d9','#e0486a'],deco:['🧠','💡','🎯','🏆']}};
+const A=(s)=>s.trim().split('\n').map(r=>r.trim());
+const levels=[
+ {name:'Tiny House',world:'toy',art:A(`
+..R..
+.RRR.
+RRRRR
+BBYBB
+BBYBB`),what:'a house'},
+ {name:'Tall Tower',world:'toy',art:A(`
+RYR
+RRR
+BBB
+YYY
+BBB
+YYY`),what:'a tower'},
+ {name:'Big Tree',world:'toy',art:A(`
+..G..
+.GGG.
+GGGGG
+.GGG.
+..K..
+..K..`),what:'a tree'},
+ {name:'Royal Castle',world:'castle',art:A(`
+G.G.G.G
+GGGGGGG
+GPGGGPG
+GGGKGGG
+GGGKGGG`),what:'a castle'},
+ {name:'Rocket Ship',world:'space',art:A(`
+..R..
+.RRR.
+.WWW.
+.WBW.
+.WWW.
+RWWWR
+R.O.R`),what:'a rocket'},
+ {name:'Sailing Boat',world:'space',art:A(`
+...K...
+..KRR..
+..KRRR.
+.......
+BBBBBBB
+.BBBBB.
+..BBB..`),what:'a boat'},
+ {name:'Rainbow',world:'boss',art:A(`
+RRRRRRR
+OOOOOOO
+YYYYYYY
+GGGGGGG
+BBBBBBB`),what:'a rainbow',peek:6},
+ {name:'Robot Pal',world:'boss',art:A(`
+.BBBB.
+.BWWB.
+.BBBB.
+RBBBBR
+R.BB.R
+..YY..
+.YYYY.`),what:'a robot',peek:6},
+ {name:'Happy Face',world:'boss',art:A(`
+..YYY..
+.YYYYY.
+YKYYYKY
+YYYYYYY
+YKYYYKY
+.YKKKY.
+..YYY..`),what:'a smiley face',peek:5},
+ {name:'Master Fort!',world:'boss',art:A(`
+P.P..P.P
+PPPPPPPP
+PRPPPPRP
+PPPYYPPP
+PPPYYPPP
+PPPKKPPP
+PPPKKPPP`),what:'a fort',peek:6,time:300}];
+function build(L,api,stage){
+ const art=L.art,H=art.length,W=art[0].length,cs=Math.max(30,Math.min(66,Math.floor(Math.min(760,innerWidth-60)/W),Math.floor((innerHeight-360)/H)));
+ const memory=!!L.peek;let hidden=false,color=null,done=0,total=0;
+ stage.appendChild(K.h('div','prompt',memory?'Remember it, then build it!':`Build ${L.what}`));
+ const hint=memory?`Look carefully! The picture will disappear in ${L.peek} seconds.`:'Pick a color, then tap the matching box. Wrong color? Try another!';
+ const hd=K.h('div','hint',hint);stage.appendChild(hd);api.coach(hint);
+ const grid=K.h('div','grid');grid.style.gridTemplateColumns=`repeat(${W},${cs}px)`;stage.appendChild(grid);
+ const cells=[];
+ art.forEach((r,y)=>[...r].forEach((k,x)=>{const el=K.h('div','bc '+(k==='.'?'e':'t'));el.style.width=el.style.height=cs+'px';cells.push({el,k,done:false});if(k!=='.'){total++;el.onclick=()=>paint(cells.find(c=>c.el===el),color);}grid.appendChild(el);}));
+ function show(c){const e=c.el;if(c.k==='.')return;if(c.done){e.className='bc d';e.style.background=COL[c.k];e.textContent='';}else if(memory&&hidden){e.className='bc t';e.style.background='#ffffff66';e.textContent='?';}else if(memory&&!hidden){e.className='bc d';e.style.background=COL[c.k];e.textContent='';}else{e.className='bc t';e.style.background=c.k==='W'?'#e3e8f8':COL[c.k]+'55';e.textContent='';}}
+ cells.forEach(show);
+ const keys=[...new Set(art.join('').replace(/\./g,''))],pal=K.h('div','pal');stage.appendChild(pal);const sws={};
+ keys.forEach(k=>{const s=K.h('div','sw');s.style.background=COL[k];s.dataset.k=k;sws[k]=s;
+  K.drag(s,{targets:()=>cells.filter(c=>c.k!=='.'&&!c.done).map(c=>c.el),onDrop:(el,t)=>{paint(cells.find(c=>c.el===t),k);return false;},onTap:()=>{color=k;Object.values(sws).forEach(x=>x.classList.toggle('sel',x===s));K.sfx.pop();}});pal.appendChild(s);});
+ function paint(c,k){if(!c||c.done)return;if(!k){api.coach('Pick a color first! 🎨');K.sfx.pop();return;}
+  if(memory&&!hidden)return;
+  if(k===c.k){c.done=true;done++;show(c);K.sfx.ok();api.progress(done,total);if(done%6===0)api.coach(K.pick(K.PRAISE),false);if(done===total)finish();}
+  else{c.el.classList.remove('shake');void c.el.offsetWidth;c.el.classList.add('shake');K.sfx.bad();api.bad(memory?'Not that color. Think hard!':'Not that color, try another!');}}
+ function finish(){grid.classList.add('wob');api.coach(`You built ${L.what}! 🎉`);K.say(`You built ${L.what}!`);K.confetti(60);setTimeout(()=>api.win(),1300);}
+ if(memory){let t=L.peek;const tick=setInterval(()=>{if(!grid.isConnected)return clearInterval(tick);t--;hd.textContent=t>0?`Memorize it! ${t}…`:'Now build it from memory!';K.sfx.tick();
+   if(t<=0){clearInterval(tick);hidden=true;cells.forEach(show);api.coach('Now build it from memory!');if(L.time)api.timer(L.time,'Time is up! Try again.');}},1000);
+  const pk=K.h('button','btn','👀 Peek (costs a star)');pk.style.marginTop='10px';pk.onclick=()=>{if(!hidden)return;api.bad('Peeking costs a star!');hidden=false;cells.forEach(show);setTimeout(()=>{hidden=true;cells.forEach(show);},2000);};stage.appendChild(pk);
+  api.solve=()=>{hidden=true;cells.forEach(show);cells.forEach(c=>{if(c.k!=='.')paint(c,c.k);});};}
+ else{api.solve=()=>cells.forEach(c=>{if(c.k!=='.')paint(c,c.k);});}
+}
+K.start({id:'block-builder',title:'Block Builder',emoji:'🧱',worlds,levels,build});
+</script></body></html>

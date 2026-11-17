@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Number Rocket — D-Games</title><link rel="stylesheet" href="../_shared/kids.css">
+<style>.cap{font-size:30px;font-weight:800}.objs{font-size:clamp(34px,7vw,56px);max-width:700px;text-align:center;line-height:1.25;animation:pop .5s}.eq{font-size:clamp(30px,6vw,52px);font-weight:800;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}.hint{font-weight:800;opacity:.75;margin:2px 0 6px;text-align:center}.vs{font-size:30px;font-weight:800;align-self:center}</style></head>
+<body><div id="app"></div><script src="../_shared/kids.js"></script>
+<script>
+const worlds={moon:{label:'Moon Base',bg:['#d9dcff','#6d74c9'],deco:['🌙','⭐','🛰️','🚀']},mars:{label:'Red Mars',bg:['#ffd3b8','#d2603a'],deco:['🪐','👽','🛸','☄️']},saturn:{label:'Saturn Rings',bg:['#e6d1ff','#7a4fc9'],deco:['🪐','✨','🌟','🚀']},galaxy:{label:'Galaxy Boss',bg:['#b8c4ff','#1c1f5e'],deco:['🌌','🌠','⭐','👾']}};
+const range=(a,b,s=1)=>{const r=[];for(let i=a;i<=b;i+=s)r.push(i);return r;};
+const levels=[
+ {name:'Count Off',world:'moon',mode:'order',set:range(1,5)},
+ {name:'How Many?',world:'moon',mode:'count',q:6,max:9},
+ {name:'Ten Steps',world:'moon',mode:'order',set:range(1,10)},
+ {name:'Missing Rocks',world:'mars',mode:'missing',set:range(1,10),hide:4},
+ {name:'Bigger Number',world:'mars',mode:'compare',q:8,max:20},
+ {name:'Plus Time',world:'mars',mode:'add',q:6,max:5},
+ {name:'Skip by Twos',world:'saturn',mode:'order',set:range(2,20,2)},
+ {name:'Ring Gaps',world:'saturn',mode:'missing',set:range(1,20),hide:8},
+ {name:'1 to 20',world:'galaxy',mode:'order',set:range(1,20),time:300},
+ {name:'Galaxy Boss!',world:'galaxy',mode:'order',set:range(1,20),time:180}];
+const cap=n=>`<span class="cap">${n}</span>`;
+const FOOD=['🍎','⭐','🚀','🍌','🐟','🎈','🍓','🐥'];
+function build(L,api,stage){
+ const hint={order:L.set&&L.set[1]-L.set[0]===2?'Count by 2s: put the numbers in order!':'Put the numbers in order, smallest first!',missing:'Fill the empty boxes with the missing numbers.',count:'Count the things, then pick the number!',compare:'Tap the BIGGER number!',add:'Add them up! How many altogether?'}[L.mode];
+ stage.appendChild(K.h('div','prompt',{order:'Rocket number line',missing:'Find the missing numbers',count:'How many do you see?',compare:'Which is bigger?',add:'Let us add!'}[L.mode]));
+ stage.appendChild(K.h('div','hint',hint));const box=K.h('div');stage.appendChild(box);api.coach(hint);
+ if(L.mode==='order'||L.mode==='missing'){
+  const n=L.set.length,hide=L.mode==='missing'?new Set(K.sample(L.set,L.hide)):null;let done=0;const total=hide?L.hide:n,cell=n>12?58:70;
+  const slots=L.set.map(v=>hide&&!hide.has(v)?{key:v,pre:true,html:cap(v)}:{key:v,ph:''});
+  const tiles=L.set.filter(v=>!hide||hide.has(v)).map(v=>({key:v,html:cap(v)}));
+  const ctl=K.placement(box,{cell,fs:Math.round(cell*.5),slots,tiles,onCorrect:(t,s)=>{done++;api.progress(done,total);api.say(String(s.key));},onWrong:()=>api.bad('Check the order. Which number comes next?'),onDone:()=>api.win()});
+  api.solve=()=>ctl.solve();if(L.time)api.timer(L.time,'Time is up! Try again, you can do it.');return;}
+ let qi=0,won=false;const g=K.h('div');box.appendChild(g);
+ function finish(){if(qi>=L.q){won=true;setTimeout(()=>api.win(),700);}else setTimeout(ask,950);}
+ function choices(parent,opts,correct,tell){const c=K.h('div','choices');parent.appendChild(c);
+  K.shuffle(opts).forEach(o=>{const b=K.h('button','choice',String(o));if(o===correct)b.dataset.good=1;b.onclick=()=>{K.audio();if(o===correct){b.classList.add('good');K.sfx.ok();qi++;api.progress(qi,L.q);api.coach(K.pick(K.PRAISE),false);K.say(tell);c.querySelectorAll('button').forEach(x=>x.disabled=true);finish();}else{b.classList.add('wrong');K.sfx.bad();api.bad();}};c.appendChild(b);});}
+ function ask(){g.innerHTML='';
+  if(L.mode==='count'){const n=1+(Math.random()*L.max|0),e=K.pick(FOOD);g.appendChild(K.h('div','objs',Array(n).fill(e).join(' ')));K.say('How many?');choices(g,K.shuffle(K.sample(range(1,L.max+1).filter(x=>x!==n),3).concat(n)),n,`${n}`);}
+  else if(L.mode==='compare'){let a=1+(Math.random()*L.max|0),b2;do{b2=1+(Math.random()*L.max|0);}while(b2===a);const big=Math.max(a,b2);K.say('Which number is bigger?');const c=K.h('div','choices');g.appendChild(c);
+   [a,b2].forEach(o=>{const b=K.h('button','choice',String(o));b.style.fontSize='64px';b.style.minWidth='150px';if(o===big)b.dataset.good=1;b.onclick=()=>{K.audio();if(o===big){b.classList.add('good');K.sfx.ok();qi++;api.progress(qi,L.q);K.say(`${big} is bigger`);c.querySelectorAll('button').forEach(x=>x.disabled=true);finish();}else{b.classList.add('wrong');K.sfx.bad();api.bad('Look again: which one is bigger?');}};c.appendChild(b);});}
+  else{const x=1+(Math.random()*L.max|0),y=1+(Math.random()*L.max|0),e=K.pick(FOOD),ans=x+y;g.appendChild(K.h('div','eq',`<span class="objs" style="font-size:40px">${Array(x).fill(e).join('')}</span><span>+</span><span class="objs" style="font-size:40px">${Array(y).fill(e).join('')}</span>`));g.appendChild(K.h('div','eq',`${x} + ${y} = ?`));K.say(`${x} plus ${y}. How many altogether?`);
+   const opts=K.sample(range(2,L.max*2).filter(v=>v!==ans),3).concat(ans);choices(g,opts,ans,`${x} plus ${y} is ${ans}`);}}
+ ask();api.solve=()=>{const t=setInterval(()=>{const b=stage.querySelector('.choice[data-good]:not(:disabled)');if(b)b.click();else if(won||document.querySelector('.modal'))clearInterval(t);},80);};
+}
+K.start({id:'number-rocket',title:'Number Rocket',emoji:'🚀',worlds,levels,build});
+</script></body></html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Shape Dash — D-Games</title><link rel="stylesheet" href="../_shared/kids.css">
+<style>canvas.sd{width:min(900px,96vw,calc((100vh - 250px)*1.607));aspect-ratio:900/560;background:#ffffffaa;border-radius:24px;box-shadow:0 8px 0 rgba(0,0,0,.12);touch-action:none;cursor:pointer;display:block}.hint{font-weight:800;opacity:.75;margin:0 0 4px;text-align:center}.dp{display:none;gap:10px;margin-top:8px}.dp button{width:64px;height:64px;font-size:26px;border:0;border-radius:18px;background:#fff;box-shadow:0 5px 0 rgba(0,0,0,.2)}@media (pointer:coarse){.dp{display:flex}}</style></head>
+<body><div id="app"></div><script src="../_shared/kids.js"></script>
+<script>
+const worlds={toy:{label:'Toy Box',bg:['#ffe9a8','#ffb36b'],deco:['🧸','🎈','🪀','🎲']},candy:{label:'Candy Maze',bg:['#ffd6ec','#ff8fc8'],deco:['🍭','🍬','🍩','🧁']},space:{label:'Space Dash',bg:['#cdbfff','#4a38b0'],deco:['🚀','👾','🪐','⭐']},boss:{label:'Dash Master',bg:['#ffd1d9','#e0486a'],deco:['🏆','🔥','⚡','🎯']}};
+const SH=['circle','square','triangle','star','heart','diamond','hexagon'];
+const CL=[['red','#ff5a6a'],['blue','#3ea0ff'],['green','#3fcf6a'],['yellow','#ffc61a'],['purple','#a45cff'],['orange','#ff8a2a']];
+const levels=[
+ {name:'First Shapes',world:'toy',kind:'shape',n:3,bees:0,goal:4},
+ {name:'Add a Star',world:'toy',kind:'shape',n:4,bees:0,goal:5},
+ {name:'Buzzy Bee',world:'toy',kind:'shape',n:3,bees:1,goal:5,speed:90},
+ {name:'Two Bees',world:'candy',kind:'shape',n:4,bees:2,goal:6,speed:110},
+ {name:'Color Match',world:'candy',kind:'color',n:4,bees:1,goal:6,speed:100},
+ {name:'Five Shapes',world:'candy',kind:'shape',n:5,bees:2,goal:7,speed:120},
+ {name:'Shape + Color',world:'space',kind:'both',n:4,bees:2,goal:8,speed:120},
+ {name:'Bee Swarm',world:'space',kind:'shape',n:6,bees:3,goal:8,speed:150},
+ {name:'Seven Shapes',world:'boss',kind:'shape',n:7,bees:3,goal:10,speed:150,time:200},
+ {name:'Dash Master!',world:'boss',kind:'both',n:6,bees:4,goal:12,speed:170,time:180}];
+function path(c,t,x,y,r){c.beginPath();
+ if(t==='circle')c.arc(x,y,r,0,7);
+ else if(t==='square'){c.rect(x-r*.85,y-r*.85,r*1.7,r*1.7);}
+ else if(t==='triangle'){c.moveTo(x,y-r);c.lineTo(x+r*1.05,y+r*.8);c.lineTo(x-r*1.05,y+r*.8);c.closePath();}
+ else if(t==='diamond'){c.moveTo(x,y-r*1.1);c.lineTo(x+r*.8,y);c.lineTo(x,y+r*1.1);c.lineTo(x-r*.8,y);c.closePath();}
+ else if(t==='hexagon'){for(let i=0;i<6;i++){const a=Math.PI/3*i;c[i?'lineTo':'moveTo'](x+Math.cos(a)*r,y+Math.sin(a)*r);}c.closePath();}
+ else if(t==='star'){for(let i=0;i<10;i++){const a=-Math.PI/2+Math.PI/5*i,rr=i%2?r*.45:r*1.1;c[i?'lineTo':'moveTo'](x+Math.cos(a)*rr,y+Math.sin(a)*rr);}c.closePath();}
+ else{c.moveTo(x,y+r*.9);c.bezierCurveTo(x-r*1.6,y-r*.2,x-r*.7,y-r*1.2,x,y-r*.4);c.bezierCurveTo(x+r*.7,y-r*1.2,x+r*1.6,y-r*.2,x,y+r*.9);c.closePath();}}
+function build(L,api,stage){
+ const W=900,H=560,cv=K.h('canvas','sd');cv.width=W;cv.height=H;const c=cv.getContext('2d');
+ const hintTxt=L.kind==='color'?'Drag the ball to the hole with the SAME COLOR. Dodge the bees!':L.kind==='both'?'Match the shape AND the color! Dodge the bees!':'Move the shape to the hole with the SAME SHAPE. Dodge the bees!';
+ stage.appendChild(K.h('div','prompt','Shape Dash'));stage.appendChild(K.h('div','hint',hintTxt+' (Arrow keys, or press and drag)'));stage.appendChild(cv);api.coach(hintTxt);
+ const dp=K.h('div','dp');[['◀','l'],['▲','u'],['▼','d'],['▶','r']].forEach(([t,k])=>{const b=K.h('button','',t);const on=e=>{e.preventDefault();keys[k]=1;},off=()=>{keys[k]=0;};b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);dp.appendChild(b);});stage.appendChild(dp);
+ // holes
+ let defs=[];
+ if(L.kind==='shape')defs=SH.slice(0,L.n).map(s=>({s,c:'#8a94c7',cn:''}));
+ else if(L.kind==='color')defs=CL.slice(0,L.n).map(([cn,cc])=>({s:'circle',c:cc,cn}));
+ else{const sh=K.shuffle(SH).slice(0,3),cs=K.shuffle(CL);defs=[];for(let i=0;i<L.n;i++)defs.push({s:sh[i%3],c:cs[i][1],cn:cs[i][0]});}
+ const holes=defs.map((d,i)=>({...d,x:(i+.5)*W/defs.length,y:84}));
+ const lanes=[];for(let i=0;i<L.bees;i++)lanes.push({y:200+(i*(200/Math.max(1,L.bees-1||1)))*(L.bees>1?1:0)+(L.bees===1?80:0),x:Math.random()*W,v:(L.speed||100)*(i%2?-1:1)*(.8+Math.random()*.5)});
+ const start={x:W/2,y:490};let p={x:start.x,y:start.y,d:null,inv:0},got=0,keys={},ptr=null,t0=0,fb=[];
+ function next(){p.d=K.pick(holes);p.x=start.x;p.y=start.y;p.inv=1.2;const nm=L.kind==='color'?`the ${p.d.cn} ball`:L.kind==='both'?`the ${p.d.cn} ${p.d.s}`:`the ${p.d.s}`;api.coach(`Find the hole for ${nm}!`);K.say(`Take ${nm} to its hole`);}
+ function pos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H};}
+ cv.addEventListener('pointerdown',e=>{K.audio();ptr=pos(e);try{cv.setPointerCapture(e.pointerId);}catch(_){}});cv.addEventListener('pointermove',e=>{if(ptr)ptr=pos(e);});cv.addEventListener('pointerup',()=>ptr=null);cv.addEventListener('pointercancel',()=>ptr=null);
+ const kd=e=>{if(!cv.isConnected)return removeEventListener('keydown',kd);const m={ArrowLeft:'l',a:'l',A:'l',ArrowRight:'r',d:'r',D:'r',ArrowUp:'u',w:'u',W:'u',ArrowDown:'d',s:'d',S:'d'}[e.key];if(m){keys[m]=1;e.preventDefault();}};
+ const ku=e=>{const m={ArrowLeft:'l',a:'l',A:'l',ArrowRight:'r',d:'r',D:'r',ArrowUp:'u',w:'u',W:'u',ArrowDown:'d',s:'d',S:'d'}[e.key];if(m)keys[m]=0;};addEventListener('keydown',kd);addEventListener('keyup',ku);
+ function reset(msg){p.x=start.x;p.y=start.y;p.inv=1.5;api.bad(msg);}
+ function deliver(h){if(h.s===p.d.s&&h.c===p.d.c){got++;api.progress(got,L.goal);K.sfx.ok();const px=cv.getBoundingClientRect();K.confetti(30,px.left+h.x/W*px.width,px.top+h.y/H*px.height);api.coach(K.pick(K.PRAISE),false);fb.push({x:h.x,y:h.y,t:0});if(got>=L.goal){done=true;setTimeout(()=>api.win(),500);}else next();}else reset(L.kind==='color'?'That hole is a different color!':'That hole is a different shape!');}
+ let last=performance.now(),done=false;
+ function frame(now){if(!cv.isConnected){removeEventListener('keydown',kd);removeEventListener('keyup',ku);return;}const dt=Math.min(.05,(now-last)/1000);last=now;t0+=dt;
+  if(!done&&p.d){let vx=(keys.r?1:0)-(keys.l?1:0),vy=(keys.d?1:0)-(keys.u?1:0);
+   if(ptr&&!vx&&!vy){const dx=ptr.x-p.x,dy=ptr.y-p.y,d=Math.hypot(dx,dy);if(d>10){vx=dx/d;vy=dy/d;}}
+   const sp=300;p.x=Math.max(28,Math.min(W-28,p.x+vx*sp*dt));p.y=Math.max(28,Math.min(H-28,p.y+vy*sp*dt));p.inv-=dt;
+   for(const b of lanes){b.x+=b.v*dt;if(b.x>W+30)b.x=-30;if(b.x<-30)b.x=W+30;if(p.inv<=0&&Math.hypot(b.x-p.x,b.y-p.y)<44){K.sfx.bad();reset('Bzzz! Dodge the bees!');}}
+   for(const h of holes)if(p.y<h.y+46&&Math.abs(p.x-h.x)<44){deliver(h);break;}}
+  draw();requestAnimationFrame(frame);}
+ function draw(){c.clearRect(0,0,W,H);c.fillStyle='#ffffff99';c.fillRect(0,0,W,150);c.fillStyle='#ffffff55';c.fillRect(0,440,W,120);
+  for(const h of holes){c.save();c.fillStyle='#2a2f55';path(c,h.s,h.x,h.y,38);c.fill();c.lineWidth=7;c.strokeStyle=h.c;c.stroke();c.restore();if(L.kind!=='shape'){c.font='800 14px sans-serif';c.textAlign='center';c.fillStyle='#27315a';c.fillText(L.kind==='both'?h.cn:h.cn,h.x,h.y+66);}}
+  for(const f of fb){f.t+=.03;c.globalAlpha=Math.max(0,1-f.t);c.fillStyle='#ffd23b';c.font='800 30px sans-serif';c.textAlign='center';c.fillText('⭐',f.x,f.y-f.t*60);c.globalAlpha=1;}fb=fb.filter(f=>f.t<1);
+  c.font='36px serif';c.textAlign='center';c.textBaseline='middle';for(const b of lanes){c.fillText('🐝',b.x,b.y+Math.sin(t0*8+b.x)*4);}c.textBaseline='alphabetic';
+  if(p.d){if(p.inv>0&&Math.floor(t0*12)%2)c.globalAlpha=.4;c.save();c.shadowColor='rgba(0,0,0,.3)';c.shadowBlur=10;c.fillStyle=p.d.c==='#8a94c7'?'#ff7a59':p.d.c;path(c,p.d.s,p.x,p.y,30);c.fill();c.lineWidth=4;c.strokeStyle='#fff';c.stroke();c.restore();c.globalAlpha=1;}
+  c.font='800 20px sans-serif';c.textAlign='left';c.fillStyle='#27315a';c.fillText(`⭐ ${got} / ${L.goal}`,14,540);}
+ next();requestAnimationFrame(frame);
+ api.solve=()=>{const t=setInterval(()=>{if(done||!cv.isConnected)return clearInterval(t);const h=holes.find(h=>h.s===p.d.s&&h.c===p.d.c);p.x=h.x;p.y=h.y+30;p.inv=0;},120);};
+ if(L.time)api.timer(L.time,'Time is up! Try again.');
+}
+K.start({id:'shape-dash',title:'Shape Dash',emoji:'🔷',worlds,levels,build});
+</script></body></html>

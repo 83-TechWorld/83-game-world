@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Alphabet Safari — D-Games</title><link rel="stylesheet" href="../_shared/kids.css">
+<style>.cap{font-size:30px;font-weight:800}.wordpop{font-size:64px;animation:pop .5s}.hint{font-weight:800;opacity:.75;margin:2px 0 6px;text-align:center}</style></head>
+<body><div id="app"></div><script src="../_shared/kids.js"></script>
+<script>
+const WORD={A:['Apple','🍎'],B:['Ball','⚽'],C:['Cat','🐱'],D:['Dog','🐶'],E:['Elephant','🐘'],F:['Fish','🐟'],G:['Grapes','🍇'],H:['Hat','🎩'],I:['Ice cream','🍦'],J:['Juice','🧃'],K:['Kite','🪁'],L:['Lion','🦁'],M:['Moon','🌙'],N:['Nose','👃'],O:['Orange','🍊'],P:['Pig','🐷'],Q:['Queen','👸'],R:['Rainbow','🌈'],S:['Sun','☀️'],T:['Tree','🌳'],U:['Umbrella','☂️'],V:['Violin','🎻'],W:['Whale','🐳'],X:['Xylophone','🎶'],Y:['Yam','🍠'],Z:['Zebra','🦓']};
+const AZ=[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];const range=(a,b)=>AZ.slice(AZ.indexOf(a),AZ.indexOf(b)+1);
+const worlds={jungle:{label:'Jungle Trail',bg:['#c9f2a8','#58b86a'],deco:['🌴','🦜','🐒','🍌']},ocean:{label:'Bubble Ocean',bg:['#bfeaff','#3a8fe0'],deco:['🐠','🫧','🐙','🐚']},space:{label:'Space Station',bg:['#b9b2ff','#3d2f93'],deco:['🚀','⭐','🪐','👽']},candy:{label:'Candy Land',bg:['#ffd6ec','#ff8fc8'],deco:['🍭','🍬','🧁','🍩']},dino:{label:'Dino Boss Cave',bg:['#ffe3a8','#d9893b'],deco:['🦖','🦕','🌋','🥚']}};
+const levels=[
+ {name:'Jungle Gate',world:'jungle',mode:'order',set:range('A','E')},
+ {name:'Vine Swing',world:'jungle',mode:'missing',set:range('A','J'),hide:4},
+ {name:'Monkey Path',world:'jungle',mode:'order',set:range('A','J')},
+ {name:'Big & Small',world:'ocean',mode:'case',set:range('A','H')},
+ {name:'Fish Gaps',world:'ocean',mode:'missing',set:range('K','T'),hide:5},
+ {name:'Vowel Fish',world:'ocean',mode:'vowel'},
+ {name:'Star Sounds',world:'space',mode:'sound',q:8},
+ {name:'Alien Gaps',world:'space',mode:'missing',set:AZ,hide:12},
+ {name:'Candy A to Z',world:'candy',mode:'order',set:AZ,time:300},
+ {name:'Dino Boss!',world:'dino',mode:'order',set:AZ,time:180}];
+const cap=l=>`<span class="cap">${l}</span>`;
+function praiseLetter(api,l){const w=WORD[l];api.coach(`${l} for ${w[0]} ${w[1]}`,false);api.say(`${l} for ${w[0]}`);}
+function build(L,api,stage){
+ const hintTxt={order:'Put the letters in ABC order. Drag or tap a letter, then tap its place!',missing:'Fill the empty boxes with the missing letters.',case:'Match each BIG letter to its small letter!',vowel:'Tap all the vowels: A, E, I, O, U',sound:'Listen and pick the first letter!'}[L.mode];
+ stage.appendChild(K.h('div','prompt',L.mode==='order'?'Arrange the letters':L.mode==='missing'?'Find the missing letters':L.mode==='case'?'Big letter, small letter':L.mode==='vowel'?'Catch the vowels!':'What letter does it start with?'));
+ stage.appendChild(K.h('div','hint',hintTxt));
+ const box=K.h('div');stage.appendChild(box);api.coach(hintTxt);
+ if(L.mode==='order'||L.mode==='missing'||L.mode==='case'){
+  const n=L.set.length;let hide=L.mode==='missing'?new Set(K.sample(L.set,L.hide)):null;let done=0,total=L.mode==='missing'?L.hide:n;
+  const cell=n>20?50:n>12?58:68;
+  const slots=L.set.map(l=>L.mode==='case'?{key:l,ph:`<span style="opacity:.45">${l.toLowerCase()}</span>`}:(hide&&!hide.has(l)?{key:l,pre:true,html:cap(l)}:{key:l,ph:''}));
+  const tiles=L.set.filter(l=>!hide||hide.has(l)).map(l=>({key:l,html:cap(l)}));
+  const ctl=K.placement(box,{cell,fs:Math.round(cell*.55),slots,tiles,
+   onCorrect:(t,s,el)=>{done++;api.progress(done,total);if(L.mode==='case')el.innerHTML=`<span class="cap">${s.key}${s.key.toLowerCase()}</span>`;praiseLetter(api,s.key);},
+   onWrong:()=>api.bad(),onDone:()=>api.win()});
+  api.solve=()=>ctl.solve();
+  if(L.time)api.timer(L.time,'Time is up! Let us try again.');
+ } else if(L.mode==='vowel'){
+  const V=[...'AEIOU'],C=K.sample(AZ.filter(x=>!V.includes(x)),12),letters=K.shuffle([...V,...C,...K.sample(V,3)]);const need=letters.filter(x=>V.includes(x)).length;let got=0;
+  const g=K.h('div','choices');box.appendChild(g);
+  letters.forEach(l=>{const b=K.h('button','choice',l);if(V.includes(l))b.dataset.good=1;b.onclick=()=>{if(b.disabled)return;K.audio();if(V.includes(l)){b.classList.add('good');b.disabled=true;got++;K.sfx.ok();api.progress(got,need);praiseLetter(api,l);if(got===need)setTimeout(()=>api.win(),400);}else{b.classList.remove('wrong');void b.offsetWidth;b.classList.add('wrong');K.sfx.bad();api.bad(l+' is a consonant. Find a vowel!');}};g.appendChild(b);});
+  api.solve=()=>g.querySelectorAll('.choice[data-good]').forEach(b=>b.click());
+ } else {
+  const qs=K.sample(AZ,L.q);let qi=0;
+  function ask(){box.innerHTML='';const l=qs[qi],w=WORD[l];box.appendChild(K.h('div','big wordpop',w[1]));box.appendChild(K.h('div','prompt',`${w[0]} starts with…`));K.say(`${w[0]}. What letter does ${w[0]} start with?`);
+   const opts=K.shuffle([l,...K.sample(AZ.filter(x=>x!==l),3)]),g=K.h('div','choices');box.appendChild(g);
+   opts.forEach(o=>{const b=K.h('button','choice',o);if(o===l)b.dataset.good=1;b.onclick=()=>{K.audio();if(o===l){b.classList.add('good');K.sfx.ok();praiseLetter(api,l);qi++;api.progress(qi,qs.length);g.querySelectorAll('button').forEach(x=>x.disabled=true);if(qi===qs.length)setTimeout(()=>api.win(),700);else setTimeout(ask,900);}else{b.classList.add('wrong');K.sfx.bad();api.bad();}};g.appendChild(b);});}
+  ask();api.solve=()=>{const t=setInterval(()=>{const b=stage.querySelector('.choice[data-good]:not(:disabled)');if(b)b.click();else if(!document.querySelector('.modal')&&qi<qs.length)return;else clearInterval(t);},70);};
+ }
+}
+K.start({id:'alphabet-safari',title:'Alphabet Safari',emoji:'🔤',worlds,levels,build});
+</script></body></html>

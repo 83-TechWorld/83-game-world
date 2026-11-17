@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Zombie Block Siege — D-Games</title>
+<title>Zombie Block Siege — 83GameWorld</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   html,body{margin:0;height:100%;background:#070b10;overflow:hidden;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#fff}
@@ -36,7 +36,7 @@
 <body>
 <canvas id="c" tabindex="0"></canvas>
 <div id="menu"><div class="card">
-  <div class="sub"><a href="/">← D-GAMES</a> &nbsp;·&nbsp; ZOMBIE BLOCK SIEGE · 15 LEVELS</div>
+  <div class="sub"><a href="/">← 83GAMEWORLD</a> &nbsp;·&nbsp; ZOMBIE BLOCK SIEGE · 15 LEVELS</div>
   <h1>🧟 ZOMBIE BLOCK SIEGE</h1>
   <div class="tag">Hide behind your brick wall, pop up to shoot, clear each zone and advance block by block. Every level ends with a <b>BIG zombie that breathes fire</b>. Zombies carry axes and guns!</div>
   <div class="row">
@@ -464,10 +464,13 @@ function drawHUD(){
 function render(){
   ctx.setTransform(K,0,0,K,0,0);ctx.clearRect(0,0,VW,VH);
   ctx.save();if(shake>0)ctx.translate(rand(-shake,shake),rand(-shake,shake));
-  drawBG();drawDecor();drawWalls();for(const z of Z)drawZ(z);if(state!=='menu')drawHero();drawBullets();drawParts();drawAmbient();
+  safe('bg',drawBG);safe('decor',drawDecor);safe('walls',drawWalls);safe('zombies',()=>{for(const z of Z)drawZ(z);});if(state!=='menu')safe('hero',drawHero);safe('bullets',drawBullets);safe('fx',drawParts);safe('ambient',drawAmbient);
   if(T.dark){const g=ctx.createRadialGradient(VW/2,VH*.55,VH*.3,VW/2,VH*.55,VW*.7);g.addColorStop(0,`rgba(${T.tint},0)`);g.addColorStop(1,`rgba(${T.tint},${T.dark})`);ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);}
-  ctx.restore();drawHUD();
+  ctx.restore();safe('hud',drawHUD);
+  if(ERR){ctx.setTransform(K,0,0,K,0,0);ctx.fillStyle='rgba(120,0,0,.85)';ctx.fillRect(0,VH-26,VW,26);font('700',13);ctx.textAlign='left';ctx.fillStyle='#fff';ctx.fillText('⚠ '+ERR,10,VH-8);}
 }
+let ERR='';
+function safe(n,fn){try{fn();}catch(e){ERR=n+': '+(e&&e.message||e);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.setLineDash([]);ctx.textAlign='left';console.error(n,e);}}
 // ---------- menu ----------
 const menuEl=document.getElementById('menu'),gridEl=document.getElementById('grid'),gunsEl=document.getElementById('guns'),lvnameEl=document.getElementById('lvname'),heroIn=document.getElementById('hero'),znIn=document.getElementById('zn');
 heroIn.value=SAVE.hero||'Dhakshith';znIn.value=SAVE.zn||NAMES_DEFAULT.join(', ');
@@ -508,7 +511,7 @@ addEventListener('blur',()=>{for(const k in keys)keys[k]=false;mouse.down=false;
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 // ---------- loop ----------
 let last=performance.now();
-function frame(t){const dt=Math.min(.05,(t-last)/1000);last=t;try{update(dt);}catch(e){console.error(e);}render();requestAnimationFrame(frame);}
+function frame(t){const dt=Math.min(.05,(t-last)/1000);last=t;try{update(dt);}catch(e){ERR='update: '+(e&&e.message||e);console.error(e);}try{render();}catch(e){ERR='render: '+(e&&e.message||e);}requestAnimationFrame(frame);}
 buildLevel(1);showMenu(true);
 window.__game={get S(){return{state,lvl,P,Z,zones,zoneIdx,walls,boss,stats,W,camX,B};},buildLevel,update,render,hurtZ,hurtP,keys,mouse,TH,WEAP,SAVE,finishLevel,rebuild,swapGun,startReload,afterEnd,setState:s=>{state=s;},step(n,dt=1/60){for(let i=0;i<n;i++)update(dt);}};
 requestAnimationFrame(frame);

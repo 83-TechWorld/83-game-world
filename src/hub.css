@@ -1,0 +1,77 @@
+:root{--ink:#27315a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:'Baloo 2','Fredoka','Chalkboard SE','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;color:var(--ink)}
+body{background:linear-gradient(180deg,#7cc6ff 0%,#bfe9ff 55%,#fff4d6 100%) fixed;overflow-x:hidden}
+#app{position:relative;min-height:100vh;padding-bottom:150px}
+/* ---- sky ---- */
+.sky{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.sky>*{position:absolute;transform:translate(calc(var(--mx,0)*var(--d,10px)),calc(var(--my,0)*var(--d,10px)));transition:transform .25s ease-out}
+.sun{top:6%;right:8%;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,#fff6c8 30%,#ffd84a 70%);box-shadow:0 0 70px 30px rgba(255,216,74,.55);--d:-18px}
+.sun::before{content:'';position:absolute;inset:-34px;border-radius:50%;background:repeating-conic-gradient(rgba(255,230,120,.5) 0 8deg,transparent 8deg 24deg);animation:spin 40s linear infinite;-webkit-mask:radial-gradient(circle,transparent 52%,#000 53%,#000 70%,transparent 71%);mask:radial-gradient(circle,transparent 52%,#000 53%,#000 70%,transparent 71%)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cloud{font-size:90px;opacity:.95;animation:drift linear infinite;filter:drop-shadow(0 8px 0 rgba(255,255,255,.4))}
+@keyframes drift{from{left:-160px}to{left:110%}}
+.fly{font-size:44px;animation:drift linear infinite}
+.hill{left:-5%;width:110%;bottom:-2px}
+.hill svg{display:block;width:100%}
+/* ---- hero ---- */
+.hero{position:relative;z-index:2;text-align:center;padding:26px 16px 6px}
+.hero h1{margin:0;font-size:clamp(54px,11vw,118px);line-height:1;letter-spacing:2px;display:flex;justify-content:center;flex-wrap:wrap;gap:0 4px}
+.hero h1 span{display:inline-block;color:#fff;-webkit-text-stroke:0;text-shadow:0 5px 0 var(--c),0 9px 0 rgba(0,0,0,.18);animation:wave 2.4s ease-in-out infinite;animation-delay:calc(var(--i)*.14s);cursor:default}
+.hero h1 span:hover{animation:jump .5s}
+@keyframes wave{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(3deg)}}
+@keyframes jump{40%{transform:translateY(-34px) scale(1.25) rotate(8deg)}}
+.hero .tag{display:inline-block;margin:10px 0 0;padding:8px 22px;background:#fffd;border-radius:999px;font-weight:800;font-size:clamp(15px,2.4vw,22px);box-shadow:0 5px 0 rgba(0,0,0,.1)}
+.chips{position:relative;z-index:2;display:flex;gap:10px;justify-content:center;margin:18px 0 6px;flex-wrap:wrap}
+.chip{border:0;background:#fff;border-radius:999px;padding:9px 20px;font:inherit;font-weight:800;font-size:16px;color:var(--ink);box-shadow:0 5px 0 rgba(0,0,0,.14);cursor:pointer;transition:transform .15s}
+.chip:hover{transform:translateY(-3px)}.chip.on{background:linear-gradient(180deg,#ffd23b,#ffa63b)}
+.stars{position:fixed;top:12px;right:14px;z-index:6;background:#fff;border-radius:999px;padding:8px 18px;font-weight:800;box-shadow:0 5px 0 rgba(0,0,0,.14)}
+/* ---- shelves ---- */
+.shelf{position:relative;z-index:2;width:min(1180px,94vw);margin:6px auto 4px}
+.shelf h2{font-size:clamp(22px,3.2vw,32px);margin:22px 6px 10px;text-shadow:0 2px 0 #fff9;display:flex;align-items:center;gap:10px}
+.shelf.hide{display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.cw{opacity:0;animation:popin .7s cubic-bezier(.3,1.6,.5,1) forwards,bob 4.5s ease-in-out infinite;animation-delay:calc(var(--n)*.09s),calc(var(--n)*.09s + .8s)}.cw:hover{animation-play-state:running,paused}
+.card{--c:#6366f1;position:relative;border-radius:30px;padding:18px 16px 14px;background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--c) 14%,#fff));border:4px solid #fff;box-shadow:0 10px 0 color-mix(in srgb,var(--c) 55%,#27315a),0 18px 30px rgba(0,0,0,.14);text-align:center;cursor:pointer;transform-style:preserve-3d;transition:box-shadow .2s;overflow:hidden}
+@keyframes popin{0%{opacity:0;transform:translateY(60px) scale(.6) rotate(-8deg)}100%{opacity:1;transform:none}}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -7px}}
+.card::after{content:'';position:absolute;top:-60%;left:-40%;width:35%;height:220%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);transform:rotate(18deg);animation:shine 5s ease-in-out infinite;animation-delay:calc(var(--n)*.5s)}
+@keyframes shine{0%,60%{left:-50%}100%{left:130%}}
+.card:hover{box-shadow:0 14px 0 color-mix(in srgb,var(--c) 55%,#27315a),0 26px 40px rgba(0,0,0,.2)}
+.ico{width:104px;height:104px;margin:0 auto 6px;border-radius:50%;background:#fff;border:6px solid var(--c);display:flex;align-items:center;justify-content:center;font-size:54px;box-shadow:inset 0 -6px 0 rgba(0,0,0,.06),0 6px 0 rgba(0,0,0,.1)}
+.ico i{font-style:normal;display:inline-block}
+.m-wiggle i{animation:wiggle 1.6s ease-in-out infinite}.m-spin i{animation:spin 6s linear infinite}.m-bounce i{animation:hop 1.3s ease-in-out infinite}.m-float i{animation:floatu 2.8s ease-in-out infinite}.m-shake i{animation:shk 2.2s ease-in-out infinite}.m-pulse i{animation:pls 1.5s ease-in-out infinite}
+@keyframes wiggle{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px) scale(1.1)}60%{transform:translateY(0) scale(1.1,.9)}}
+@keyframes floatu{0%,100%{transform:translate(0,2px) rotate(-6deg)}50%{transform:translate(4px,-10px) rotate(6deg)}}
+@keyframes shk{0%,70%,100%{transform:translateX(0)}75%{transform:translateX(-7px)}80%{transform:translateX(7px)}85%{transform:translateX(-5px)}90%{transform:translateX(5px)}}
+@keyframes pls{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.card:hover .ico i{animation:jump .6s infinite}
+.card h3{margin:2px 0 2px;font-size:23px}
+.card p{margin:0 0 10px;font-size:14px;font-weight:700;opacity:.75;min-height:38px;line-height:1.25}
+.meta{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
+.meta span{background:var(--c);color:#fff;border-radius:999px;padding:2px 12px;font-size:12px;font-weight:800}
+.meta span.age{background:#fff;color:var(--ink);border:2px solid var(--c)}
+.pb{margin:10px auto 0;width:80%;height:12px;border-radius:99px;background:#e8ebf7;overflow:hidden}.pb i{display:block;height:100%;background:linear-gradient(90deg,#ffd23b,var(--c));border-radius:99px}
+.pt{font-size:12px;font-weight:800;margin-top:3px;min-height:16px}
+.ribbon{position:absolute;top:14px;right:-34px;width:120px;transform:rotate(38deg);background:#ff4d6a;color:#fff;font-weight:800;font-size:13px;padding:3px 0;box-shadow:0 3px 0 rgba(0,0,0,.2);z-index:2}
+/* ---- mascot ---- */
+.mascot{position:absolute;left:2.5%;top:14px;z-index:3;display:flex;align-items:flex-end;gap:6px;pointer-events:none}
+.kid{width:110px;height:150px;transform-origin:50% 100%;animation:kidjump 5s ease-in-out infinite;filter:drop-shadow(0 6px 0 rgba(0,0,0,.12))}
+@keyframes kidjump{0%,80%,100%{transform:translateY(0)}86%{transform:translateY(-34px) scaleY(1.06)}92%{transform:translateY(0) scaleY(.94)}}
+.kid .wv{transform-origin:60px 72px;animation:waveArm .7s ease-in-out infinite alternate}
+@keyframes waveArm{from{transform:rotate(-18deg)}to{transform:rotate(22deg)}}
+.bubble{background:#fff;border-radius:20px 20px 20px 4px;padding:10px 16px;font-weight:800;font-size:15px;max-width:min(260px,52vw);box-shadow:0 5px 0 rgba(0,0,0,.14);margin-bottom:70px;animation:bubin .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bubin{from{transform:scale(.6);opacity:0}}
+/* ---- portal ---- */
+.portal{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;clip-path:circle(0 at var(--px) var(--py));transition:clip-path .75s cubic-bezier(.7,0,.3,1);pointer-events:none}
+.portal.go{clip-path:circle(150% at var(--px) var(--py));pointer-events:auto}
+.portal .big{font-size:150px;animation:zoomspin 1.2s ease-in-out infinite}
+@keyframes zoomspin{0%{transform:scale(.4) rotate(-30deg)}50%{transform:scale(1.15) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+.portal .t{font-size:clamp(26px,5vw,44px);font-weight:800;text-shadow:0 4px 0 rgba(0,0,0,.25)}
+.portal .dots span{display:inline-block;animation:dot 1s infinite;font-size:50px;line-height:.5}.portal .dots span:nth-child(2){animation-delay:.2s}.portal .dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{50%{transform:translateY(-14px)}}
+.spark{position:fixed;z-index:49;pointer-events:none;font-size:26px;animation:sp .9s ease-out forwards}
+@keyframes sp{to{transform:translate(var(--dx),var(--dy)) scale(.4) rotate(240deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.cw,.hero h1 span,.cloud,.fly,.kid,.card::after{animation:none!important;opacity:1}}
+@media (max-width:1000px){.mascot{display:none}}@media (max-width:560px){.sun{width:80px;height:80px}}

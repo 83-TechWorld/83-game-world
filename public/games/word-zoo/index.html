@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Word Zoo — D-Games</title><link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.hint{font-weight:800;opacity:.75;margin:2px 0 4px;text-align:center}
+.slot.pic{width:110px;height:118px;font-size:56px;border-radius:20px}.slot.pic .w{font-size:17px;font-weight:800;color:var(--ok);position:absolute;bottom:4px}
+.tile.word{font-size:22px;min-width:96px;height:54px}
+.basket{width:150px;min-height:132px;border-radius:22px;border:4px dashed #27315a66;background:#ffffffaa;display:flex;flex-direction:column;align-items:center;padding:8px 6px;font-weight:800;gap:2px;transition:transform .15s}
+.basket.hot{background:#fff;transform:scale(1.06)}.basket .nm{font-size:17px}.basket .ic{font-size:30px}.basket .cnt{font-size:22px;display:flex;flex-wrap:wrap;justify-content:center;max-width:140px;line-height:1.1}
+.baskets{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.tile.emo{font-size:46px;min-width:70px;height:70px}
+.sp .slot{--cell:62px;--fs:32px}
+</style></head>
+<body><div id="app"></div><script src="../_shared/kids.js"></script>
+<script>
+const CAT={fruit:{n:'Fruits',ic:'🍎',w:[['apple','🍎'],['banana','🍌'],['grapes','🍇'],['orange','🍊'],['mango','🥭'],['pineapple','🍍'],['watermelon','🍉'],['strawberry','🍓'],['cherry','🍒'],['lemon','🍋'],['peach','🍑'],['kiwi','🥝']]},
+ veg:{n:'Vegetables',ic:'🥕',w:[['carrot','🥕'],['broccoli','🥦'],['corn','🌽'],['tomato','🍅'],['potato','🥔'],['onion','🧅'],['brinjal','🍆'],['cucumber','🥒'],['chilli','🌶️'],['garlic','🧄']]},
+ pet:{n:'Farm & Pet Animals',ic:'🐶',w:[['dog','🐶'],['cat','🐱'],['cow','🐄'],['pig','🐖'],['sheep','🐑'],['goat','🐐'],['hen','🐔'],['horse','🐴'],['duck','🦆'],['rabbit','🐇']]},
+ wild:{n:'Wild Animals',ic:'🦁',w:[['lion','🦁'],['tiger','🐯'],['elephant','🐘'],['giraffe','🦒'],['zebra','🦓'],['bear','🐻'],['monkey','🐒'],['gorilla','🦍'],['rhino','🦏'],['wolf','🐺'],['fox','🦊'],['deer','🦌']]},
+ water:{n:'Water Animals',ic:'🐟',w:[['fish','🐟'],['dolphin','🐬'],['whale','🐳'],['octopus','🐙'],['crab','🦀'],['shark','🦈'],['turtle','🐢'],['squid','🦑'],['lobster','🦞'],['frog','🐸']]}};
+const ALL=[];for(const k in CAT)CAT[k].w.forEach(([w,e])=>ALL.push({w,e,cat:k}));
+const worlds={orchard:{label:'Fruit Orchard',bg:['#fff0b8','#ff9a6a'],deco:['🍎','🍌','🍇','🍊']},farm:{label:'Veggie Farm',bg:['#d6f5b0','#5dbb58'],deco:['🥕','🌽','🍅','🐄']},safari:{label:'Animal Safari',bg:['#ffe5b0','#e29a3f'],deco:['🦁','🐘','🦒','🌴']},sea:{label:'Deep Sea',bg:['#bfeaff','#2f7fd6'],deco:['🐠','🐙','🫧','🐳']},zoo:{label:'Zoo Boss',bg:['#e6d1ff','#8a55d6'],deco:['🦓','🐼','🦜','🏆']}};
+const levels=[
+ {name:'Fruit Match',world:'orchard',mode:'pair',cats:['fruit'],n:4},
+ {name:'Veggie Match',world:'farm',mode:'pair',cats:['veg'],n:5},
+ {name:'Farm Friends',world:'farm',mode:'pair',cats:['pet'],n:5},
+ {name:'Wild Match',world:'safari',mode:'pair',cats:['wild'],n:5},
+ {name:'Sea Match',world:'sea',mode:'pair',cats:['water'],n:5},
+ {name:'Fruit or Veg?',world:'farm',mode:'sort',cats:['fruit','veg'],per:4},
+ {name:'Where Live?',world:'safari',mode:'sort',cats:['pet','wild','water'],per:3},
+ {name:'Listen & Tap',world:'sea',mode:'listen',q:8},
+ {name:'Spell It!',world:'zoo',mode:'spell',n:5},
+ {name:'Zoo Boss!',world:'zoo',mode:'sort',cats:['fruit','veg','pet','wild','water'],per:3,time:150}];
+function build(L,api,stage){
+ const hint={pair:'Match each picture with its word. Drag or tap a word, then tap the picture!',sort:'Sort every picture into the right group!',listen:'Listen to the word and tap the right picture!',spell:'Spell the word! Put the letters in order.'}[L.mode];
+ stage.appendChild(K.h('div','prompt',{pair:'Picture & Word',sort:'Sort them out!',listen:'Listen carefully',spell:'Spelling time'}[L.mode]));
+ stage.appendChild(K.h('div','hint',hint));const box=K.h('div');stage.appendChild(box);api.coach(hint);
+ if(L.mode==='pair'){const items=K.sample(CAT[L.cats[0]].w,L.n).map(([w,e])=>({w,e}));let d=0;
+  const ctl=K.placement(box,{cell:110,slots:items.map(i=>({key:i.w,ph:i.e,cls:'pic'})),tiles:items.map(i=>({key:i.w,html:`<span style="font-size:22px">${i.w}</span>`})),
+   onCorrect:(t,s,el)=>{d++;api.progress(d,items.length);const it=items.find(i=>i.w===s.key);el.innerHTML=`${it.e}<span class="w">${it.w}</span>`;api.say(`${it.w}`);api.coach(`${it.e} ${it.w}`,false);},onWrong:()=>api.bad('Look at the picture again!'),onDone:()=>api.win()});
+  ctl.slotEls.forEach(e=>e.classList.add('pic'));ctl.tiles.forEach(t=>t.classList.add('word'));api.solve=()=>ctl.solve();
+ } else if(L.mode==='sort'){
+  const items=K.shuffle(L.cats.flatMap(k=>K.sample(CAT[k].w,L.per).map(([w,e])=>({w,e,cat:k}))));let d=0;box.innerHTML='';
+  const bs=K.h('div','baskets');
+  const ctl=K.placement(box,{multi:true,slots:L.cats.map(k=>({key:k})),tiles:items.map(i=>({key:i.w,cat:i.cat,html:i.e,w:i.w})),accepts:(t,s)=>t.cat===s.key,
+   onCorrect:(t)=>{d++;api.progress(d,items.length);api.say(t.w);},onWrong:(t)=>api.bad(`${t.w} does not go there. Think again!`),onDone:()=>api.win()});
+  // restyle slots into baskets
+  ctl.slotEls.forEach(se=>{const k=se._s.key;se.className='basket';se.innerHTML=`<div class="ic">${CAT[k].ic}</div><div class="nm">${CAT[k].n}</div>`;});
+  ctl.slotEls[0].parentNode.className='baskets';ctl.tiles.forEach(t=>t.classList.add('emo'));
+  // keep 'ok' class from tinting basket
+  api.solve=()=>ctl.solve();if(L.time)api.timer(L.time,'Time is up! Try again.');
+ } else if(L.mode==='listen'){const qs=K.sample(ALL,L.q);let qi=0;
+  function ask(){box.innerHTML='';const it=qs[qi];const sp=K.h('button','btn pri','🔊 Say it again');sp.onclick=()=>K.say(it.w);box.appendChild(K.h('div','prompt','Tap the '+it.w+'!'));box.appendChild(sp);K.say(`Tap the ${it.w}`);
+   const g=K.h('div','choices');box.appendChild(g);K.shuffle([it,...K.sample(ALL.filter(x=>x.w!==it.w),3)]).forEach(o=>{const b=K.h('button','choice',o.e);if(o===it)b.dataset.good=1;b.onclick=()=>{K.audio();if(o===it){b.classList.add('good');K.sfx.ok();qi++;api.progress(qi,qs.length);api.coach(`${it.e} ${it.w}`,false);g.querySelectorAll('button').forEach(x=>x.disabled=true);if(qi===qs.length)setTimeout(()=>api.win(),700);else setTimeout(ask,900);}else{b.classList.add('wrong');K.sfx.bad();api.bad();}};g.appendChild(b);});}
+  ask();api.solve=()=>{const t=setInterval(()=>{const b=stage.querySelector('.choice[data-good]:not(:disabled)');if(b)b.click();else if(document.querySelector('.modal'))clearInterval(t);},80);};
+ } else {const items=K.sample(ALL.filter(x=>x.w.length<=6),L.n);let wi=0,won=false;
+  function nextWord(){box.innerHTML='';const it=items[wi];box.appendChild(K.h('div','big',it.e));box.appendChild(K.h('div','prompt','Spell: '+it.w.split('').map(()=>'_').join(' ')));K.say(`Spell ${it.w}`);const holder=K.h('div','sp');box.appendChild(holder);
+   const letters=it.w.split('');const ctl=K.placement(holder,{cell:62,slots:letters.map((l,i)=>({key:l+i,ph:''})),tiles:letters.map((l,i)=>({key:l+i,html:`<span style="font-weight:800">${l.toUpperCase()}</span>`,l})),accepts:(t,s)=>t.l===letters[+s.key.slice(1)]&&(t.key===s.key||letters[+s.key.slice(1)]===t.l),
+     onCorrect:()=>K.say(''),onWrong:()=>api.bad('Check the letters!'),onDone:()=>{wi++;api.progress(wi,items.length);api.coach(`${it.e} ${it.w}!`);K.say(it.w);if(wi===items.length){won=true;setTimeout(()=>api.win(),700);}else setTimeout(nextWord,1100);}});
+   api.solveWord=()=>ctl.solve();}
+  nextWord();api.solve=()=>{const t=setInterval(()=>{if(won||document.querySelector('.modal'))return clearInterval(t);api.solveWord&&api.solveWord();},300);};}
+}
+K.start({id:'word-zoo',title:'Word Zoo',emoji:'🦁',worlds,levels,build});
+</script></body></html>
