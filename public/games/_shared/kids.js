@@ -8,16 +8,68 @@ const pick=a=>a[Math.random()*a.length|0];
 let AC=null,muted=false;try{muted=localStorage.getItem('dg_muted')==='1';}catch(e){}
 function audio(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==='suspended')try{AC.resume();}catch(e){}}
 function tone(f,d,type,v,delay,f2){if(muted||!AC)return;try{const t=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v||.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d);}catch(e){}}
-const sfx={pop:()=>tone(520,.12,'sine',.12,0,900),ok:()=>{tone(660,.12,'triangle',.14);tone(880,.18,'triangle',.14,.1);},bad:()=>tone(240,.25,'sawtooth',.06,0,140),cheer:()=>[523,659,784,1046,1318].forEach((f,i)=>tone(f,.22,'triangle',.12,i*.09)),star:()=>tone(900,.15,'sine',.12,0,1500),whoosh:()=>tone(300,.3,'sine',.08,0,900),tick:()=>tone(1000,.04,'square',.04)};
+// soft, cute sounds: rounded sine/triangle tones only (no buzzy sawtooth/square)
+const sfx={pop:()=>tone(560,.11,'sine',.11,0,880),ok:()=>{tone(784,.14,'triangle',.12);tone(1175,.22,'sine',.11,.1);},bad:()=>{tone(392,.16,'triangle',.08,0,330);tone(311,.24,'triangle',.08,.15,262);},cheer:()=>[523,659,784,1046,1318].forEach((f,i)=>tone(f,.22,'triangle',.11,i*.09)),star:()=>tone(988,.16,'sine',.11,0,1568),whoosh:()=>tone(300,.3,'sine',.07,0,900),tick:()=>tone(1320,.05,'sine',.05)};
+// ---------- voice ----------
+// One voice for every game: a clear Indian-English voice (female first), the same voice from the first line to the last,
+// and helpers that light up each word/letter on screen exactly while it is being spoken.
+const RATE=.9,PITCH=1.08; // a little higher pitch = friendly, cute voice for kids
+// macOS gives Chrome many novelty/"Eloquence" voices (Eddy, Flo, Grandma, Reed...) that sound robotic: never use them
+const BAD_VOICE=/novelty|bad news|good news|whisper|bells|boing|bubbles|cellos|zarvox|trinoids|organ|jester|albert|fred|junior|kathy|ralph|wobble|bahh|superstar|eddy|\bflo\b|grandma|grandpa|\breed\b|rocko|sandy|shelley/i;
+function scoreVoice(v){const n=v.name||'',l=(v.lang||'').replace('_','-').toLowerCase();if(BAD_VOICE.test(n))return -1;let s=0;
+ if(l==='en-in')s+=100;else if(/^en-(gb|au|za|nz|ie)/.test(l))s+=40;else if(l.startsWith('en'))s+=20;else return -1;
+ // always a girl's voice when one exists: female names win over everything else (Indian-English first)
+ if(/neerja|tara|isha|sangeeta|veena|heera|swara|lekha|priya|female|samantha|karen|moira|tessa|serena|kate|fiona|victoria|zira|susan|hazel|libby|sonia|aria|jenny|emma/i.test(n))s+=80;
+ else if(/rishi|aman|ravi|prabhat|prakash|daniel|alex|tom\b|david|mark|george|guy|ryan|arthur|oliver|\bmale/i.test(n))s-=40;
+ if(/natural|neural|premium|enhanced|online/i.test(n))s+=25; // Edge "Natural" and macOS premium voices sound the most human
+ if(/^google/i.test(n)&&l!=='en-in')s-=15; // Chrome's online Google voices stop mid-sentence on long lines
+ if(v.localService)s+=6;return s;}
+let VOICE=null,VSCORE=0,voicesReady=false;
+function refreshVoice(){let vs=[];try{vs=window.speechSynthesis.getVoices()||[];}catch(e){}if(!vs.length)return;voicesReady=true;
+ for(const v of vs){const s=scoreVoice(v);if(s>VSCORE||(VOICE&&v.voiceURI===VOICE.voiceURI)&&s>=VSCORE){VSCORE=s;VOICE=v;}}}
+try{if(window.speechSynthesis){refreshVoice();window.speechSynthesis.addEventListener('voiceschanged',refreshVoice);}}catch(e){}
+// Chrome fills the voice list a moment after page load: wait for it so the first line is not spoken by a random default voice
+function whenVoices(f){if(voicesReady||!window.speechSynthesis)return f();let done=false;const go=()=>{if(done)return;done=true;clearInterval(iv);refreshVoice();f();};
+ const iv=setInterval(()=>{refreshVoice();if(voicesReady)go();},100);setTimeout(go,1500);}
+// iOS/Safari only allow speech after a tap: speak a silent word on the first tap to unlock it
+try{document.addEventListener('pointerdown',function unlock(){document.removeEventListener('pointerdown',unlock,true);try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;window.speechSynthesis.speak(u);}catch(e){}},true);}catch(e){}
 function speakText(t){t=String(t);
  t=t.replace(/(\d{1,2}):(\d{2}):(\d{2})/g,(a,h,m,sec)=>`${+h} ${+m===0?"o'clock":+m<10?'oh '+(+m):+m} and ${+sec} seconds`);
  t=t.replace(/(\d{1,2}):(\d{2})/g,(a,h,m)=>`${+h} ${+m===0?"o'clock":+m<10?'oh '+(+m):+m}`);
  t=t.replace(/(^|[\s(])-(\d)/g,'$1minus $2').replace(/°C/g,' degrees Celsius').replace(/\bkm\b/g,'kilometers');
- return t.replace(/[^\w\s!?.,']/g,' ');}
-function say(t,rate,cb){let fired=false;const fin=()=>{if(!fired){fired=true;if(cb)cb();}};t=speakText(t);
- if(muted){if(cb)setTimeout(fin,1400);return;}
- try{const s=window.speechSynthesis;if(!s){if(cb)setTimeout(fin,1800);return;}s.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=rate||.9;u.pitch=1.15;u.lang='en-US';
-  if(cb){const t0=Date.now(),minMs=Math.min(t.length*40,9000),early=()=>{const w=minMs-(Date.now()-t0);if(w>0)setTimeout(fin,w);else fin();};u.onend=early;u.onerror=early;setTimeout(fin,Math.max(2500,t.length*95)+3500);}s.speak(u);}catch(e){if(cb)setTimeout(fin,1800);}}
+ return t.replace(/[^\w\s!?.,']/g,' ').replace(/\s+/g,' ').trim();}
+let sayTok=0;const KEEP=[];
+function clearLit(){document.querySelectorAll('.lit').forEach(e=>e.classList.remove('lit'));}
+function stopVoice(){sayTok++;clearLit();try{window.speechSynthesis&&window.speechSynthesis.cancel();}catch(e){}}
+// speak one short piece; done(ok) is called once. onWord(charIndex) follows the voice; onTimeline(ms) is the fallback when the browser gives no word events
+function speakOne(text,o,tok,done){let fin=false,fb=0,gotB=false;const est=Math.max(600,text.length*72/(o.rate||RATE))+250;
+ const end=ok=>{if(fin)return;fin=true;clearTimeout(fb);done(ok);};
+ if(muted||!window.speechSynthesis||!text){if(o.onTimeline)o.onTimeline(est);fb=setTimeout(()=>end(true),text?est:50);return;}
+ const s=window.speechSynthesis,u=new SpeechSynthesisUtterance(text);
+ if(VOICE){u.voice=VOICE;u.lang=VOICE.lang;}else u.lang='en-IN';u.rate=o.rate||RATE;u.pitch=PITCH;u.volume=1;
+ u.onstart=()=>{if(o.onTimeline)setTimeout(()=>{if(!gotB&&!fin&&tok===sayTok)o.onTimeline(est-300);},300);};
+ u.onboundary=e=>{if(tok!==sayTok||(e.name&&e.name!=='word'))return;gotB=true;if(o.onWord)o.onWord(e.charIndex);};
+ u.onend=()=>end(true);u.onerror=e=>end(!(e&&/interrupted|canceled/.test(e.error)));
+ KEEP.push(u);if(KEEP.length>6)KEEP.shift(); // keep references: Chrome can garbage-collect a speaking utterance and never fire onend
+ try{if(s.paused)s.resume();s.speak(u);}catch(e){end(true);return;}
+ fb=setTimeout(()=>end(true),est*2+3000);}
+// start a new voice job: stops whatever is speaking. The callback runs when the job finishes, but not if a newer line replaced it.
+function job(run,cb){stopVoice();const tok=sayTok;const fin=()=>{if(tok===sayTok){clearLit();if(cb)cb();}};
+ // Chrome drops a speak() fired right after cancel(), so wait a moment
+ setTimeout(()=>{if(tok!==sayTok)return;whenVoices(()=>{if(tok===sayTok)run(tok,fin);});},120);}
+const chunks=t=>(t.match(/[^.!?]+[.!?]*\s*/g)||[t]).map(x=>x.trim()).filter(Boolean);
+// steps: [{t:'text', el:element lit while it is spoken, rate, gap:ms pause after}]
+function runSteps(steps,tok,fin){let i=0;const next=()=>{if(tok!==sayTok)return;if(i>=steps.length)return fin();const st=steps[i++];clearLit();if(st.el)st.el.classList.add('lit');
+  speakOne(speakText(st.t),{rate:st.rate},tok,ok=>{if(tok!==sayTok)return;if(st.el)st.el.classList.remove('lit');if(!ok)return fin();setTimeout(next,st.gap!=null?st.gap:90);});};next();}
+// plain speech (long text is spoken sentence by sentence so Chrome never cuts it off)
+function say(t,rate,cb){job((tok,fin)=>runSteps(chunks(String(t)).map(c=>({t:c,rate,gap:60})),tok,fin),cb);}
+// speak a list of steps in order, lighting up each step's element while it is spoken (e.g. spelling letter by letter)
+function saySeq(steps,cb){job((tok,fin)=>runSteps(steps,tok,fin),cb);}
+// show text in el and light up each word as it is spoken. o.key: word to colour; o.hide: word to show as 🔊 (so the answer is not written)
+function sayLine(el,text,o,cb){o=o||{};const t=speakText(text),parts=[];el.innerHTML='';const re=/\S+/g;let m;
+ while((m=re.exec(t))){const raw=m[0],w=raw.toLowerCase().replace(/[^a-z']/g,'');const s=h('span','w'+(o.key&&w===o.key?' kw':''));s.textContent=o.hide&&w===o.hide?'🔊':raw;el.appendChild(s);el.appendChild(document.createTextNode(' '));parts.push({s,at:m.index});}
+ const timers=[];const lit=ci=>{let cur=null;for(const p of parts)if(p.at<=ci)cur=p;parts.forEach(p=>p.s.classList.toggle('lit',p===cur));};
+ job((tok,fin)=>speakOne(t,{rate:o.rate,onWord:lit,onTimeline:ms=>parts.forEach(p=>timers.push(setTimeout(()=>{if(tok===sayTok)lit(p.at);},ms*p.at/t.length)))},tok,()=>{timers.forEach(clearTimeout);parts.forEach(p=>p.s.classList.remove('lit'));fin();}),cb);}
 const PRAISE=['Awesome!','Great job!','You rock!','Brilliant!','Super smart!','Well done!','Fantastic!','Wow, amazing!','Perfect!','You are a star!'];
 const TRY=['Oops! Try again!','Almost! You can do it!','Not that one, try again!','Keep going, you are close!','Nice try! Once more!'];
 // ---------- confetti ----------
@@ -69,13 +121,13 @@ function start(cfg){
   const main=h('main');app.appendChild(main);
   const coach=h('div','coach','<div class="owl">🦉</div><div class="bub"></div>');document.body.appendChild(coach);
   let coachT=null;function coachSay(t,speak,cb){const b=coach.querySelector('.bub');b.textContent=t;b.classList.add('show');clearTimeout(coachT);coachT=setTimeout(()=>b.classList.remove('show'),cb?6000:2600);if(speak!==false)say(t,undefined,cb);else if(cb)setTimeout(cb,1200);}
-  header.querySelector('#snd').onclick=e=>{muted=!muted;try{localStorage.setItem('dg_muted',muted?'1':'0');}catch(_){}e.target.textContent=muted?'🔇':'🔊';if(muted)try{speechSynthesis.cancel();}catch(_){}audio();sfx.pop();};
+  header.querySelector('#snd').onclick=e=>{muted=!muted;try{localStorage.setItem('dg_muted',muted?'1':'0');}catch(_){}e.target.textContent=muted?'🔇':'🔊';if(muted)stopVoice();audio();sfx.pop();};
   const totalStars=()=>Object.values(save.stars).reduce((a,b)=>a+b,0);
   const refreshTot=()=>{header.querySelector('#tot').textContent='⭐ '+totalStars()+' / '+save.max;};
   let timerId=null;const stopTimer=()=>{clearInterval(timerId);timerId=null;};
   function setWorld(w){const W=(cfg.worlds||{})[w]||{bg:['#bfe9ff','#7cc6ff'],deco:['⭐','☁️']};document.documentElement.style.setProperty('--c1',W.bg[0]);document.documentElement.style.setProperty('--c2',W.bg[1]);
     bg.innerHTML='';for(let i=0;i<14;i++){const s=h('span','',W.deco[i%W.deco.length]);s.style.left=(Math.random()*95)+'%';s.style.top=(8+Math.random()*80)+'%';s.style.fontSize=(30+Math.random()*34)+'px';s.style.animationDelay=(-Math.random()*8)+'s';s.style.animationDuration=(6+Math.random()*6)+'s';bg.appendChild(s);}}
-  function showMap(){stopTimer();main.innerHTML='';refreshTot();const first=cfg.levels[0].world;setWorld(first);
+  function showMap(){window.GNav&&GNav.leave();document.querySelectorAll(".modal").forEach(x=>x.remove());stopTimer();main.innerHTML='';refreshTot();const first=cfg.levels[0].world;setWorld(first);
     const worlds=[];cfg.levels.forEach((L,i)=>{let w=worlds.find(x=>x.k===L.world);if(!w){w={k:L.world,items:[]};worlds.push(w);}w.items.push(i);});
     const wrap=h('div','map');main.appendChild(wrap);
     for(const w of worlds){const W=(cfg.worlds||{})[w.k]||{label:w.k,deco:['⭐']};const box=h('div','world',`<h2>${W.deco[0]} ${W.label}</h2>`),lvls=h('div','lvls');
@@ -83,7 +135,7 @@ function start(cfg){
       box.appendChild(lvls);wrap.appendChild(box);}
     const ad=document.getElementById('about-data');if(ad){try{const d=JSON.parse(ad.textContent);main.appendChild(h('section','about-game',`<h2>About ${d.name}: a free game for kids ${d.ages}</h2><p>${d.intro}</p>${d.skills&&d.skills.length?`<h3>What kids learn</h3><ul>${d.skills.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}<h3>How to play</h3><p>${d.how}</p><h3>More free games</h3><p>${d.related.map(r=>`<a href="${r.url}">${r.name}</a>`).join(' &middot; ')} &middot; <a href="/">All Kids Games 4u games</a></p>`));}catch(e){}}
     const nxt=Math.min(save.unlocked,cfg.levels.length);coachSay(save.unlocked>1?'Welcome back! Ready for level '+nxt+'?':'Hi! Let us start with level 1!');}
-  function play(i){stopTimer();const L=cfg.levels[i];main.innerHTML='';setWorld(L.world);let mistakes=0,over=false;
+  function play(i){window.GNav&&GNav.enter(()=>showMap());stopTimer();const L=cfg.levels[i];main.innerHTML='';setWorld(L.world);let mistakes=0,over=false;
     const hud=h('div','hud',`<span class="lt">${i+1}. ${L.name}</span><div class="prog"><i></i></div><span class="tm" style="display:none"></span><button>🗺 Levels</button>`);
     const stage=h('div','stage');main.appendChild(hud);main.appendChild(stage);hud.querySelector('button').onclick=()=>{sfx.pop();showMap();};
     const api={level:L,index:i,stage,mistakes:()=>mistakes,coach:coachSay,sfx,say,confetti,
@@ -104,5 +156,5 @@ function start(cfg){
   window.__K={cfg,save,play,showMap};
   showMap();
 }
-window.K={h,shuffle,sample,pick,sfx,say,confetti,drag,placement,start,audio,PRAISE,TRY};
+window.K={h,shuffle,sample,pick,sfx,say,saySeq,sayLine,stopVoice,confetti,drag,placement,start,audio,PRAISE,TRY};
 })();

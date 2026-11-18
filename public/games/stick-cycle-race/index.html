@@ -53,7 +53,8 @@
     <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
     <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Stick Cycle Race","url":"https://kidsgames4u.com/games/stick-cycle-race/index.html","description":"Free 20-level cycle race. Pick your colour, grab boosters, sprint past the other riders and outrun the ghost. Plays on phone, tablet and computer.","applicationCategory":"GameApplication","genre":"Action","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":6},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Action games","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Stick Cycle Race","item":"https://kidsgames4u.com/games/stick-cycle-race/index.html"}]}]</script>
     <!--/SEO-->
-  </head>
+  <script src="/games/_shared/nav.js"></script>
+</head>
 <body>
     <!--SEO-BODY-->
     <script type="application/json" id="about-data">{"name":"Stick Cycle Race","title":"Stick Cycle Race – Free Cycle Racing Game","intro":"Stick Cycle Race is a free 20-level cycling game. Choose your colour, pedal fast, grab boosters and try to beat the other riders and the ghost.","skills":[],"how":"Hold the pedal button (or Space or D) to go, press W and S to change lane, and hold Shift to sprint when you have stamina.","ages":"6+","related":[{"name":"Stick Spy Ops","url":"/games/stick-spy-ops/index.html"},{"name":"Zombie Block Siege","url":"/games/zombie-block-siege/index.html"},{"name":"Rough Note Showdown","url":"/games/rough-note-showdown/index.html"}]}</script>
@@ -140,7 +141,7 @@ function build(level){
   items=[];for(let x=700;x<trackLen-500;x+=260+r()*220){const t=r();items.push({x,lane:Math.floor(r()*LANES),type:t<.4?'boost':t<.75?'rock':'oil',taken:false,t:0});}
   deco={far:[],mid:[],stars:[]};for(let x=-200;x<trackLen*.35+VW+400;x+=90+r()*120)deco.far.push({x,h:60+r()*120,v:r()});for(let x=-200;x<trackLen+VW+400;x+=160+r()*200)deco.mid.push({x,h:120+r()*160,v:r(),side:r()<.5?-1:1});
   for(let i=0;i<120;i++)deco.stars.push({x:r()*VW,y:r()*380,s:r()});
-  parts=[];texts=[];finishOrder=[];countdown=3.6;result=null;endT=0;camX=0;state='race';menu.classList.add('hidden');cv.focus();
+  parts=[];texts=[];finishOrder=[];countdown=3.6;result=null;endT=0;camX=0;state='race';menu.classList.add('hidden');cv.focus();window.GNav&&GNav.enter(toMenu);
 }
 
 // ---------- input ----------
@@ -156,7 +157,7 @@ function onKey(code){audioInit();
 }
 function onClick(){if(state==='result'&&endT>.8){if(result.pass&&lvl<20)build(lvl+1);else if(result.pass)toMenu();else build(lvl);}else if(state==='eaten'&&endT>.8)build(lvl);}
 function changeLane(d){if(countdown>0||player.finished)return;const nl=clamp(player.lane+d,0,LANES-1);if(nl!==player.lane){player.lane=nl;SFX.lane();}}
-function toMenu(){state='menu';menu.classList.remove('hidden');buildGrid();}
+function toMenu(){window.GNav&&GNav.leave();state='menu';menu.classList.remove('hidden');buildGrid();}
 // menu DOM
 const grid=document.getElementById('grid'),lvname=document.getElementById('lvname'),sw=document.getElementById('sw'),prev=document.getElementById('prev').getContext('2d');
 function buildGrid(){grid.innerHTML='';THEMES.forEach(()=>{});for(let i=0;i<20;i++){const b=document.createElement('button');b.className='lv'+(i===sel?' sel':'');b.textContent=i+1;b.disabled=i>=SAVE.unlocked;b.onclick=()=>{sel=i;buildGrid();};grid.appendChild(b);}

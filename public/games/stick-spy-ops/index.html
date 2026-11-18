@@ -54,7 +54,8 @@
     <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
     <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Stick Spy Ops","url":"https://kidsgames4u.com/games/stick-spy-ops/index.html","description":"Free stick figure spy shooter with 20 missions. Sneak, hide in cover and take down enemies. Name your hero and enemies after your friends.","applicationCategory":"GameApplication","genre":"Action","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":8},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Action games","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Stick Spy Ops","item":"https://kidsgames4u.com/games/stick-spy-ops/index.html"}]}]</script>
     <!--/SEO-->
-  </head>
+  <script src="/games/_shared/nav.js"></script>
+</head>
 <body>
     <!--SEO-BODY-->
     <script type="application/json" id="about-data">{"name":"Stick Spy Ops","title":"Stick Spy Ops – Free Stick Figure Spy Game","intro":"Stick Spy Ops is a free stick figure spy game with 20 missions. Sneak past guards, hide in cover and take down enemy agents. Give your hero and the enemies the names of your friends.","skills":[],"how":"Move with A and D or the arrow keys, jump with W or Space, crouch with S to hide in cover and aim with the mouse. On a phone, use the on-screen buttons and touch the screen to aim.","ages":"8+","related":[{"name":"Stick Cycle Race","url":"/games/stick-cycle-race/index.html"},{"name":"Zombie Block Siege","url":"/games/zombie-block-siege/index.html"},{"name":"Rough Note Showdown","url":"/games/rough-note-showdown/index.html"}]}</script>
@@ -220,7 +221,7 @@ function loadLevel(i){
   bullets=[];parts=[];rings=[];texts=[];pickups=[];
   camX=0;bannerT=3.4;doneT=-1;hintT=i===0?14:0;endT=0;stats={shots:0,hits:0,time:0,dmg:0};
   dino=t.extras&&t.extras.includes('dino')?{x:600,dir:1,anim:0,roarT:4}:null;
-  state='play';menu.classList.add('hidden');cv.focus();
+  state='play';menu.classList.add('hidden');cv.focus();window.GNav&&GNav.enter(toMenu);
 }
 function mkEnemy(k,x,range,color,name){
   return {name,color,x,y:L.ground(x),range,facing:-1,hp:2,maxHp:2,state:'patrol',cd:1.5,alertT:0,lastSeenX:x,duck:false,peekT:1,dead:false,deathT:0,revealT:0,vis:0,anim:0,moving:false,
@@ -232,7 +233,7 @@ function finishLevel(){
   unlocked=Math.max(unlocked,Math.min(20,L.lvl+1));save();buildGrid();
   SFX.win();endT=0;state=L.t.boss?'win':'levelDone';
 }
-function toMenu(){state='menu';L=buildLevel(selLevel);menu.classList.remove('hidden');buildGrid();}
+function toMenu(){window.GNav&&GNav.leave();state='menu';L=buildLevel(selLevel);menu.classList.remove('hidden');buildGrid();}
 
 // ---------- dialogue ----------
 const H=()=>NAMES.hero;

@@ -56,7 +56,8 @@
     <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
     <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Zombie Block Siege","url":"https://kidsgames4u.com/games/zombie-block-siege/index.html","description":"Free stickman zombie shooter with 15 levels. Hide behind bricks, choose your gun and beat the fire-breathing boss. Name the hero and zombies after your friends.","applicationCategory":"GameApplication","genre":"Action","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":10},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Action games","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Zombie Block Siege","item":"https://kidsgames4u.com/games/zombie-block-siege/index.html"}]}]</script>
     <!--/SEO-->
-  </head>
+  <script src="/games/_shared/nav.js"></script>
+</head>
 <body>
     <!--SEO-BODY-->
     <script type="application/json" id="about-data">{"name":"Zombie Block Siege","title":"Zombie Block Siege – Free Stickman Zombie Shooter","intro":"Zombie Block Siege is a free stickman zombie shooter with 15 levels. Hide behind brick walls, choose your gun, rebuild your wall and defeat the fire-breathing boss at the end of every level.","skills":[],"how":"Move with A and D, crouch with S, aim and shoot with the mouse, reload with R and rebuild bricks with E. On a phone, touch the screen to aim and shoot.","ages":"10+","related":[{"name":"Stick Spy Ops","url":"/games/stick-spy-ops/index.html"},{"name":"Stick Cycle Race","url":"/games/stick-cycle-race/index.html"},{"name":"Rough Note Showdown","url":"/games/rough-note-showdown/index.html"}]}</script>
@@ -280,7 +281,7 @@ function buildLevel(n){
   midD=[];for(let x=-100;x<W*.55+VW+300;x+=170+r()*220)midD.push({x,h:150+r()*170,v:r()});
   const g=SAVE.gun;P={x:180,vx:0,facing:1,aim:0,crouch:false,hp:10,maxHp:10,inv:0,flash:0,anim:0,moving:false,slots:g==='pistol'?[{id:'pistol',mag:12}]:[{id:g,mag:WEAP[g].mag},{id:'pistol',mag:12}],si:0,cd:0,reload:0,bricks:12,buildCd:0,exposeT:0};
   stats={shots:0,hits:0,kills:0,dmg:0,time:0};camX=0;bannerT=3.4;hintT=n===1?16:0;lightning=0;
-  state='play';menuEl.classList.add('hidden');cv.focus();}
+  state='play';menuEl.classList.add('hidden');cv.focus();window.GNav&&GNav.enter(()=>{state='menu';showMenu()});}
 function finishLevel(){const acc=stats.hits/Math.max(1,stats.shots),stars=1+(stats.dmg<=4?1:0)+(acc>=.3?1:0);result={stars,acc};
   SAVE.unlocked=Math.max(SAVE.unlocked,Math.min(15,lvl+1));save();SFX.win();state=lvl===15?'win':'levelDone';endT=0;}
 function update(dt){
@@ -524,7 +525,7 @@ function buildMenu(){
 }
 function isUnlocked(g,l){return WEAP[g].unlock<=l;}
 function previewLevel(n){SAVE.gun=isUnlocked(SAVE.gun,n)?SAVE.gun:'pistol';buildLevel(n);showMenu(true);}
-function showMenu(keep){state='menu';menuEl.classList.remove('hidden');if(!keep){sel=clamp(sel,1,SAVE.unlocked);buildLevel(sel);state='menu';menuEl.classList.remove('hidden');}buildMenu();}
+function showMenu(keep){window.GNav&&GNav.leave();state='menu';menuEl.classList.remove('hidden');if(!keep){sel=clamp(sel,1,SAVE.unlocked);buildLevel(sel);state='menu';menuEl.classList.remove('hidden');}buildMenu();}
 document.getElementById('start').onclick=()=>{audioInit();readNames();if(!isUnlocked(SAVE.gun,sel))SAVE.gun='pistol';save();buildLevel(sel);};
 [heroIn,znIn].forEach(e=>e.addEventListener('keydown',ev=>ev.stopPropagation()));
 // ---------- input ----------

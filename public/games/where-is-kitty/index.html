@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.hint{font-weight:800;opacity:.75;margin:0 0 2px;text-align:center;font-size:15px}
+.sc-wrap{display:flex;justify-content:center}
+.scene{position:relative;width:340px;height:230px;border-radius:24px;background:linear-gradient(#e3f6ff,#bfe6ff);overflow:hidden;box-shadow:0 6px 0 rgba(0,0,0,.12);flex:none}
+.scene .gr{position:absolute;left:0;right:0;bottom:0;height:30px;background:#7ccf6a;border-top:4px solid #5cb85c}
+.scene .cloud{position:absolute;left:24px;top:12px;font-size:40px;opacity:.9}
+.actor{position:absolute;width:56px;height:56px;font-size:50px;line-height:56px;text-align:center;z-index:2}
+.bx-back{position:absolute;left:120px;top:112px;width:110px;height:88px;background:#7a4c22;border-radius:8px 8px 4px 4px;z-index:1}
+.bx-front{position:absolute;left:114px;top:128px;width:122px;height:72px;background:linear-gradient(#e0a663,#b87a3c);border-radius:6px;z-index:3;box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
+.bx-front:after{content:'';position:absolute;left:50%;top:0;bottom:0;width:14px;margin-left:-7px;background:#c9904f}
+.house{position:absolute;left:214px;top:94px;font-size:104px;line-height:1;z-index:1}
+.bell{position:absolute;left:226px;top:118px;font-size:28px;z-index:4;animation:ring .5s ease-in-out 3}
+@keyframes ring{25%{transform:rotate(-25deg)}75%{transform:rotate(25deg)}}
+.zone{position:absolute;border:3px dashed #27315a55;border-radius:14px;z-index:5;cursor:pointer}
+.zone.hot{background:#ffd23b66;border-color:#ffb703}
+.drag .actor{z-index:6;cursor:grab;touch-action:none}.drag .actor.placed{z-index:2}
+.actor.sel{filter:drop-shadow(0 0 8px #ffb703);transform:scale(1.15)}
+.blank{display:inline-block;min-width:72px;height:1.1em;border-bottom:5px solid #27315a;margin:0 6px;vertical-align:middle}
+.cards{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.pcard{border:0;border-radius:20px;background:#fff;min-width:96px;padding:8px 14px;box-shadow:0 6px 0 rgba(0,0,0,.18);display:flex;flex-direction:column;align-items:center;transition:transform .15s}
+.pcard b{font-size:34px;text-transform:uppercase;color:#e8590c;letter-spacing:2px}.pcard small{font-size:13px;font-weight:800;opacity:.7}
+.pcard.on{outline:4px solid #ffd23b;transform:translateY(-3px)}.pcard.done{background:#d9f7e2}.pcard.done small:after{content:' ✅'}
+.choice.wordc{font-size:34px;min-width:104px;min-height:70px;text-transform:uppercase;letter-spacing:2px}
+.pic{font-size:72px;line-height:1}
+.row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.btn.small{padding:7px 14px;font-size:15px}
+.hud .lt{white-space:nowrap}
+@media (max-height:520px){.scene{transform:scale(.72);transform-origin:top center;margin-bottom:-64px}.pic{font-size:48px}.choice.wordc{min-height:52px;font-size:26px}}
+@media (max-width:380px){.scene{transform:scale(.9);transform-origin:top center;margin-bottom:-23px}}
+</style>
+      <!--SEO-->
+    <title>Where Is Kitty? – Free Prepositions Game for Kids: in, on, by, up | Kids Games 4u</title>
+    <meta name="description" content="Free English prepositions game for kids aged 4-8. Watch Kitty move and learn in, on, by, up, off, out, to and at with spoken sentences, drag-and-drop and fill-the-gap levels." />
+    <meta name="keywords" content="prepositions game for kids, in on by game, learn prepositions, english grammar game for kids, preposition worksheet online, Kids Games 4u" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#7cc6ff" />
+    <link rel="canonical" href="https://kidsgames4u.com/games/where-is-kitty/index.html" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:site_name" content="Kids Games 4u" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Where Is Kitty? – Free Prepositions Game for Kids | Kids Games 4u" />
+    <meta property="og:description" content="Watch Kitty move and learn in, on, by, up, off, out, to and at. Free English prepositions game for kids aged 4-8." />
+    <meta property="og:url" content="https://kidsgames4u.com/games/where-is-kitty/index.html" />
+    <meta property="og:image" content="https://kidsgames4u.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Where Is Kitty? – Free Prepositions Game for Kids | Kids Games 4u" />
+    <meta name="twitter:description" content="Watch Kitty move and learn in, on, by, up, off, out, to and at. Free English prepositions game for kids aged 4-8." />
+    <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Where Is Kitty?","url":"https://kidsgames4u.com/games/where-is-kitty/index.html","description":"Free English prepositions game for kids aged 4-8. Watch Kitty move and learn in, on, by, up, off, out, to and at.","applicationCategory":"EducationalApplication","genre":"Educational","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":4,"suggestedMaxAge":8},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Learn & Play","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Where Is Kitty?","item":"https://kidsgames4u.com/games/where-is-kitty/index.html"}]}]</script>
+    <!--/SEO-->
+  <script src="/games/_shared/nav.js"></script>
+</head>
+<body><div id="app"></div>
+    <!--SEO-BODY-->
+    <script type="application/json" id="about-data">{"name":"Where Is Kitty?","title":"Where Is Kitty? – Free Prepositions Game for Kids","intro":"Where Is Kitty? teaches small English prepositions: in, on, by, up, off, out, to and at. Kitty jumps into boxes, onto boxes, out of boxes and walks to the house, so children see what each word means while a friendly voice reads every sentence.","skills":["Prepositions: in, on, by, up, off, out, to, at","Reading short sentences","Listening to English","Position words (where is it?)"],"how":"Tap each word card to watch Kitty and hear what the word means. Drag Kitty to the right spot, watch Kitty move and pick the word, and fill the gap in everyday sentences.","ages":"4-8","related":[{"name":"Spell Gaps","url":"/games/spell-gaps/index.html"},{"name":"Word Zoo","url":"/games/word-zoo/index.html"},{"name":"Alphabet Safari","url":"/games/alphabet-safari/index.html"},{"name":"Tick Tock Clock","url":"/games/tick-tock-clock/index.html"}]}</script>
+    <noscript>
+      <main style="font-family:system-ui,sans-serif;max-width:720px;margin:30px auto;padding:0 16px">
+        <p><a href="/">&larr; Kids Games 4u</a></p>
+        <h1>Where Is Kitty? – Free Prepositions Game for Kids</h1>
+        <p>Where Is Kitty? teaches small English prepositions: in, on, by, up, off, out, to and at. Kitty jumps into boxes, onto boxes, out of boxes and walks to the house, so children see what each word means.</p>
+        <h2>What kids learn</h2><ul><li>Prepositions: in, on, by, up, off, out, to, at</li><li>Reading short sentences</li><li>Listening to English</li></ul>
+        <h2>More free games</h2><ul><li><a href="/games/spell-gaps/index.html">Spell Gaps – Missing Letters Spelling Game</a></li><li><a href="/games/word-zoo/index.html">Word Zoo – English Words Game</a></li><li><a href="/games/alphabet-safari/index.html">Alphabet Safari – ABC Game</a></li></ul>
+        <p>Please turn on JavaScript to play.</p>
+      </main>
+    </noscript>
+    <!--/SEO-BODY--><script src="../_shared/kids.js"></script>
+<script>
+// ---- the 8 small prepositions: what Kitty does, the example sentence, and a kid-friendly meaning ----
+const P={
+ in:{tag:'inside',ex:'The cat is in the box.',q:'The cat is _ the box.',mean:'In means inside something.'},
+ on:{tag:'on top',ex:'The cat is on the box.',q:'The cat is _ the box.',mean:'On means on top of something, touching it.'},
+ by:{tag:'next to',ex:'The cat is by the box.',q:'The cat is _ the box.',mean:'By means next to something. Very close!'},
+ up:{tag:'higher',ex:'The balloon goes up.',q:'The balloon goes _.',mean:'Up means going higher, towards the sky.'},
+ off:{tag:'down from',ex:'The cat jumps off the box.',q:'The cat jumps _ the box.',mean:'Off means coming down from something.'},
+ out:{tag:'go outside',ex:'The cat jumps out of the box.',q:'The cat jumps _ of the box.',mean:'Out means going from inside to the outside.'},
+ to:{tag:'towards',ex:'The cat walks to the house.',q:'The cat walks _ the house.',mean:'To means going towards a place.'},
+ at:{tag:'exact spot',ex:'The cat is at the door.',q:'The cat is _ the door.',mean:'At tells the exact place, like at the door. Or the exact time, like at 7 o\'clock.'}};
+const ALLP=Object.keys(P);
+// look-alike words used as wrong choices (each one is clearly wrong for that picture)
+const CONF={in:['on','by','out'],on:['in','by','off'],by:['in','on','to'],up:['in','at','to'],off:['on','out','up'],out:['in','up','by'],to:['in','off','up'],at:['in','up','off']};
+// everyday sentences: [sentence, answer, picture, wrong choices]
+const SENT=[['I go _ school.','to','🏫',['on','up']],['Fish swim _ the water.','in','🐟',['up','at']],['The book is _ the table.','on','📖',['out','to']],
+ ['Wake up _ 7 o\'clock.','at','⏰',['in','off']],['Come and sit _ me.','by','🪑',['to','off']],['Please stand _.','up','🧍',['in','at']],
+ ['Turn _ the light.','off','💡',['by','at']],['Let us go _ and play.','out','⚽',['at','by']],['The toys are _ the box.','in','🧸',['up','to']],
+ ['Put the hat _ your head.','on','🎩',['out','to']],['Give the gift _ me.','to','🎁',['in','off']],['Look _ me!','at','👀',['in','off']],
+ ['The cup fell _ the table.','off','☕',['at','to']],['The kite flies _ high.','up','🪁',['at','in']],['Take _ your shoes.','off','👟',['to','at']],
+ ['The cat ran _ of the house.','out','🐱',['up','on']],['I sit _ my friend.','by','👫',['off','up']]];
+// ---- Kitty's little stage: box, house, balloon. Positions are [left, top] in px inside the 340x230 scene ----
+const POS={ground:[24,146],in:[142,104],on:[142,62],by:[248,146]};
+const PATH={idle:[POS.ground],in:[[142,-70],[142,104]],on:[[24,146],[84,30],[142,62]],by:[[24,146],[248,146]],up:[[142,150],[142,8]],
+ off:[[142,62],[208,8],[270,146]],out:[[142,104],[192,0],[270,146]],to:[[10,146],[164,146]],at:[[164,146],[164,124],[164,146],[164,124],[164,146]],drag:[POS.ground]};
+const ZONE={in:{left:'124px',top:'94px',width:'102px',height:'58px'},on:{left:'124px',top:'18px',width:'102px',height:'70px'},by:{left:'240px',top:'118px',width:'92px',height:'84px'}};
+function showScene(host,kind){host.innerHTML='';const el=K.h('div','scene');host.appendChild(el);
+ el.appendChild(K.h('div','gr'));el.appendChild(K.h('div','cloud','☁️'));
+ const withBox=['idle','in','on','by','off','out','drag'].includes(kind);
+ if(kind==='to'||kind==='at')el.appendChild(K.h('div','house','🏠'));
+ if(withBox)el.appendChild(K.h('div','bx-back'));
+ const actor=K.h('div','actor',kind==='up'?'🎈':'🐱');el.appendChild(actor);
+ if(withBox)el.appendChild(K.h('div','bx-front'));
+ const path=PATH[kind]||[POS.ground];
+ const put=p=>{actor.style.left=p[0]+'px';actor.style.top=p[1]+'px';};put(path[path.length-1]);
+ return{el,actor,put,play(){if(path.length<2)return;
+   try{actor.getAnimations().forEach(a=>a.cancel());actor.animate(path.map(p=>({left:p[0]+'px',top:p[1]+'px'})),{duration:kind==='to'?1800:1300,easing:'ease-in-out'});}catch(e){}
+   if(kind==='at'){const b=K.h('div','bell','🔔');el.appendChild(b);setTimeout(()=>b.remove(),1600);}
+   if(kind!=='up')setTimeout(()=>K.sfx.whoosh(),100);}};}
+const blankHTML=q=>q.split('_').join('<span class="blank"></span>');
+const done=stage=>!stage.isConnected||document.querySelector('.modal');
+
+const worlds={box:{label:'Kitty Box',bg:['#fff1c9','#ffb86b'],deco:['📦','🐱','🧶','🐾']},park:{label:'Kitty Park',bg:['#d9f7c9','#6cc46a'],deco:['🎈','🌳','☁️','🐱']},
+ town:{label:'Kitty Town',bg:['#d6ecff','#6aa8f0'],deco:['🏠','🚪','🏫','🐱']},boss:{label:'Big Kitty Test',bg:['#ecdcff','#9a6be0'],deco:['🏆','⭐','🐱','🎉']}};
+const levels=[
+ {name:'In, On, By',world:'box',mode:'learn',words:['in','on','by']},
+ {name:'Move Kitty',world:'box',mode:'drag'},
+ {name:'Up, Off, Out',world:'park',mode:'learn',words:['up','off','out']},
+ {name:'To & At',world:'town',mode:'learn',words:['to','at']},
+ {name:'Watch & Pick',world:'town',mode:'watch',n:8},
+ {name:'Fill the Gap',world:'town',mode:'sent',n:8},
+ {name:'Kitty Boss!',world:'boss',mode:'boss',n:10,time:180}];
+
+// one question. scene questions: Kitty acts it out; sentence questions: a picture + an everyday sentence
+function ask(stage,box,api,qn,next){box.innerHTML='';
+ const w=qn.w,q=qn.scene?P[w].q:qn.q,full=q.replace('_',w);let S=null;
+ if(qn.scene){const sc=K.h('div','sc-wrap');box.appendChild(sc);S=showScene(sc,w);setTimeout(()=>S.play(),250);}
+ else box.appendChild(K.h('div','pic',qn.pic));
+ const sent=K.h('div','say-line');sent.innerHTML=blankHTML(q);box.appendChild(sent);
+ const g=K.h('div','choices');box.appendChild(g);let ok=false;
+ K.shuffle([w,...qn.wrong]).forEach(c=>{const b=K.h('button','choice wordc',c);b.onclick=()=>{K.audio();if(ok)return;
+   if(c===w){ok=true;b.classList.add('good');K.sfx.ok();g.querySelectorAll('button').forEach(x=>x.disabled=true);
+     K.sayLine(sent,full,{key:w},()=>{if(!done(stage))setTimeout(next,350);});}
+   else{b.classList.remove('wrong');void b.offsetWidth;b.classList.add('wrong');
+     api.bad(`Not ${c}. ${P[c].mean}`+(S?' Watch Kitty again!':' Try again!'));if(S)setTimeout(()=>S.play(),300);}};g.appendChild(b);});
+ const row=K.h('div','row');box.appendChild(row);
+ if(S){const r=K.h('button','btn small','▶ Watch again');r.onclick=()=>{K.audio();S.play();};row.appendChild(r);}
+ api.coach(qn.scene?'Watch Kitty! Which word fits?':'Which word fits the sentence?');}
+const sceneQ=w=>({scene:true,w,wrong:K.sample(CONF[w],2)});
+const sentQ=s=>({scene:false,q:s[0],w:s[1],pic:s[2],wrong:s[3]});
+function quizRun(stage,box,api,qs,base,total){let i=0;const go=()=>{if(i>=qs.length)return api.win();ask(stage,box,api,qs[i],()=>{i++;api.progress(base+i,total);go();});};go();}
+
+function build(L,api,stage){
+ if(L.mode==='learn'){
+  // 1) tap every word card: Kitty acts it out while the sentence and its meaning are read, word by word
+  const sc=K.h('div','sc-wrap'),sent=K.h('div','say-line'),mean=K.h('div','say-line'),cards=K.h('div','cards'),box=K.h('div');
+  mean.style.fontSize='clamp(16px,2.6vw,22px)';stage.append(sc,sent,mean,cards,box);showScene(sc,L.words[0]==='to'?'to':'idle');
+  const heard=new Set(),total=L.words.length*2;let cur=0;
+  K.sayLine(sent,'Tap a word card. Watch Kitty and listen!');
+  L.words.forEach(w=>{const b=K.h('button','pcard',`<b>${w}</b><small>${P[w].tag}</small>`);b.onclick=()=>{K.audio();K.sfx.pop();const my=++cur;
+    cards.querySelectorAll('.pcard').forEach(x=>x.classList.toggle('on',x===b));const S=showScene(sc,w);S.play();mean.innerHTML='';
+    K.sayLine(sent,P[w].ex,{key:w},()=>{if(my!==cur)return;
+      K.sayLine(mean,P[w].mean,{key:w},()=>{if(my!==cur||done(stage))return;if(!heard.has(w)){heard.add(w);b.classList.add('done');api.progress(heard.size,total);}
+        if(heard.size===L.words.length){cur++;cards.remove();mean.remove();sent.remove();sc.remove();
+          // 2) quick check: Kitty acts, the child picks the word
+          api.coach('Now you try! Watch Kitty and pick the word.');setTimeout(()=>{if(!done(stage))quizRun(stage,box,api,K.shuffle(L.words).map(x=>({scene:true,w:x,wrong:K.sample(L.words.filter(y=>y!==x).concat(CONF[x].filter(y=>!L.words.includes(y))),2).slice(0,2)})),L.words.length,total);},1800);}
+        else{const left=L.words.filter(x=>!heard.has(x));api.coach('Now tap '+left[0]+'!',false);}});});};cards.appendChild(b);});
+ } else if(L.mode==='drag'){
+  // move Kitty yourself: drag (or tap Kitty, then tap a spot)
+  const rounds=K.shuffle(['in','on','by','in','on','by']);let r=0;
+  const sent=K.h('div','say-line'),sc=K.h('div','sc-wrap');stage.append(sent,sc,K.h('div','hint','Drag Kitty to the right spot (or tap Kitty, then tap a spot).'));
+  const round=()=>{const w=rounds[r],S=showScene(sc,'drag');S.el.classList.add('drag');let sel=false,placed=false;
+   const zones=['in','on','by'].map(k=>{const z=K.h('div','zone');Object.assign(z.style,ZONE[k]);z.dataset.k=k;S.el.appendChild(z);z.onclick=()=>{if(sel)drop(z);};return z;});
+   const drop=z=>{if(placed)return false;const k=z.dataset.k;sel=false;S.actor.classList.remove('sel');
+    if(k!==w){api.bad(`Oops, that spot is ${k} the box. We need ${w}. ${P[w].mean}`);return false;}
+    placed=true;S.actor.style.transition='none';S.actor.style.transform='';S.put(POS[k]);S.actor.classList.add('placed');zones.forEach(x=>x.remove());K.sfx.ok();r++;api.progress(r,rounds.length);
+    K.sayLine(sent,`Yes! The cat is ${w} the box.`,{key:w},()=>{if(done(stage))return;if(r===rounds.length)api.win();else setTimeout(round,300);});return true;};
+   K.drag(S.actor,{targets:()=>placed?[]:zones,onDrop:(el,z)=>drop(z),onTap:()=>{if(placed)return;sel=!sel;S.actor.classList.toggle('sel',sel);K.sfx.pop();}});
+   K.sayLine(sent,`Put the cat ${w} the box.`,{key:w});};
+  round();
+ } else {
+  const box=K.h('div');stage.appendChild(box);let qs;
+  if(L.mode==='watch')qs=K.shuffle(ALLP).slice(0,L.n).map(sceneQ);
+  else if(L.mode==='sent')qs=K.sample(SENT,L.n).map(sentQ);
+  else{qs=K.shuffle([...K.sample(ALLP,5).map(sceneQ),...K.sample(SENT,L.n-5).map(sentQ)]);api.timer(L.time,'Time is up! Try again.');}
+  quizRun(stage,box,api,qs,0,qs.length);}
+}
+K.start({id:'where-is-kitty',title:'Where Is Kitty?',emoji:'🐱',worlds,levels,build});
+</script></body></html>

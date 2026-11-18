@@ -106,7 +106,8 @@ button{font-family:inherit;cursor:pointer}
     <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
     <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Rough Note Showdown","url":"https://kidsgames4u.com/games/rough-note-showdown/index.html","description":"The classic school notebook game with dice for 2-6 players or vs the computer. Draw your stickman, grab a gun and be the last one standing.","applicationCategory":"GameApplication","genre":"Strategy","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":6},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Action games","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Rough Note Showdown","item":"https://kidsgames4u.com/games/rough-note-showdown/index.html"}]}]</script>
     <!--/SEO-->
-  </head>
+  <script src="/games/_shared/nav.js"></script>
+</head>
 <body>
     <!--SEO-BODY-->
     <script type="application/json" id="about-data">{"name":"Rough Note Showdown","title":"Rough Note Showdown – Classic Notebook Dice Game","intro":"Rough Note Showdown is the classic school notebook dice game for 2 to 6 players or against the computer. Roll the dice, draw your stickman part by part, get a gun and shoot your rivals' rows. The last player standing wins.","skills":[],"how":"Roll the dice. The number decides which row you hit: 0 or 1 is row 1, 2 or 3 is row 3, and so on. Every hit draws more of your stickman, and an armed row earns bullets.","ages":"6+","related":[{"name":"Stick Spy Ops","url":"/games/stick-spy-ops/index.html"},{"name":"Stick Cycle Race","url":"/games/stick-cycle-race/index.html"},{"name":"Zombie Block Siege","url":"/games/zombie-block-siege/index.html"}]}</script>
@@ -205,7 +206,7 @@ function help(){modal(`<h2>How to Play</h2>
 $('helpBtn').onclick=help;
 
 /* ---------- setup screen ---------- */
-function showSetup(){
+function showSetup(){window.GNav&&GNav.leave();
  gen++;S=null;$('sheet').innerHTML='';$('turn').innerHTML='';$('rollBtn').disabled=true;$('die').textContent='?';$('dieInfo').textContent='Roll the dice!';
  say('Set up the players and start the game!');
  const pl=setup.players;
@@ -233,7 +234,7 @@ function say(msg){logLines.push(msg);if(logLines.length>40)logLines.shift();$('b
 
 /* ---------- build ---------- */
 function startGame(){
- closeModal();gen++;
+ closeModal();gen++;window.GNav&&GNav.enter(showSetup);
  const n=setup.players.length;
  S={players:setup.players.map((p,i)=>({name:(p.name||'').trim()||DEF[i],cpu:p.cpu,ink:INKS[i],rows:ROWS.map(()=>({hits:0,alive:true})),shots:0,rolls:0,out:false})),
   cur:0,phase:'roll',turns:0,over:false,outOrder:[],pick:null};

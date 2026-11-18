@@ -82,3 +82,8 @@ main{position:relative;z-index:2;flex:1;min-height:0;display:flex;flex-direction
 h1.ttl{margin:0}
 .about-game{width:min(900px,100%);margin:6px auto 20px;background:#ffffffcc;border-radius:22px;padding:14px 20px;font-size:15px;line-height:1.5;font-weight:600}
 .about-game h2{margin:0 0 6px;font-size:19px}.about-game h3{margin:10px 0 2px;font-size:16px}.about-game p{margin:2px 0}.about-game ul{margin:2px 0;padding-left:20px}.about-game a{color:#3b5bdb;font-weight:800;text-decoration:none}
+/* spoken-text sync: the word/letter being spoken lights up */
+.say-line{font-size:clamp(19px,3.2vw,28px);font-weight:800;text-align:center;min-height:1.5em;line-height:1.5;margin:2px 0}
+.say-line .w{display:inline-block;padding:0 4px;border-radius:9px;transition:background .15s,transform .15s}
+.lit{background:#ffe066!important;transform:scale(1.12);box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.kw{color:#e8590c;text-transform:uppercase;letter-spacing:1px}
