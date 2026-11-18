@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.hud .lt{white-space:nowrap}
+.ttl{flex:0 1 auto!important;margin:0 auto!important;background:#ffffffd9;border-radius:999px;padding:2px 18px}
+.hero{display:flex;align-items:center;gap:12px;background:#ffffffcc;border-radius:22px;padding:6px 14px;box-shadow:0 4px 0 rgba(0,0,0,.1)}
+.av{position:relative;font-size:46px;line-height:1}.av .re{position:absolute;right:-14px;top:-10px;font-size:26px;animation:pop .4s}
+.av.yay{animation:bob .5s 2}.av.oh{animation:shake .4s}
+.meters{display:flex;flex-direction:column;gap:4px;min-width:150px}
+.mt{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:800}.mt .bar{flex:1;height:11px;background:#e9edf7;border-radius:99px;overflow:hidden}
+.mt .bar i{display:block;height:100%;border-radius:99px;transition:width .5s}.mt.e i{background:#ffc93c}.mt.c i{background:#4cc9f0}.mt.s i{background:#ff7aa8}
+.clock{background:#27315a;color:#fff;border-radius:999px;padding:5px 14px;font-weight:800;font-size:16px}
+.hcard{position:relative;width:min(660px,96vw);background:#fff;border-radius:28px;padding:12px 14px 14px;box-shadow:0 8px 0 rgba(0,0,0,.14);display:flex;flex-direction:column;align-items:center;gap:8px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+.hc{border:0;border-radius:22px;background:#f4f6ff;padding:10px 8px 12px;box-shadow:0 6px 0 rgba(0,0,0,.16);display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:800;font-size:clamp(15px,2.6vw,20px);transition:transform .12s}
+.hc b{font-size:clamp(46px,9vw,70px);line-height:1.1;letter-spacing:4px}
+.hc:active{transform:translateY(3px)}.hc.good{background:#c9f5d6}.hc.bad{background:#ffd3d8}.hc:disabled{opacity:1}
+.hc.hint{animation:pulse .9s infinite;outline:5px solid #ffd23b}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.small{padding:7px 14px;font-size:15px}
+.tbar{width:100%;height:12px;background:#eef1f8;border-radius:99px;overflow:hidden}.tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#3fd27a,#ffd23b);border-radius:99px}.tbar.low i{background:#ff5a6a}
+.fb{width:100%;border-radius:20px;padding:8px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;animation:pop .35s}.fb.good{background:#e1f8e9}.fb.bad{background:#fff0e3}
+.fb .say-line{font-size:clamp(17px,2.8vw,23px)}
+.steps{display:flex;flex-direction:column;gap:8px;width:100%}.step{border:0;border-radius:16px;background:#f2f5ff;padding:10px 14px;font-size:clamp(16px,2.8vw,21px);font-weight:800;text-align:left;box-shadow:0 4px 0 rgba(0,0,0,.14)}
+.step.wrong{background:#ffc5cb;animation:shake .35s}.done-list{display:flex;flex-direction:column;gap:6px;width:100%}.done-list .step{background:#d9f7e2;box-shadow:none}
+.basket{width:170px;min-height:140px;border-radius:22px;border:4px dashed #27315a55;background:#ffffffcc;display:flex;flex-direction:column;align-items:center;padding:8px 6px;font-weight:800;gap:2px;transition:transform .15s}
+.basket.hot{background:#fff;transform:scale(1.06)}.basket .nm{font-size:16px;text-align:center}.basket .ic{font-size:34px}.basket .cnt{font-size:26px;display:flex;flex-wrap:wrap;justify-content:center;max-width:160px;line-height:1.15}
+.baskets{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}.tile.emo{font-size:44px;min-width:68px;height:68px}
+.room{position:relative;width:100%;height:290px;border-radius:22px;background:linear-gradient(#ffe9c7 0 62%,#d8a774 62%);overflow:hidden}
+.toy{position:absolute;font-size:44px;cursor:grab;z-index:3;touch-action:none;transition:transform .2s}.toy.sel{filter:drop-shadow(0 0 8px #ffb703);transform:scale(1.2)}
+.tbox{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);font-size:80px;line-height:1;z-index:2;border-radius:20px;padding:0 10px}.tbox.hot{background:#ffd23b88}
+.tbox small{display:block;font-size:14px;font-weight:800;text-align:center}
+.mouth{position:relative;width:100%;height:300px;border-radius:22px;background:radial-gradient(circle at 50% 55%,#ffd7de,#ff9fb2);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.mouth .tooth{font-size:210px;line-height:1;filter:drop-shadow(0 6px 0 rgba(0,0,0,.1))}
+.germ{position:absolute;font-size:46px;border:0;background:none;padding:0;animation:wob 1s ease-in-out infinite;cursor:pointer}
+@keyframes wob{50%{transform:rotate(15deg) scale(1.1)}}
+.spark{position:absolute;font-size:40px;pointer-events:none;animation:fade 1s forwards}
+.pickav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.pickav button{border:0;background:#fff;border-radius:16px;font-size:38px;padding:4px 8px;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.pickav button.on{outline:4px solid #ffd23b;transform:translateY(-3px)}
+.shelf{width:min(980px,100%);margin:4px auto 12px;background:#ffffffcc;border-radius:24px;padding:12px 16px;box-shadow:0 6px 0 rgba(0,0,0,.08);text-align:center}
+.shelf h2{margin:4px 0 8px;font-size:20px}.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bdg{width:104px;border-radius:18px;background:#fff;padding:8px 4px;box-shadow:0 4px 0 rgba(0,0,0,.12);font-weight:800;font-size:12px}.bdg b{display:block;font-size:38px}.bdg.no{filter:grayscale(1);opacity:.45}
+@media (max-width:480px){.meters{min-width:110px}.av{font-size:36px}.room,.mouth{height:250px}.mouth .tooth{font-size:160px}}
+@media (max-height:520px){.hc b{font-size:40px}.hero{padding:2px 10px}.av{font-size:30px}.room,.mouth{height:200px}.mouth .tooth{font-size:130px}}
+</style>
+      <!--SEO-->
+    <title>Habit Hero – Free Good Habits Game for Kids: Daily Routine | Kids Games 4u</title>
+    <meta name="description" content="Free good habits game for kids aged 4-9. Follow a whole day from sunrise to bedtime: brush away germs, pick healthy food, tidy toys, pack your bag and choose good habits over bad ones. 11 levels." />
+    <meta name="keywords" content="good habits for kids, good habits vs bad habits game, daily routine game for kids, healthy habits game, hygiene game for kids, Kids Games 4u" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#7cc6ff" />
+    <link rel="canonical" href="https://kidsgames4u.com/games/habit-hero/index.html" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:site_name" content="Kids Games 4u" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Habit Hero – Free Good Habits Game for Kids | Kids Games 4u" />
+    <meta property="og:description" content="Follow a whole day from sunrise to bedtime and choose good habits. 11 levels with mini-games." />
+    <meta property="og:url" content="https://kidsgames4u.com/games/habit-hero/index.html" />
+    <meta property="og:image" content="https://kidsgames4u.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Habit Hero – Free Good Habits Game for Kids | Kids Games 4u" />
+    <meta name="twitter:description" content="Follow a whole day from sunrise to bedtime and choose good habits. 11 levels with mini-games." />
+    <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Habit Hero","url":"https://kidsgames4u.com/games/habit-hero/index.html","description":"Free good habits game for kids aged 4-9. Follow a whole day from sunrise to bedtime and choose good habits over bad ones.","applicationCategory":"EducationalApplication","genre":"Educational","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":4,"suggestedMaxAge":9},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Learn & Play","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Habit Hero","item":"https://kidsgames4u.com/games/habit-hero/index.html"}]}]</script>
+    <!--/SEO-->
+  <script src="/games/_shared/nav.js"></script>
+</head>
+<body><div id="app"></div>
+    <!--SEO-BODY-->
+    <script type="application/json" id="about-data">{"name":"Habit Hero","title":"Habit Hero – Free Good Habits Game for Kids","intro":"Habit Hero follows a child's whole day, from waking up at sunrise to sleeping under the stars. Kids pick the good habit from two picture cards, brush germs off a tooth, fill a healthy plate, wash hands step by step, tidy their toys and pack their school bag. Every good habit fills the Energy, Clean and Smile meters.","skills":["Morning and bedtime routines","Hygiene: brushing, bathing, handwashing","Healthy food choices","Good manners and sharing","Tidiness and getting ready for school"],"how":"Listen to both cards, then tap the good habit. Play the mini-games: tap the germs, drag food to the right basket, tap the steps in order, drag toys into the toy box and pack the right things in your bag. Earn a badge for every part of the day.","ages":"4-9","related":[{"name":"Safety Scout","url":"/games/safety-scout/index.html"},{"name":"Where Is Kitty?","url":"/games/where-is-kitty/index.html"},{"name":"Spell Gaps","url":"/games/spell-gaps/index.html"},{"name":"Tick Tock Clock","url":"/games/tick-tock-clock/index.html"}]}</script>
+    <noscript>
+      <main style="font-family:system-ui,sans-serif;max-width:720px;margin:30px auto;padding:0 16px">
+        <p><a href="/">&larr; Kids Games 4u</a></p>
+        <h1>Habit Hero – Free Good Habits Game for Kids</h1>
+        <p>Habit Hero follows a child's whole day, from sunrise to bedtime. Kids choose good habits, brush germs, fill a healthy plate, wash hands step by step, tidy toys and pack their school bag.</p>
+        <h2>More free games</h2><ul><li><a href="/games/safety-scout/index.html">Safety Scout – Safe or Unsafe Game</a></li><li><a href="/games/where-is-kitty/index.html">Where Is Kitty? – Prepositions Game</a></li></ul>
+        <p>Please turn on JavaScript to play.</p>
+      </main>
+    </noscript>
+    <!--/SEO-BODY--><script src="../_shared/kids.js"></script>
+<script>
+// Ad hooks for the site (optional). Set these from outside the game:
+//   HabitHero.onLevelComplete = n => {...}          called after level n (1-based) is won, before the result card is shown
+//   HabitHero.onRewardedHintRequested = grant => {...}  call grant() after a rewarded ad to give the hint (without a handler the hint is free)
+window.HabitHero=window.HabitHero||{onLevelComplete:null,onRewardedHintRequested:null};
+// ---------- good vs bad habit pairs: [clock, good card, bad card, meter (e energy / c clean / s smile), tip] ----------
+const H={
+ wake:[['6:00 AM',['⏰😊','Wake up on time'],['😴🛏️','Keep sleeping after the alarm'],'e','Waking up on time gives you a calm, happy morning.'],
+  ['6:05 AM',['🥛💧','Drink a glass of water'],['🥱🚫','Skip your water'],'e','Water wakes up your brain and body!'],
+  ['6:10 AM',['🛏️✨','Make your bed neatly'],['🛏️🌀','Leave your blanket in a mess'],'c','A tidy bed makes a tidy room.'],
+  ['6:15 AM',['🤸☀️','Stretch your arms and legs'],['📱🛏️','Play on the phone in bed'],'e','Stretching wakes up your muscles.'],
+  ['6:30 AM',['🪥😁','Brush your teeth for two minutes'],['🍬🦷','Skip brushing your teeth'],'c','Brushing keeps germs away and teeth strong.'],
+  ['6:45 AM',['🛁🧼','Take a bath with soap'],['🙈🛁','Skip your bath'],'c','A bath with soap washes away dirt and germs.'],
+  ['7:15 AM',['🥣🍌','Eat fruit and cereal for breakfast'],['🍟🥤','Eat chips for breakfast'],'e','A healthy breakfast gives you energy till lunch.']],
+ ready:[['7:40 AM',['👕✨','Wear a clean uniform'],['👕🟤','Wear yesterday\'s dirty shirt'],'c','Clean clothes help you feel fresh all day.'],
+  ['7:50 AM',['🙏👪','Say good morning to your family'],['😒🚪','Walk away without a word'],'s','Kind words make everyone\'s day happy.'],
+  ['8:00 AM',['👟🎀','Tie your shoe laces properly'],['👟〰️','Leave your laces loose'],'e','Loose laces can make you trip and fall.'],
+  ['8:10 AM',['🎒✅','Check your bag before you go'],['🏃❓','Rush out and forget your books'],'s','Checking your bag means no missing books.']],
+ school:[['9:00 AM',['👂🧑‍🏫','Listen when the teacher talks'],['🗣️😜','Chat with friends in class'],'s','Listening helps you learn new things.'],
+  ['9:30 AM',['🙋','Raise your hand to speak'],['📢','Shout out the answer'],'s','Raising your hand gives everyone a turn.'],
+  ['10:30 AM',['🧸🤝','Share toys and take turns'],['🧸😠','Grab all the toys'],'s','Sharing makes play time fun for everyone.'],
+  ['11:00 AM',['🗑️📄','Put paper in the dustbin'],['📄🌬️','Throw paper on the floor'],'c','Dustbins keep our school clean.'],
+  ['11:30 AM',['✏️📚','Finish your class work'],['✏️💤','Daydream and leave it'],'s','Finishing your work makes you proud.'],
+  ['12:30 PM',['🥦😋','Eat your vegetables'],['🥦🚮','Throw your vegetables away'],'e','Vegetables give your body vitamins. Do not waste food.'],
+  ['1:00 PM',['🙏🧹','Say thank you to the helpers'],['🙄','Ignore the helpers'],'s','Saying thank you makes helpers feel happy.']],
+ clean:[['12:15 PM',['🤧💪','Sneeze into your elbow'],['🤧👥','Sneeze on your friends'],'c','Your elbow stops germs from flying to friends.'],
+  ['12:20 PM',['✂️💅','Keep your nails short and clean'],['💅🦠','Bite your nails'],'c','Germs hide under nails. Keep them short and clean.'],
+  ['12:25 PM',['🧼🚽','Wash hands after the toilet'],['🚽🏃','Run out without washing'],'c','Washing hands after the toilet stops tummy germs.'],
+  ['12:30 PM',['🧦✨','Wear clean socks every day'],['🧦🤢','Wear smelly socks again'],'c','Clean socks keep your feet healthy.']],
+ play:[['2:00 PM',['⚽🌳','Play outside in fresh air'],['📺🛋️','Watch TV all afternoon'],'e','Outdoor play makes your body strong.'],
+  ['2:30 PM',['📖😊','Read a story book'],['🎮😵','Play video games for hours'],'s','Books take you on adventures and grow your brain.'],
+  ['3:00 PM',['💧😊','Drink water when you are thirsty'],['🥤🍭','Drink fizzy soda'],'e','Water is the best drink. Soda has lots of sugar.'],
+  ['3:30 PM',['🧢☀️','Wear a cap in the hot sun'],['☀️🥵','Play in hot sun with no cap'],'e','A cap keeps the hot sun off your head.'],
+  ['4:00 PM',['🍉','Eat watermelon for a snack'],['🍫🍫','Eat lots of chocolates'],'e','Fruit is a sweet snack that is good for you.'],
+  ['4:30 PM',['🙏','Say thank you when someone helps'],['😶','Forget to say thank you'],'s','Thank you is a magic word!'],
+  ['5:00 PM',['🧘','Take a stretch break'],['🪑😩','Sit still for hours'],'e','Short breaks keep your body happy.']],
+ evening:[['5:30 PM',['🧹🏠','Help with small chores'],['🛋️😴','Lie on the sofa while others work'],'s','Helping at home makes you a great team player.'],
+  ['6:00 PM',['🍎','Pick an apple for a snack'],['🍩','Pick a big donut'],'e','Apples give you lasting energy.'],
+  ['6:30 PM',['📚🔕','Do homework with the phone away'],['📚📱','Do homework while watching videos'],'s','Focus makes homework quick and easy.'],
+  ['7:00 PM',['⏸️🚶','Take a short break, then study again'],['😫📚','Keep studying until you are very tired'],'e','Little breaks help your brain remember more.'],
+  ['7:30 PM',['🍽️👪','Eat dinner with family, TV off'],['🍽️📺','Eat dinner in front of the TV'],'s','Family dinner is time to talk and share your day.'],
+  ['7:45 PM',['🙏🍽️','Say thank you for the food'],['😖🍽️','Complain about the food'],'s','Being thankful makes meals happy.']],
+ night:[['8:30 PM',['📖🌙','Read a storybook before bed'],['📱🌙','Play on the phone in bed'],'e','Screens keep your brain awake. Books help you sleep.'],
+  ['8:40 PM',['🪥🌙','Brush your teeth at night'],['🍬🌙','Eat sweets and go to sleep'],'c','Night brushing stops germs working while you sleep.'],
+  ['8:45 PM',['🎒✅','Pack your bag for tomorrow'],['🎒❓','Leave it for the morning rush'],'s','A packed bag means an easy morning.'],
+  ['8:50 PM',['🧼🦶','Wash your face, hands and feet'],['🦶🟤','Sleep with dirty feet'],'c','Clean skin helps you sleep fresh.'],
+  ['8:55 PM',['👕🌙','Change into night clothes'],['👔🌙','Sleep in your school uniform'],'c','Night clothes are soft and comfy for sleep.'],
+  ['9:00 PM',['🤗💤','Say good night kindly'],['😠💤','Go to bed grumpy'],'s','A kind good night gives everyone sweet dreams.'],
+  ['9:05 PM',['💡❌','Switch off the lights and fan'],['💡💡','Leave all the lights on'],'s','Saving power helps our planet.'],
+  ['9:30 PM',['🌙😴','Sleep early, on time'],['🌙👀','Stay up very late'],'e','Sleep helps you grow tall and strong!']]};
+const ORDER={morning:{t:'Morning time! Put your routine in order.',clock:'6:00 AM',steps:['⏰ Wake up','🪥 Brush your teeth','🛁 Take a bath','👕 Wear your uniform','🥣 Eat breakfast'],tip:'Wake, brush, bath, dress, eat. A smooth morning!',m:'c'},
+ hands:{t:'Lunch time! Wash your hands in the right order.',clock:'12:10 PM',steps:['💧 Wet your hands','🧼 Add soap','👐 Scrub for twenty seconds','🚿 Rinse with water','🧻 Dry with a clean towel'],tip:'Wet, soap, scrub, rinse, dry. Germs are gone!',m:'c'}};
+// sorting games
+const FOOD={good:[['🍎','apple'],['🥦','broccoli'],['🥕','carrot'],['🍌','banana'],['🥚','egg'],['🍚','rice'],['🥛','milk'],['🍇','grapes'],['🥒','cucumber']],
+ bad:[['🍟','chips'],['🍩','donut'],['🍭','lollipop'],['🥤','soda'],['🍫','chocolate'],['🧁','cupcake']]};
+const BAG={good:[['📚','books'],['✏️','pencils'],['📏','ruler'],['🍱','lunch box'],['💧','water bottle'],['🎨','colours']],
+ bad:[['🎮','game'],['📱','phone'],['🧸','teddy'],['🍭','candy'],['🪀','yo-yo']]};
+const TOYS=['🧸','🚗','⚽','🪀','🧩','🎲','🪁','🚂','🦖','🏀'];
+const BADGES=[['🌅','Morning Champ'],['🏫','School Star'],['🥦','Healthy Hero'],['🧸','Tidy Titan'],['📚','Study Star'],['🌙','Bedtime Boss']];
+const AV=['👧','🧒','👦','👧🏽','👦🏽','👧🏾','👦🏾','🧕'];
+let avatar=AV[0];try{avatar=localStorage.getItem('dg_habit-hero_av')||AV[0];}catch(e){}
+// sky follows the sun and moon across the day
+const worlds={dawn:{label:'Sunrise',bg:['#ffe8b3','#ffb36b'],deco:['🌅','🐓','☀️','🌼']},morning:{label:'Morning',bg:['#fff7d1','#8fd3ff'],deco:['☀️','🏫','🎒','☁️']},
+ noon:{label:'School Day',bg:['#d9f2ff','#5bb6f0'],deco:['☁️','✏️','🍎','📚']},afternoon:{label:'Afternoon',bg:['#c8f1ff','#4aa3df'],deco:['⚽','🌳','🪁','☁️']},
+ sunset:{label:'Evening',bg:['#ffd1a1','#f2726b'],deco:['🌇','🏠','🍽️','📚']},night:{label:'Night',bg:['#5a5fb8','#262c66'],deco:['⭐','🌙','✨','💤']}};
+const pairs=(k,n)=>K.sample(H[k],Math.min(n,H[k].length)).sort((a,b)=>tm(a[0])-tm(b[0])).map(x=>({type:'pair',clock:x[0],g:x[1],b:x[2],m:x[3],tip:x[4]}));
+const tm=s=>{let[h,m]=s.split(/[: ]/);h=+h%12+(/PM/.test(s)?12:0);return h*60+ +m;};
+const levels=[
+ {name:'Sunrise Wake-Up',world:'dawn',time:0,plan:()=>pairs('wake',6)},
+ {name:'Brush the Germs',world:'dawn',time:30,plan:()=>[{type:'brush',clock:'6:30 AM'}]},
+ {name:'Get Ready!',world:'morning',time:0,plan:()=>[{type:'order',...ORDER.morning},...pairs('ready',4)]},
+ {name:'School & Friends',world:'noon',time:15,plan:()=>pairs('school',7)},
+ {name:'Healthy Plate',world:'noon',time:0,plan:()=>[{type:'sort',clock:'12:30 PM',set:FOOD,n:[6,4],labels:[['🍽️','Everyday food'],['🍩','Sometimes food']],t:'Fill your plate! Everyday food on the plate, sometimes food on the side.'}]},
+ {name:'Clean Hands',world:'noon',time:15,plan:()=>[{type:'order',...ORDER.hands},...pairs('clean',4)]},
+ {name:'Sunny Afternoon',world:'afternoon',time:12,plan:()=>pairs('play',7)},
+ {name:'Tidy Toys',world:'afternoon',time:40,plan:()=>[{type:'tidy',clock:'5:00 PM'}]},
+ {name:'Study & Dinner',world:'sunset',time:10,plan:()=>pairs('evening',6)},
+ {name:'Pack Your Bag',world:'sunset',time:0,plan:()=>[{type:'sort',clock:'8:45 PM',set:BAG,n:[5,4],labels:[['🎒','School bag'],['🏠','Leave at home']],t:'Pack your school bag! What do you need for school?'}]},
+ {name:'Bedtime Boss',world:'night',time:8,plan:()=>pairs('night',8)}];
+const GOOD=['Yay!','Super habit!','Great choice!','You are a Habit Hero!','Well done!'];
+
+function build(L,api,stage,li){
+ const plan=L.plan();let qi=0,mistakes=0,combo=0,tmr=null;const M={e:3,c:3,s:3};
+ const hero=K.h('div','hero'),card=K.h('div','hcard');stage.append(hero,card);
+ const gone=()=>!stage.isConnected||document.querySelector('.modal');
+ const drawHero=(re)=>{hero.innerHTML=`<div class="av${re?' '+re[1]:''}">${avatar}${re?`<span class="re">${re[0]}</span>`:''}</div><div class="meters">${[['e','⚡'],['c','🧼'],['s','😊']].map(([k,i])=>`<div class="mt ${k}">${i}<div class="bar"><i style="width:${M[k]*20}%"></i></div></div>`).join('')}</div><span class="clock" id="clk"></span>`;};
+ drawHero();const setClock=c=>{const e=hero.querySelector('#clk');if(e)e.textContent='🕒 '+c;};
+ // a good habit fills the meter; a bad one drains it and the hero looks sleepy, messy or grumpy
+ const meter=(k,ok)=>{M[k]=Math.max(0,Math.min(5,M[k]+(ok?1:-1)));drawHero(ok?['✨','yay']:[{e:'😴',c:'💩',s:'😠'}[k],'oh']);setClock(cur&&cur.clock||'');};
+ let cur=null;
+ const stopT=()=>{clearInterval(tmr);tmr=null;};
+ const startT=(sec,onEnd)=>{if(!sec)return;const tb=K.h('div','tbar','<i></i>');card.appendChild(tb);const t0=Date.now();
+  tmr=setInterval(()=>{if(gone())return stopT();const left=1-(Date.now()-t0)/(sec*1000);tb.firstChild.style.width=Math.max(0,left*100)+'%';tb.classList.toggle('low',left<.3);if(left<=0){stopT();onEnd();}},100);};
+ function feedback(ok,text,m,key){stopT();if(m)meter(m,ok);if(ok){combo++;K.sfx.ok();if(combo%3===0){K.sfx.cheer();K.confetti(50);}}else{combo=0;mistakes++;K.sfx.bad();}
+  const fb=K.h('div','fb '+(ok?'good':'bad')),line=K.h('div','say-line');fb.appendChild(line);card.appendChild(fb);
+  const nx=K.h('button','btn pri','Next ▶');let moved=false;const go=()=>{if(moved||gone())return;moved=true;next();};nx.onclick=()=>{K.audio();go();};fb.appendChild(nx);
+  K.sayLine(line,text,{key},()=>setTimeout(go,900));}
+ function next(){if(gone())return;stopT();if(qi>=plan.length){api.progress(1,1);try{HabitHero.onLevelComplete&&HabitHero.onLevelComplete(li+1);}catch(e){}return api.win(mistakes===0?3:mistakes<=2?2:1);}
+  cur=plan[qi++];api.progress(qi-1,plan.length);card.innerHTML='';setClock(cur.clock);({pair:askPair,order:askOrder,sort:askSort,brush:askBrush,tidy:askTidy})[cur.type](cur);}
+ // two picture cards side by side; the voice reads each card while it lights up, then the timer starts
+ function askPair(it){const cap=K.h('div','say-line');const pr=K.h('div','pair');card.append(cap,pr);let done=false;
+  const cards=K.shuffle([[it.g,1],[it.b,0]]).map(([c,good])=>{const b=K.h('button','hc',`<b>${c[0]}</b>${c[1]}`);b._good=!!good;b.onclick=()=>{K.audio();if(done)return;done=true;
+    pr.querySelectorAll('.hc').forEach(x=>{x.disabled=true;x.classList.remove('hint');x.classList.add(x._good?'good':'bad');});
+    feedback(!!good,(good?K.pick(GOOD)+' ':'Oh no! That is a bad habit. ')+it.tip,it.m,'');};pr.appendChild(b);return b;});
+  const tools=K.h('div','row');const hint=K.h('button','btn small','💡 Hint');tools.appendChild(hint);card.appendChild(tools);
+  hint.onclick=()=>{K.audio();const grant=()=>{if(done||gone())return;cards.find(c=>c._good).classList.add('hint');K.say('Look at the glowing card!');};
+   try{if(typeof HabitHero.onRewardedHintRequested==='function')HabitHero.onRewardedHintRequested(grant);else grant();}catch(e){grant();}};
+  K.saySeq([{t:'Which is the good habit?',el:cap},{t:cards[0].textContent.replace(/\p{Extended_Pictographic}|️|‍/gu,''),el:cards[0]},{t:'or',gap:120},{t:cards[1].textContent.replace(/\p{Extended_Pictographic}|️|‍/gu,''),el:cards[1]}],
+   ()=>{if(!done&&!gone())startT(L.time,()=>{if(done)return;done=true;pr.querySelectorAll('.hc').forEach(x=>{x.disabled=true;x.classList.add(x._good?'good':'bad');});feedback(false,'Time is up! '+it.tip,it.m,'');});});
+  cap.textContent='Which is the good habit?';}
+ function askOrder(it){const cap=K.h('div','say-line');const dl=K.h('div','done-list'),list=K.h('div','steps');card.append(cap,dl,list);let n=0,slips=0;
+  K.shuffle(it.steps.map((s,i)=>({s,i}))).forEach(o=>{const b=K.h('button','step',o.s);b._i=o.i;b.onclick=()=>{K.audio();if(n>=it.steps.length)return;
+    if(o.i===n){n++;b.remove();dl.appendChild(K.h('div','step',`${n}. ${o.s}`));K.sfx.pop();K.say(o.s);if(n===it.steps.length)feedback(slips===0,(slips===0?K.pick(GOOD)+' ':'You did it! ')+it.tip,it.m,'');}
+    else{b.classList.remove('wrong');void b.offsetWidth;b.classList.add('wrong');slips++;K.sfx.bad();K.say('Not yet. What comes first?');}};list.appendChild(b);});
+  K.sayLine(cap,it.t);}
+ // drag each item into the right basket (or tap it, then tap a basket)
+ function askSort(it){const cap=K.h('div','say-line'),box=K.h('div');card.append(cap,box);const items=K.shuffle([...K.sample(it.set.good,it.n[0]).map(x=>[...x,'good']),...K.sample(it.set.bad,it.n[1]).map(x=>[...x,'bad'])]);let d=0,slips=0;
+  const ctl=K.placement(box,{multi:true,slots:[{key:'good'},{key:'bad'}],tiles:items.map(([e,n,k])=>({key:n,k,html:e,n})),accepts:(t,s)=>t.k===s.key,
+   onCorrect:t=>{d++;api.progress(qi-1+d/items.length,plan.length);K.say(t.n);},
+   onWrong:t=>{slips++;K.say(it.set===FOOD?(t.k==='good'?`${t.n} is an everyday food. Put it on the plate!`:`${t.n} is a sometimes food.`):(t.k==='good'?`You need the ${t.n} at school!`:`The ${t.n} stays at home.`));},
+   onDone:()=>{mistakes+=Math.min(slips,3);feedback(slips===0,(slips===0?K.pick(GOOD)+' ':'All sorted! ')+(it.set===FOOD?'Everyday foods help you grow. Sometimes foods are only a small treat.':'A neatly packed bag means a happy school day.'),it.set===FOOD?'e':'s','');}});
+  ctl.slotEls.forEach((se,i)=>{se.className='basket';se.innerHTML=`<div class="ic">${it.labels[i][0]}</div><div class="nm">${it.labels[i][1]}</div>`;});ctl.slotEls[0].parentNode.className='baskets';ctl.tiles.forEach(t=>t.classList.add('emo'));
+  K.sayLine(cap,it.t);}
+ // tap the germs to brush them away before time runs out
+ function askBrush(it){const cap=K.h('div','say-line'),mo=K.h('div','mouth','<div class="tooth">🦷</div>');card.append(cap,mo);let left=12,live=0,over=false,spawnT=null;
+  const spawn=()=>{if(over||gone()||live>=3||left-live<=0)return;live++;const g=K.h('button','germ','🦠');g.style.left=(12+Math.random()*70)+'%';g.style.top=(10+Math.random()*68)+'%';
+   g.onclick=()=>{K.audio();if(over)return;const s=K.h('div','spark','✨');s.style.left=g.style.left;s.style.top=g.style.top;mo.appendChild(s);setTimeout(()=>s.remove(),900);g.remove();live--;left--;K.sfx.pop();api.progress(12-left,12);
+    if(left===0){over=true;clearInterval(spawnT);stopT();feedback(true,'Sparkling clean! Brush in the morning and at night to keep germs away.','c','');}};mo.appendChild(g);};
+  K.sayLine(cap,'Oh no, germs! Tap the germs to brush them away.',{},()=>{if(gone())return;spawn();spawn();spawnT=setInterval(spawn,700);
+   startT(L.time,()=>{if(over)return;over=true;clearInterval(spawnT);mistakes+=2;feedback(false,'Some germs are still there! Brush for two whole minutes, every morning and night.','c','');});});}
+ // drag the scattered toys into the toy box
+ function askTidy(it){const cap=K.h('div','say-line'),room=K.h('div','room'),tb=K.h('div','tbox','🧺<small>Toy box</small>');card.append(cap,room);room.appendChild(tb);
+  const toys=K.sample(TOYS,8);let left=toys.length,sel=null,over=false;
+  const put=t=>{if(over||!t.isConnected)return false;t.remove();left--;sel=null;K.sfx.ok();api.progress(toys.length-left,toys.length);
+   if(left===0){over=true;stopT();feedback(true,'Your room is tidy! Toys in the box means no tripping and easy finding.','c','');}return true;};
+  toys.forEach((e,i)=>{const t=K.h('div','toy',e);t.style.left=(4+(i%4)*24+Math.random()*8)+'%';t.style.top=(6+Math.floor(i/4)*30+Math.random()*10)+'%';room.appendChild(t);
+   K.drag(t,{targets:()=>[tb],onDrop:()=>put(t),onTap:()=>{if(sel)sel.classList.remove('sel');sel=sel===t?null:t;if(sel)sel.classList.add('sel');K.sfx.pop();}});});
+  tb.onclick=()=>{if(sel)put(sel);};
+  K.sayLine(cap,'Tidy up time! Drag the toys into the toy box.',{},()=>{if(!gone()&&!over)startT(L.time,()=>{if(over)return;over=true;mistakes+=2;feedback(false,'Time is up! Tidy a little every day, so it is quick and easy.','c','');});});}
+ api.coach(['Good morning! Pick the good habits.','Brush brush brush!','Let us get ready for school!','School time! Timer is on.','Lunch time! Fill your plate.','Clean hands, happy tummy!','Afternoon fun!','Tidy up time!','Evening! Homework and dinner.','Pack for tomorrow!','Bedtime boss round! Be quick!'][li],false);
+ next();
+}
+// ---------- level map extras: pick your hero + badge shelf ----------
+function mapExtras(main,save,wrap){const sh=K.h('section','shelf','<h2>Choose your hero</h2>');const pa=K.h('div','pickav');sh.appendChild(pa);
+ AV.forEach(a=>{const b=K.h('button',a===avatar?'on':'',a);b.onclick=()=>{K.audio();K.sfx.pop();avatar=a;try{localStorage.setItem('dg_habit-hero_av',a);}catch(e){}pa.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));};pa.appendChild(b);});
+ sh.appendChild(K.h('h2','','🏆 Habit Hero Badges'));const row=K.h('div','badges');sh.appendChild(row);
+ BADGES.forEach(([e,n],i)=>{const lv=i<5?[i*2,i*2+1]:[10];const ok=lv.every(k=>(save.stars[k]||0)>0);row.appendChild(K.h('div','bdg'+(ok?'':' no'),`<b>${e}</b>${n}`));});
+ main.insertBefore(sh,wrap);}
+K.start({id:'habit-hero',title:'Habit Hero',emoji:'🦸‍♀️',worlds,levels,build,onMap:mapExtras});
+</script></body></html>
