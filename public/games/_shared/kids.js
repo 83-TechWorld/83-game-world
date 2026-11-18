@@ -133,6 +133,7 @@ function start(cfg){
     for(const w of worlds){const W=(cfg.worlds||{})[w.k]||{label:w.k,deco:['⭐']};const box=h('div','world',`<h2>${W.deco[0]} ${W.label}</h2>`),lvls=h('div','lvls');
       for(const i of w.items){const L=cfg.levels[i],unlocked=i<save.unlocked,s=save.stars[i]||0,b=h('button','lv'+(i===save.unlocked-1&&!s?' next':''),`<b>${unlocked?i+1:'🔒'}</b><small>${L.name}</small><span class="st">${'⭐'.repeat(s)}${'☆'.repeat(unlocked?3-s:0)}</span>`);b.disabled=!unlocked;b.onclick=()=>{audio();sfx.whoosh();play(i);};lvls.appendChild(b);}
       box.appendChild(lvls);wrap.appendChild(box);}
+    if(cfg.onMap)try{cfg.onMap(main,save,wrap);}catch(e){} // game-specific extras on the level map (e.g. badge shelf)
     const ad=document.getElementById('about-data');if(ad){try{const d=JSON.parse(ad.textContent);main.appendChild(h('section','about-game',`<h2>About ${d.name}: a free game for kids ${d.ages}</h2><p>${d.intro}</p>${d.skills&&d.skills.length?`<h3>What kids learn</h3><ul>${d.skills.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}<h3>How to play</h3><p>${d.how}</p><h3>More free games</h3><p>${d.related.map(r=>`<a href="${r.url}">${r.name}</a>`).join(' &middot; ')} &middot; <a href="/">All Kids Games 4u games</a></p>`));}catch(e){}}
     const nxt=Math.min(save.unlocked,cfg.levels.length);coachSay(save.unlocked>1?'Welcome back! Ready for level '+nxt+'?':'Hi! Let us start with level 1!');}
   function play(i){window.GNav&&GNav.enter(()=>showMap());stopTimer();const L=cfg.levels[i];main.innerHTML='';setWorld(L.world);let mistakes=0,over=false;

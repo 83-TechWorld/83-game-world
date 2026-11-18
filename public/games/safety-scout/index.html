@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.hud .lt{white-space:nowrap}
+.sbar{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
+.shields{background:#fff;border-radius:999px;padding:4px 14px;font-size:24px;box-shadow:0 3px 0 rgba(0,0,0,.14);letter-spacing:2px}
+.shields .off{filter:grayscale(1);opacity:.3}
+.combo{background:#fff;border-radius:999px;padding:5px 14px;font-weight:800;box-shadow:0 3px 0 rgba(0,0,0,.14);min-width:90px;text-align:center}
+.combo.hot{background:linear-gradient(90deg,#ffd23b,#ff8a3d);animation:pop .4s}
+.scard{position:relative;width:min(640px,96vw);background:#fff;border-radius:28px;padding:14px 16px 16px;box-shadow:0 8px 0 rgba(0,0,0,.14);display:flex;flex-direction:column;align-items:center;gap:6px}
+.scene-e{font-size:clamp(60px,12vw,92px);line-height:1.1;letter-spacing:6px;animation:pop .45s}
+.scout{position:absolute;right:-6px;top:-22px;font-size:46px;transition:transform .2s}
+.scout.yay{animation:bob .5s 2}.scout.oh{animation:shake .4s}
+.sbtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+.sbtn{border:0;border-radius:22px;padding:14px 22px;font-size:clamp(20px,3.6vw,28px);font-weight:800;min-width:150px;box-shadow:0 6px 0 rgba(0,0,0,.2);color:#fff;transition:transform .12s}
+.sbtn:active{transform:translateY(3px)}.sbtn.safe{background:linear-gradient(#3fd27a,#22a85a)}.sbtn.unsafe{background:linear-gradient(#ff9a4a,#f0602b)}
+.sbtn:disabled{opacity:.45}.sbtn.pickd{opacity:1;outline:5px solid #ffd23b}
+.tbar{width:100%;height:12px;background:#eef1f8;border-radius:99px;overflow:hidden}.tbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#3fd27a,#ffd23b);border-radius:99px;transition:width .1s linear}
+.tbar.low i{background:#ff5a6a}
+.fb{width:100%;border-radius:20px;padding:8px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;animation:pop .35s}
+.fb.good{background:#e1f8e9}.fb.bad{background:#fff0e3}
+.fb .say-line{font-size:clamp(17px,2.8vw,23px)}
+.street{position:relative;width:100%;border-radius:20px;padding:10px;background:linear-gradient(#bfe6ff 0 30%,#8fd17a 30% 42%,#5b6270 42% 78%,#8fd17a 78%);display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.street:before{content:'';position:absolute;left:0;right:0;top:60%;border-top:5px dashed #fff;opacity:.8}
+.spot{position:relative;z-index:1;border:0;border-radius:18px;background:#ffffffee;padding:8px;display:flex;flex-direction:column;align-items:center;box-shadow:0 5px 0 rgba(0,0,0,.18);font-weight:800;font-size:14px}
+.spot b{font-size:44px;line-height:1.1}.spot.good{background:#b9f3c9}.spot.wrong{background:#ffc5cb;animation:shake .35s}
+.steps{display:flex;flex-direction:column;gap:8px;width:100%}
+.step{border:0;border-radius:16px;background:#f2f5ff;padding:10px 14px;font-size:clamp(16px,2.8vw,21px);font-weight:800;text-align:left;box-shadow:0 4px 0 rgba(0,0,0,.14)}
+.step.done{background:#d9f7e2}.step.wrong{background:#ffc5cb;animation:shake .35s}
+.done-list{display:flex;flex-direction:column;gap:6px;width:100%}.done-list .step{background:#d9f7e2;box-shadow:none}
+.shelf{width:min(980px,100%);margin:4px auto 12px;background:#ffffffcc;border-radius:24px;padding:12px 16px;box-shadow:0 6px 0 rgba(0,0,0,.08);text-align:center}
+.shelf h2{margin:0 0 8px;font-size:21px}
+.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bdg{width:104px;border-radius:18px;background:#fff;padding:8px 4px;box-shadow:0 4px 0 rgba(0,0,0,.12);font-weight:800;font-size:12px}
+.bdg b{display:block;font-size:40px}.bdg.no{filter:grayscale(1);opacity:.45}
+.cert-card{width:min(760px,96vw)!important}.cert-card canvas{width:100%;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.cert-card input{font:inherit;font-size:20px;padding:8px 14px;border-radius:14px;border:3px solid #cfd8ff;width:min(320px,80%);text-align:center;margin:6px 0 10px}
+@media (max-height:520px){.scene-e{font-size:50px}.sbtn{padding:8px 16px;min-width:120px}.scout{font-size:32px;top:-12px}.spot b{font-size:32px}}
+</style>
+      <!--SEO-->
+    <title>Safety Scout – Free Safe or Unsafe School Safety Game for Kids | Kids Games 4u</title>
+    <meta name="description" content="Free school safety game for kids aged 5-10. Decide safe or unsafe in the classroom, playground, bus, street, fire drills, field trips and with strangers. Earn badges and a Junior Safety Inspector certificate." />
+    <meta name="keywords" content="safety game for kids, safe or unsafe quiz, school safety for kids, road safety game, stranger danger game, fire drill for kids, Kids Games 4u" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#7cc6ff" />
+    <link rel="canonical" href="https://kidsgames4u.com/games/safety-scout/index.html" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:site_name" content="Kids Games 4u" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Safety Scout – Free Safe or Unsafe School Safety Game for Kids | Kids Games 4u" />
+    <meta property="og:description" content="Safe or unsafe? Learn school, playground, road, fire and stranger safety. Earn badges and a printable certificate." />
+    <meta property="og:url" content="https://kidsgames4u.com/games/safety-scout/index.html" />
+    <meta property="og:image" content="https://kidsgames4u.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Safety Scout – Free Safe or Unsafe School Safety Game for Kids | Kids Games 4u" />
+    <meta name="twitter:description" content="Safe or unsafe? Learn school, playground, road, fire and stranger safety. Earn badges and a printable certificate." />
+    <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Safety Scout","url":"https://kidsgames4u.com/games/safety-scout/index.html","description":"Free school safety game for kids aged 5-10. Decide safe or unsafe in the classroom, playground, bus, street, fire drills, field trips and with strangers.","applicationCategory":"EducationalApplication","genre":"Educational","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":5,"suggestedMaxAge":10},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Learn & Play","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Safety Scout","item":"https://kidsgames4u.com/games/safety-scout/index.html"}]}]</script>
+    <!--/SEO-->
+  <script src="/games/_shared/nav.js"></script>
+</head>
+<body><div id="app"></div>
+    <!--SEO-BODY-->
+    <script type="application/json" id="about-data">{"name":"Safety Scout","title":"Safety Scout – Free Safe or Unsafe School Safety Game","intro":"Safety Scout teaches children everyday safety at school and outside. Kids decide if each situation is safe or unsafe and hear a short, friendly rule after every answer. They spot dangers on a busy street, put fire-drill steps in order, and finish with a stranger-safety and kindness round.","skills":["Classroom and hallway safety","Playground and lunchtime safety","Bus and road safety","Fire drills and field trips","Stranger safety, privacy and kindness"],"how":"Listen to each situation, then tap SAFE or UNSAFE. You have three safety shields per level. From level 2 a timer starts after the question is read. Earn a badge for every level and collect all five to get your Junior Safety Inspector certificate.","ages":"5-10","related":[{"name":"Where Is Kitty?","url":"/games/where-is-kitty/index.html"},{"name":"Spell Gaps","url":"/games/spell-gaps/index.html"},{"name":"Tick Tock Clock","url":"/games/tick-tock-clock/index.html"},{"name":"Word Zoo","url":"/games/word-zoo/index.html"}]}</script>
+    <noscript>
+      <main style="font-family:system-ui,sans-serif;max-width:720px;margin:30px auto;padding:0 16px">
+        <p><a href="/">&larr; Kids Games 4u</a></p>
+        <h1>Safety Scout – Free Safe or Unsafe School Safety Game</h1>
+        <p>Safety Scout teaches children everyday safety at school and outside: classroom, playground, bus and road, fire drills, field trips, stranger safety and kindness.</p>
+        <h2>More free games</h2><ul><li><a href="/games/where-is-kitty/index.html">Where Is Kitty? – Prepositions Game</a></li><li><a href="/games/spell-gaps/index.html">Spell Gaps – Spelling Game</a></li></ul>
+        <p>Please turn on JavaScript to play.</p>
+      </main>
+    </noscript>
+    <!--/SEO-BODY--><script src="../_shared/kids.js"></script>
+<script>
+// ---------- situations: e = picture, t = what happens, s = is it safe?, w = the rule kids hear after answering ----------
+const Q={
+ hall:[
+  {e:'🚶‍♀️🏫',t:'Walking in the school corridor.',s:1,w:'Walking inside keeps everyone from bumping and falling.'},
+  {e:'🏃💨🏫',t:'Running fast in the corridor.',s:0,w:'You can slip or crash into a friend. Always walk inside school.'},
+  {e:'🪑↩️',t:'Rocking back on two chair legs.',s:0,w:'Keep all four chair legs on the floor, so you do not tip over.'},
+  {e:'🔌⚡🗣️',t:'You see a broken wire and tell the teacher.',s:1,w:'Broken wires can give a shock. Never touch them. Tell a grown-up.'},
+  {e:'🧍🧍‍♀️🧍',t:'Waiting for your turn in the line.',s:1,w:'Waiting your turn means no pushing and nobody gets hurt.'},
+  {e:'✂️🏃',t:'Running while holding scissors.',s:0,w:'Walk with scissors closed and pointing down.'},
+  {e:'💧🧑‍🏫',t:'Water is spilled on the floor, so you tell the teacher.',s:1,w:'Wet floors are slippery. Telling a grown-up keeps everyone safe.'},
+  {e:'🤚😵',t:'Pushing friends on the stairs.',s:0,w:'Hold the rail and take one step at a time.'},
+  {e:'🖍️👄',t:'Putting a pencil or crayon in your mouth.',s:0,w:'Things in your mouth can make you choke or get germs. Keep them on the desk.'}],
+ play:[
+  {e:'🛝⬇️',t:'Sliding down the slide, sitting, feet first.',s:1,w:'Feet first and sitting down is the safe way to slide.'},
+  {e:'🧗🛝',t:'Climbing up the slide the wrong way.',s:0,w:'Use the steps to go up. The slide is only for coming down.'},
+  {e:'🤲🎠',t:'Holding the swing with both hands.',s:1,w:'Two hands on the swing help you not to fall.'},
+  {e:'🚶‍♂️🎠',t:'Walking right in front of a moving swing.',s:0,w:'A swing can hit you hard. Walk far around it.'},
+  {e:'🥃💥',t:'Picking up broken glass from the ground.',s:0,w:'Never touch sharp things. Show a grown-up where it is.'},
+  {e:'🧼🍎',t:'Washing hands with soap before lunch.',s:1,w:'Clean hands keep germs out of your food.'},
+  {e:'⚽🤝',t:'Playing gently and taking turns.',s:1,w:'Gentle play means everybody has fun and nobody gets hurt.'},
+  {e:'🥜🧒',t:'Sharing your nuts with a friend who has an allergy.',s:0,w:'Some foods can make a friend very sick. Do not share food without asking a grown-up.'},
+  {e:'💧🥤',t:'Drinking water when you are hot and tired.',s:1,w:'Water keeps your body cool and strong.'}],
+ road:[
+  {e:'🚏🧍',t:'Waiting for the bus far back from the road.',s:1,w:'Stay back from the road edge until the bus fully stops.'},
+  {e:'🚌🙋',t:'Putting your hand out of the bus window.',s:0,w:'Keep your hands and head inside. Things outside can hit you.'},
+  {e:'🚌💺',t:'Staying in your seat while the bus is moving.',s:1,w:'Sit down and face the front until the bus stops.'},
+  {e:'⚽🚗',t:'Running into the road to get your ball.',s:0,w:'Stop! Let the ball go and ask a grown-up to get it.'},
+  {e:'🚦🤝',t:'Crossing at the green walking man, holding a grown-up\'s hand.',s:1,w:'Cross at the signal, hold hands, and look both ways.'},
+  {e:'📱🚶',t:'Crossing the road while looking at a phone.',s:0,w:'Put the phone away. Use your eyes and ears to cross.'},
+  {e:'🚗🔒',t:'Wearing your seat belt in the car.',s:1,w:'A seat belt holds you safe if the car stops suddenly.'},
+  {e:'🚲⛑️',t:'Wearing a helmet when you ride your bicycle.',s:1,w:'A helmet protects your head.'}],
+ fire:[
+  {e:'🔔🧍‍♀️',t:'The fire alarm rings. You stop and line up with your teacher.',s:1,w:'Stop, line up, and follow your teacher out quickly.'},
+  {e:'🔔🎒',t:'The fire alarm rings. You go back to get your bag.',s:0,w:'Leave your things behind. You are more important than your bag.'},
+  {e:'💨🗣️',t:'You see smoke and tell a teacher right away.',s:1,w:'Telling a grown-up fast helps everyone get out safely.'},
+  {e:'🔔🙈',t:'You hide under the table when the fire alarm rings.',s:0,w:'Never hide. Go out with your class so grown-ups can find you.'},
+  {e:'🦁🏃',t:'On a zoo trip, you walk off alone to see the lions.',s:0,w:'Always stay with your group and your teacher.'},
+  {e:'👫🧑‍🏫',t:'On a trip, you stay with your buddy and your group.',s:1,w:'A buddy and your group help keep you safe.'},
+  {e:'🏷️🙋',t:'You are lost, so you ask a staff member with a name badge for help.',s:1,w:'A staff member with a badge or uniform is a safe helper.'}],
+ smart:[
+  {e:'🚗❓',t:'A stranger says, come in my car, I will take you home.',s:0,w:'Never go with a stranger. Say no, and run to a safe grown-up.'},
+  {e:'🏠❓',t:'Someone you do not know asks where you live.',s:0,w:'Keep your home address private. Tell a trusted grown-up.'},
+  {e:'😟🗣️',t:'You feel scared, so you tell a trusted grown-up.',s:1,w:'Your feelings matter. Trusted grown-ups are there to help.'},
+  {e:'😢🧑‍🏫',t:'A friend is being bullied, so you tell the teacher.',s:1,w:'Telling is brave and kind. It is not tattling.'},
+  {e:'🍬🚶',t:'A stranger gives you sweets and asks you to follow them.',s:0,w:'Do not take gifts from strangers. Walk away and tell a grown-up.'},
+  {e:'💻🔑',t:'Telling someone online your password.',s:0,w:'Passwords are secret. Only share them with your parents.'},
+  {e:'🤗⚽',t:'Asking a lonely child to come and play.',s:1,w:'Being kind makes school safe and happy for everyone.'},
+  {e:'🤫😣',t:'Keeping a secret that makes you feel bad.',s:0,w:'Bad secrets should be told. Tell a trusted grown-up.'},
+  {e:'🚪🔔',t:'You are home alone and open the door to a stranger.',s:0,w:'Do not open the door. Call a grown-up you trust.'},
+  {e:'✋🗣️',t:'Saying loudly, stop, I do not like that!',s:1,w:'Your body belongs to you. It is good to say stop.'},
+  {e:'📸🌐',t:'Posting your school name and photo for strangers online.',s:0,w:'Keep your name, school and photos private online.'}]};
+// "Spot the danger": one unsafe child on a busy street
+const SPOT=[
+ {spots:[['🧍','waiting at the bus stop'],['🚸','crossing at the zebra crossing'],['🏃⚽','chasing a ball into the road',1],['🤝🧒','holding a grown-up\'s hand']],w:'Never run into the road after a ball. Ask a grown-up.'},
+ {spots:[['🚲⛑️','riding with a helmet'],['🚌🙋','hand out of the bus window',1],['💺🚌','sitting on the bus'],['🚗🔒','seat belt on']],w:'Keep your hands and head inside the bus.'},
+ {spots:[['🛑🧍','stopping at the kerb'],['👀↔️','looking both ways'],['📱🚶','crossing while playing a phone game',1],['🧍‍♀️🚏','standing back from the road']],w:'Look and listen when you cross. No phones on the road.'},
+ {spots:[['🚶‍♀️🦺','walking on the footpath'],['🛹🚗','skating between cars',1],['🚦⏸️','waiting for the green man'],['🤝🧑','holding hands to cross']],w:'Roads are for cars. Play in parks and playgrounds, never on the road.'}];
+// put the steps in the right order
+const ORDER=[
+ {t:'Fire alarm! Put the steps in order.',steps:['🛑 Stop what you are doing','🧍 Line up with your teacher','🚪 Walk out by the exit','🌳 Wait at the meeting spot'],w:'Stop, line up, walk out, and wait together. Your teacher will count everyone.'},
+ {t:'Lost on a trip? Put the steps in order.',steps:['🧘 Stay calm and stand still','👀 Look for a staff member with a badge','🗣️ Tell them your school and teacher\'s name','🤝 Wait with them for your teacher'],w:'Stay calm, find a safe helper, and wait. Your teacher will come for you.'}];
+const BADGES=[['🏅','Hallway Hero'],['🤸','Playground Pro'],['🚦','Road Ranger'],['🧯','Fire Captain'],['🛡️','Kindness Knight']];
+const qs=(k,n)=>K.sample(Q[k],n).map(x=>({type:'q',...x}));
+const worlds={school:{label:'School',bg:['#fff3c4','#ffb547'],deco:['🏫','✏️','📚','🔔']},outside:{label:'Playground & Street',bg:['#d4f7c5','#4fb86a'],deco:['🛝','🚦','🚌','⚽']},
+ hero:{label:'Safety Hero',bg:['#e6d9ff','#7d5ad8'],deco:['🛡️','🦸','⭐','🏆']}};
+const levels=[
+ {name:'Hallway Rookie',world:'school',time:0,plan:()=>qs('hall',8)},
+ {name:'Playground Pro',world:'outside',time:15,plan:()=>qs('play',8)},
+ {name:'Road Ranger',world:'outside',time:12,plan:()=>{const a=qs('road',6),s=K.sample(SPOT,2).map(x=>({type:'spot',...x}));return[a[0],a[1],s[0],a[2],a[3],s[1],a[4],a[5]];}},
+ {name:'Fire & Trip Hero',world:'hero',time:10,plan:()=>{const a=qs('fire',6);return[a[0],a[1],{type:'order',...ORDER[0]},a[2],a[3],{type:'order',...ORDER[1]},a[4],a[5]];}},
+ {name:'Smart Shield Boss',world:'hero',time:8,plan:()=>qs('smart',10)}];
+const GOOD=['Great catch!','Super safe thinking!','Well spotted!','You are a safety star!','Smart choice!'];
+
+function build(L,api,stage,li){
+ const plan=L.plan();let qi=0,shields=3,combo=0,mistakes=0,tmr=null;
+ const bar=K.h('div','sbar'),card=K.h('div','scard');stage.append(bar,card);
+ const gone=()=>!stage.isConnected||document.querySelector('.modal');
+ const draw=()=>{bar.innerHTML=`<span class="shields">${[0,1,2].map(i=>`<span class="${i<shields?'':'off'}">🛡️</span>`).join('')}</span><span class="combo${combo>=3?' hot':''}">🔥 ${combo} in a row</span>`;};draw();
+ const stopT=()=>{clearInterval(tmr);tmr=null;};
+ // the timer starts only after the question has been read out, so slow readers are never rushed by the voice
+ const startT=(sec,onEnd)=>{if(!sec)return;const tb=K.h('div','tbar','<i></i>');card.appendChild(tb);const t0=Date.now();
+  tmr=setInterval(()=>{if(gone())return stopT();const left=1-(Date.now()-t0)/(sec*1000);tb.firstChild.style.width=Math.max(0,left*100)+'%';tb.classList.toggle('low',left<.3);
+   if(left<=0){stopT();onEnd();}},100);};
+ const scout=()=>{const s=K.h('div','scout','🦸');card.appendChild(s);return s;};
+ // after every answer: a short rule, read with each word lighting up; then the next situation
+ function feedback(ok,text,key){stopT();const s=card.querySelector('.scout');
+  if(ok){combo++;K.sfx.ok();if(s){s.textContent='🥳';s.className='scout yay';}if(combo%3===0){K.sfx.cheer();K.confetti(50);}}
+  else{combo=0;mistakes++;shields--;K.sfx.bad();if(s){s.textContent='😮';s.className='scout oh';}}
+  draw();const fb=K.h('div','fb '+(ok?'good':'bad'));const line=K.h('div','say-line');fb.appendChild(line);card.appendChild(fb);
+  const nx=K.h('button','btn pri','Next ▶');let moved=false;const go=()=>{if(moved||gone())return;moved=true;if(shields<=0)api.lose('Your safety shields are used up!');else next();};nx.onclick=()=>{K.audio();go();};fb.appendChild(nx);
+  K.sayLine(line,text,{key},()=>setTimeout(go,900));}
+ function next(){if(gone())return;stopT();if(qi>=plan.length){api.progress(1,1);return api.win(mistakes===0?3:mistakes===1?2:1);}
+  const it=plan[qi++];api.progress(qi-1,plan.length);card.innerHTML='';({q:askQ,spot:askSpot,order:askOrder})[it.type](it);}
+ function askQ(it){scout();card.appendChild(K.h('div','scene-e',it.e));const cap=K.h('div','say-line');card.appendChild(cap);
+  const row=K.h('div','sbtns');card.appendChild(row);let done=false;
+  const answer=pick=>{if(done)return;done=true;row.querySelectorAll('button').forEach(b=>{b.disabled=true;if(pick!==null&&+b.dataset.v===pick)b.classList.add('pickd');});
+   const word=it.s?'safe':'unsafe',ok=pick===it.s;
+   feedback(ok,(ok?K.pick(GOOD)+' ':pick===null?'Time is up! ':'Oops! ')+`That is ${word}. ${it.w}`,word);};
+  [['✅ SAFE',1,'safe'],['⚠️ UNSAFE',0,'unsafe']].forEach(([t,v,c])=>{const b=K.h('button','sbtn '+c,t);b.dataset.v=v;b._ok=v===it.s;b.onclick=()=>{K.audio();answer(v);};row.appendChild(b);});
+  K.sayLine(cap,it.t+' Safe, or unsafe?',{},()=>{if(!done&&!gone())startT(L.time,()=>answer(null));});}
+ function askSpot(it){scout();const cap=K.h('div','say-line');card.appendChild(cap);const st=K.h('div','street');card.appendChild(st);let done=false;
+  K.shuffle(it.spots).forEach(([e,c,bad])=>{const b=K.h('button','spot',`<b>${e}</b>${c}`);b.onclick=()=>{K.audio();if(done)return;done=true;stopT();
+    if(bad){b.classList.add('good');feedback(true,K.pick(GOOD)+' '+it.w,'');}
+    else{b.classList.add('wrong');const bb=[...st.children].find(x=>x._bad);if(bb)bb.classList.add('good');feedback(false,`That child is safe: ${c}. Look for the danger. ${it.w}`,'');}};b._bad=!!bad;st.appendChild(b);});
+  K.sayLine(cap,'Spot the danger! Tap the child who is not safe.',{},()=>{if(!done&&!gone())startT(L.time*2,()=>{if(done)return;done=true;const bb=[...st.children].find(x=>x._bad);if(bb)bb.classList.add('good');feedback(false,'Time is up! '+it.w,'');});});}
+ function askOrder(it){scout();const cap=K.h('div','say-line');card.appendChild(cap);const doneL=K.h('div','done-list'),list=K.h('div','steps');card.append(doneL,list);let n=0,slips=0;
+  K.shuffle(it.steps.map((s,i)=>({s,i}))).forEach(o=>{const b=K.h('button','step',o.s);b.onclick=()=>{K.audio();if(n>=it.steps.length)return;
+    if(o.i===n){n++;b.remove();doneL.appendChild(K.h('div','step',`${n}. ${o.s}`));K.sfx.pop();K.say(o.s);api.progress(qi-1+n/it.steps.length,plan.length);
+      if(n===it.steps.length)feedback(slips===0,(slips===0?K.pick(GOOD)+' ':'You got there! ')+it.w,'');}
+    else{b.classList.remove('wrong');void b.offsetWidth;b.classList.add('wrong');slips++;K.sfx.bad();K.say('Not yet. What comes first?');}};b._i=o.i;list.appendChild(b);});
+  K.sayLine(cap,it.t+' Tap the first step first.');}
+ api.coach(['','Timer starts after the question is read!','Watch the road! Timer is on.','Be a hero! Quick decisions!','Boss round! Be smart and brave!'][li]||'Safe or unsafe? You decide!',false);
+ next();
+}
+// ---------- badge shelf + certificate on the level map ----------
+function shelf(main,save,wrap){const sh=K.h('section','shelf','<h2>🏆 My Safety Badges</h2>'),row=K.h('div','badges');sh.appendChild(row);
+ let got=0;BADGES.forEach(([e,n],i)=>{const ok=(save.stars[i]||0)>0;if(ok)got++;row.appendChild(K.h('div','bdg'+(ok?'':' no'),`<b>${e}</b>${n}`));});
+ const b=K.h('button','btn '+(got===5?'pri':''),got===5?'🎓 Get my certificate':`🔒 Certificate: earn all 5 badges (${got}/5)`);b.style.marginTop='10px';b.disabled=got<5;b.onclick=()=>{K.audio();K.sfx.pop();certificate(save);};sh.appendChild(b);
+ main.insertBefore(sh,wrap);}
+function certificate(save){const stars=Object.values(save.stars).reduce((a,b)=>a+b,0);let name='';try{name=localStorage.getItem('dg_safety-scout_name')||'';}catch(e){}
+ const m=K.h('div','modal','<div class="card cert-card"><h1>🎓 Well done, Safety Scout!</h1><p>Type your name for the certificate:</p></div>');const c=m.querySelector('.card');
+ const inp=K.h('input');inp.maxLength=24;inp.placeholder='Your name';inp.value=name;const cv=K.h('canvas');cv.width=1200;cv.height=850;
+ const bt=K.h('div','btns');c.append(inp,cv,bt);
+ const draw=()=>{const g=cv.getContext('2d'),nm=inp.value.trim()||'Safety Scout';g.fillStyle='#fffdf3';g.fillRect(0,0,1200,850);
+  g.lineWidth=18;g.strokeStyle='#ffb547';g.strokeRect(24,24,1152,802);g.lineWidth=4;g.strokeStyle='#7d5ad8';g.strokeRect(52,52,1096,746);
+  g.textAlign='center';g.fillStyle='#27315a';g.font='bold 64px "Baloo 2","Chalkboard SE","Comic Sans MS",sans-serif';g.fillText('Junior Safety Inspector',600,170);
+  g.font='600 30px "Chalkboard SE","Comic Sans MS",sans-serif';g.fillText('This certificate is proudly given to',600,250);
+  g.fillStyle='#e8590c';g.font='bold 76px "Baloo 2","Chalkboard SE","Comic Sans MS",sans-serif';g.fillText(nm,600,350);
+  g.fillStyle='#27315a';g.font='600 28px "Chalkboard SE","Comic Sans MS",sans-serif';g.fillText('for knowing what is safe and what is unsafe',600,420);g.fillText('at school, on the road, in emergencies and with strangers.',600,460);
+  g.font='60px sans-serif';g.fillText(BADGES.map(b=>b[0]).join('  '),600,560);g.font='bold 22px sans-serif';g.fillText(BADGES.map(b=>b[1]).join('  •  '),600,600);
+  g.font='bold 34px sans-serif';g.fillText(`⭐ ${stars} / ${save.max} stars`,600,670);
+  g.font='600 24px sans-serif';g.fillText(new Date().toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'})+'   •   Kids Games 4u',600,750);};
+ inp.oninput=()=>{try{localStorage.setItem('dg_safety-scout_name',inp.value);}catch(e){}draw();};draw();
+ const mk=(t,cls,f)=>{const b=K.h('button','btn '+cls,t);b.onclick=f;bt.appendChild(b);};
+ mk('⬇️ Download','pri',()=>{draw();const a=document.createElement('a');a.download='safety-certificate.png';a.href=cv.toDataURL('image/png');document.body.appendChild(a);a.click();a.remove();});
+ mk('🖨️ Print','',()=>{draw();const w=window.open('','_blank');if(!w)return;w.document.write(`<title>Safety Certificate</title><img src="${cv.toDataURL('image/png')}" style="width:100%" onload="print()">`);w.document.close();});
+ mk('Close','',()=>m.remove());document.body.appendChild(m);K.confetti(140);K.sfx.cheer();
+ K.say('Congratulations! You are a Junior Safety Inspector!');}
+K.start({id:'safety-scout',title:'Safety Scout',emoji:'🦸',worlds,levels,build,onMap:shelf});
+</script></body></html>
