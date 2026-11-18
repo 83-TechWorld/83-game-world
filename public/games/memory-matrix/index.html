@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.hud .lt{white-space:nowrap}
+.mbar{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
+.pillx{background:#fff;border-radius:999px;padding:5px 14px;font-weight:800;box-shadow:0 3px 0 rgba(0,0,0,.14)}
+.shields{font-size:22px;letter-spacing:2px}.shields .off{filter:grayscale(1);opacity:.3}
+.target{display:flex;gap:8px;justify-content:center;align-items:center;min-height:64px}
+.tg{background:#fff;border-radius:18px;font-size:46px;padding:2px 12px;box-shadow:0 4px 0 rgba(0,0,0,.14);transition:transform .2s}
+.tg.cur{outline:4px solid #ffd23b;transform:scale(1.12)}.tg.got{opacity:.35;filter:grayscale(1)}
+.gwrap{position:relative;padding:8px;border-radius:24px;background:#ffffff88}
+.grid{display:grid;gap:10px;justify-content:center}
+.cell{width:var(--ts);height:var(--ts);perspective:700px;border:0;background:none;padding:0;cursor:pointer}
+.cell .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.cell.flip .in{transform:rotateY(180deg)}
+.face,.door{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.18)}
+.face{background:#fff;font-size:calc(var(--ts)*.56)}
+.face i{position:absolute;left:6px;top:4px;font-style:normal;font-size:calc(var(--ts)*.18);font-weight:800;color:#8a93b8}
+.door{background:linear-gradient(160deg,#8b6cff,#5b3fd6);color:#fff;font-weight:800;font-size:calc(var(--ts)*.44);transform:rotateY(180deg);text-shadow:0 3px 0 #0003}
+.door:after{content:'';position:absolute;right:7%;top:46%;width:8%;height:8%;border-radius:50%;background:#ffd23b}
+.cell.ok .face{background:#c9f5d6;animation:pop .4s}.cell.no .face{background:#ffd3d8}.cell.empty .face{background:#eef1f8;color:#b5bdd8}
+.cell.pick .face{outline:5px solid #ffd23b}
+.cell.wob{animation:shake .35s}
+.curtain{position:absolute;inset:0;border-radius:24px;background:repeating-linear-gradient(90deg,#e8455a 0 26px,#d23048 26px 52px);transform-origin:top;animation:drop 1.4s ease-in-out forwards;z-index:5;display:flex;align-items:center;justify-content:center;font-size:56px}
+@keyframes drop{0%{transform:scaleY(0)}25%,75%{transform:scaleY(1)}100%{transform:scaleY(0)}}
+.count{font-size:26px;font-weight:800;background:#fff;border-radius:999px;padding:4px 16px;box-shadow:0 3px 0 rgba(0,0,0,.14);min-width:86px;text-align:center}
+.count.low{background:#ffd23b}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center;margin-top:6px}
+.btn.small{padding:7px 14px;font-size:15px}
+.choice.pic{font-size:48px;min-width:90px;min-height:80px}
+</style>
+      <!--SEO-->
+    <title>Memory Matrix – Free Picture Memory Game for Kids: 20 Levels | Kids Games 4u</title>
+    <meta name="description" content="Free visual memory game for kids aged 4-10. Remember where each picture hides behind the numbered doors, find missing pictures and spot swaps. 20 levels from 4 to 16 tiles." />
+    <meta name="keywords" content="memory game for kids, picture memory game, brain training for kids, concentration game, visual memory, find the missing picture, Kids Games 4u" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#7cc6ff" />
+    <link rel="canonical" href="https://kidsgames4u.com/games/memory-matrix/index.html" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:site_name" content="Kids Games 4u" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Memory Matrix – Free Picture Memory Game for Kids | Kids Games 4u" />
+    <meta property="og:description" content="Remember where each picture hides! 20 levels of picture memory, missing pictures and swaps." />
+    <meta property="og:url" content="https://kidsgames4u.com/games/memory-matrix/index.html" />
+    <meta property="og:image" content="https://kidsgames4u.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Memory Matrix – Free Picture Memory Game for Kids | Kids Games 4u" />
+    <meta name="twitter:description" content="Remember where each picture hides! 20 levels of picture memory, missing pictures and swaps." />
+    <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Memory Matrix","url":"https://kidsgames4u.com/games/memory-matrix/index.html","description":"Free visual memory game for kids aged 4-10. Remember where each picture hides behind numbered doors. 20 levels.","applicationCategory":"EducationalApplication","genre":"Educational","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":4,"suggestedMaxAge":10},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Learn & Play","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Memory Matrix","item":"https://kidsgames4u.com/games/memory-matrix/index.html"}]}]</script>
+    <!--/SEO-->
+  <script src="/games/_shared/nav.js"></script>
+</head>
+<body><div id="app"></div>
+    <!--SEO-BODY-->
+    <script type="application/json" id="about-data">{"name":"Memory Matrix","title":"Memory Matrix – Free Picture Memory Game for Kids","intro":"Memory Matrix is a picture memory game that trains focus and visual memory. Kids look at a grid of numbered pictures, the pictures hide behind numbered doors, and they find where each one was. Later levels ask for two or three pictures in a row, which picture went missing, and which two pictures swapped places.","skills":["Visual and spatial memory","Concentration","Numbers 1 to 16","Spotting differences","New words for animals, food, space and more"],"how":"Look carefully while the timer counts down, or tap Ready when you have remembered. Then tap the number door where the picture was hiding. You have three shields per level. In missing levels pick the picture that disappeared; in swap levels tap the two pictures that changed places.","ages":"4-10","related":[{"name":"Block Builder","url":"/games/block-builder/index.html"},{"name":"Habit Hero","url":"/games/habit-hero/index.html"},{"name":"Safety Scout","url":"/games/safety-scout/index.html"},{"name":"Planet Parade","url":"/games/planet-parade/index.html"}]}</script>
+    <noscript>
+      <main style="font-family:system-ui,sans-serif;max-width:720px;margin:30px auto;padding:0 16px">
+        <p><a href="/">&larr; Kids Games 4u</a></p>
+        <h1>Memory Matrix – Free Picture Memory Game for Kids</h1>
+        <p>Memory Matrix is a picture memory game: remember the numbered pictures, then find where each one was hiding. 20 levels with missing pictures and swaps.</p>
+        <h2>More free games</h2><ul><li><a href="/games/block-builder/index.html">Block Builder – Memory Building Game</a></li><li><a href="/games/habit-hero/index.html">Habit Hero – Good Habits Game</a></li></ul>
+        <p>Please turn on JavaScript to play.</p>
+      </main>
+    </noscript>
+    <!--/SEO-BODY--><script src="../_shared/kids.js"></script>
+<script>
+// Ad hooks (optional, set from outside):
+//   window.onLevelComplete(level)  called after every 3rd level is won (3, 6, 9...) - a good place for an interstitial
+//   window.onRewardedPeek(grant)   call grant() after a rewarded ad to give +3 seconds extra peek (without a handler the peek is free)
+const S=(s)=>s.split(',').map(x=>{const[e,...n]=x.trim().split(' ');return[e,n.join(' ')];});
+const SETS={
+ farm:S('🐄 cow,🐖 pig,🐔 hen,🐑 sheep'),fruit:S('🍎 apple,🍌 banana,🍓 strawberry,🍉 watermelon'),
+ ocean:S('🐳 whale,🐙 octopus,🦀 crab,🐟 fish,🐢 turtle,🦭 seal'),ride:S('🚀 rocket,🚂 train,🚒 fire engine,⛵ boat,✈️ aeroplane,🚲 bicycle'),
+ space:S('☀️ sun,🌙 moon,🪐 Saturn,⭐ star,👩‍🚀 astronaut,👽 alien,☄️ comet,🌍 Earth,🛸 flying saucer'),
+ jungle:S('🦁 lion,🐘 elephant,🐒 monkey,🦒 giraffe,🦓 zebra,🐯 tiger,🦜 parrot,🐍 snake,🦛 hippo'),
+ snack:S('🍕 pizza,🍔 burger,🌮 taco,🍩 donut,🍦 ice cream,🧁 cupcake,🍪 cookie,🍟 fries,🍿 popcorn'),
+ sport:S('⚽ football,🏀 basketball,🎾 tennis ball,⚾ baseball,🏆 trophy,🏅 medal,🛹 skateboard,🏏 cricket bat,🏸 badminton'),
+ bug:S('🦖 T rex,🦕 long neck dinosaur,🦋 butterfly,🐞 ladybird,🐝 bee,🐌 snail,🐛 caterpillar,🕷️ spider,🐜 ant,🦗 cricket,🪲 beetle,🦂 scorpion'),
+ weather:S('🌈 rainbow,❄️ snowflake,☁️ cloud,⚡ lightning,☂️ umbrella,☀️ sun,🌪️ tornado,🍁 leaf,⛄ snowman,💧 raindrop,🌬️ wind,🌡️ thermometer'),
+ music:S('🎸 guitar,🥁 drum,🎹 piano,🎺 trumpet,🎻 violin,🎤 microphone,🪕 banjo,🔔 bell,🎷 saxophone'),
+ school:S('🎒 school bag,✏️ pencil,📕 book,✂️ scissors,📏 ruler,🧭 compass,🖍️ crayon,🔬 microscope,🎨 paint palette'),
+ magic:S('🏰 castle,👑 crown,🐉 dragon,🧙 wizard,🪄 magic wand,🦄 unicorn,💎 crystal,🗝️ key,🛡️ shield,🧪 potion,🧚 fairy,🧜 mermaid'),
+ robot:S('⚙️ gear,🔋 battery,🔧 spanner,🧲 magnet,💡 bulb,📡 dish,🔩 bolt,🤖 robot,🔌 plug,💾 disk,🖥️ computer,🔦 torch'),
+ place:S('🗼 tower,🗽 statue,🏰 castle,🌋 volcano,🏝️ island,⛺ tent,🎡 big wheel,⛲ fountain,🌉 bridge,🏔️ mountain,🕌 mosque,🛕 temple,🏯 pagoda,🏟️ stadium,🎠 merry go round,🏛️ museum'),
+ colour:S('🔴 red circle,🔵 blue circle,🟢 green circle,🟥 red square,🟦 blue square,🟩 green square,❤️ red heart,💙 blue heart,💚 green heart'),
+ face:S('😀 happy face,😉 winking face,😂 laughing face,😮 surprised face,😴 sleepy face,😎 cool face,😛 silly tongue face,🤔 thinking face,😍 heart eyes face,🤩 star eyes face,😊 shy smile face,😜 cheeky face'),
+ toy:S('🧸 teddy,🚗 toy car,⚽ ball,🪀 yo-yo,🧩 puzzle,🎲 dice,🪁 kite,🚂 toy train,🦖 dino toy,🏀 basketball,🎈 balloon,🛴 scooter,🥏 frisbee,🎯 dart board,🤖 robot,🎳 bowling'),
+ galaxy:S('🚀 rocket,🛸 flying saucer,👽 alien,🪐 Saturn,🌙 crescent moon,☀️ sun,⭐ star,🌍 Earth,☄️ comet,🛰️ satellite,👩‍🚀 astronaut,🔭 telescope,🌠 shooting star,🌌 galaxy,🌑 new moon,🌕 full moon')};
+const POOL=[];for(const k in SETS)SETS[k].forEach(x=>{if(!POOL.some(p=>p[0]===x[0]))POOL.push(x);});
+// [name, world, cols, rows, peek seconds, picture set, rounds]. Rounds: ['find',n] one picture at a time, ['chain',n] all n shown, find in order, ['missing'], ['swap']
+const LV=(name,world,cols,rows,peek,set,rounds)=>({name,world,cols,rows,peek,set,rounds});
+const F=n=>['find',n],C=n=>['chain',n],MI=['missing'],SW=['swap'];
+const levels=[
+ LV('Farm Friends','peek',2,2,10,'farm',[F(1),F(1),F(1)]),LV('Sweet Fruits','peek',2,2,8,'fruit',[F(1),F(1),F(1)]),
+ LV('Ocean Friends','peek',3,2,10,'ocean',[F(1),F(1),F(1)]),LV('Zoom Zoom','peek',3,2,8,'ride',[F(1),F(1),F(1)]),
+ LV('Space & Sky','peek',3,3,10,'space',[F(1),F(1),F(1)]),
+ LV('Jungle Safari','hunt',3,3,10,'jungle',[F(2),F(2)]),LV('Yummy Snacks','hunt',3,3,9,'snack',[F(2),F(2)]),
+ LV('Sports Day','hunt',3,3,8,'sport',[F(2),F(2)]),LV('Dinos & Bugs','hunt',4,3,10,'bug',[F(2),F(2)]),
+ LV('Weather','hunt',4,3,9,'weather',[F(3),F(3)]),
+ LV('Music Missing','swap',3,3,8,'music',[MI,MI,MI]),LV('School Swap','swap',3,3,8,'school',[SW,SW,SW]),
+ LV('Fairy Tale Missing','swap',4,3,9,'magic',[MI,MI,MI]),LV('Robot Swap','swap',4,3,8,'robot',[SW,SW,SW]),
+ LV('World Places','swap',4,4,12,'place',[F(2),F(2)]),
+ LV('Colour Twins','master',3,3,8,'colour',[F(2),F(2)]),LV('Funny Faces','master',4,3,8,'face',[F(2),F(2)]),
+ LV('Mega Toy Box','master',4,4,10,'toy',[C(3),C(3)]),LV('Galaxy Explorer','master',4,4,8,'galaxy',[C(3),SW]),
+ LV('Memory Master','master',4,4,7,'mix',[C(4),MI,C(4)])];
+const worlds={peek:{label:'Picture Peek',bg:['#fff5cc','#ffc56b'],deco:['🐄','🍎','🐟','🚀']},hunt:{label:'Double Hunt',bg:['#d9f7c9','#4fb86a'],deco:['🦁','🍕','⚽','🦋']},
+ swap:{label:'Missing & Swap',bg:['#ffe1ec','#e86aa0'],deco:['🎸','✏️','🦄','🤖']},master:{label:'Memory Master',bg:['#e2d9ff','#6f52d8'],deco:['🧠','⭐','🏆','🌌']}};
+const nm=x=>x[1],art=n=>/^[A-Z]/.test(n)?n:'the '+n;
+
+function build(L,api,stage,li){
+ let shields=3,ri=0,peekGiven=false,cells=[],items=[];
+ const bar=K.h('div','mbar'),ask=K.h('div','say-line'),tgt=K.h('div','target'),gw=K.h('div','gwrap'),tools=K.h('div','row');stage.append(bar,ask,tgt,gw,tools);
+ const gone=()=>!stage.isConnected||document.querySelector('.modal');
+ const ts=Math.max(52,Math.floor(Math.min(118,(Math.min(innerWidth*.94,640)-(L.cols-1)*10-16)/L.cols,(innerHeight-(innerHeight<520?230:400)-(L.rows-1)*10)/L.rows)));
+ const drawBar=()=>{bar.innerHTML=`<span class="pillx shields">${[0,1,2].map(i=>`<span class="${i<shields?'':'off'}">🛡️</span>`).join('')}</span><span class="pillx">🧩 Board ${Math.min(ri,L.rounds.length)} / ${L.rounds.length}</span>`;};
+ const hurt=(msg)=>{shields--;drawBar();K.sfx.bad();if(shields<=0){setTimeout(()=>{if(!gone())api.lose('Out of shields!');},700);return true;}K.say(msg);return false;};
+ // board: numbered cells; a cell shows its picture (face) or its numbered door (flip)
+ function board(list){items=list;gw.innerHTML='';const g=K.h('div','grid');g.style.gridTemplateColumns=`repeat(${L.cols},${ts}px)`;g.style.setProperty('--ts',ts+'px');gw.appendChild(g);
+  cells=list.map((it,i)=>{const c=K.h('button','cell',`<div class="in"><div class="face"><i>${i+1}</i><span>${it[0]}</span></div><div class="door">${i+1}</div></div>`);c._i=i;g.appendChild(c);return c;});}
+ const setFace=(c,it)=>{c.querySelector('.face span').textContent=it?it[0]:'❔';c.classList.toggle('empty',!it);};
+ const flipAll=on=>cells.forEach(c=>{if(!c.classList.contains('ok'))c.classList.toggle('flip',on);});
+ // peek phase: countdown with ticks, "Ready!" to skip
+ function peek(sec,done){flipAll(false);tools.innerHTML='';const cnt=K.h('div','count');const rd=K.h('button','btn pri','✋ Ready!');tools.append(cnt,rd);let left=sec,fin=false;
+  const end=()=>{if(fin)return;fin=true;clearInterval(t);tools.innerHTML='';if(!gone()){K.sfx.whoosh();done();}};
+  const draw=()=>{cnt.textContent='⏳ '+left;cnt.classList.toggle('low',left<=3);};draw();rd.onclick=()=>{K.audio();end();};
+  const t=setInterval(()=>{if(gone()){clearInterval(t);return;}left--;if(left<=0)return end();draw();if(left<=3)K.sfx.tick();},1000);}
+ // optional extra peek (+3 s), once per level
+ function peekBtn(){if(peekGiven)return;const b=K.h('button','btn small','👀 Peek +3s');tools.appendChild(b);
+  b.onclick=()=>{K.audio();const grant=()=>{if(gone()||peekGiven)return;peekGiven=true;b.remove();flipAll(false);setTimeout(()=>{if(!gone())flipAll(true);},3000);};
+   try{if(typeof window.onRewardedPeek==='function')window.onRewardedPeek(grant);else grant();}catch(e){grant();}};}
+ function next(){if(gone())return;if(shields<=0)return;if(ri>=L.rounds.length){api.progress(1,1);if((li+1)%3===0)try{window.onLevelComplete&&window.onLevelComplete(li+1);}catch(e){}return api.win(shields);}
+  const r=L.rounds[ri++];drawBar();api.progress(ri-1,L.rounds.length);tgt.innerHTML='';
+  const set=L.set==='mix'?K.sample(POOL,L.cols*L.rows):K.sample(SETS[L.set],L.cols*L.rows);board(set);
+  K.sayLine(ask,r[0]==='missing'?'Remember all the pictures. One will go missing!':r[0]==='swap'?'Remember all the pictures. Two will swap places!':'Remember where each picture is!');
+  peek(L.peek,()=>({find:findR,chain:findR,missing:missR,swap:swapR})[r[0]](r));}
+ // find: the pictures hide behind numbered doors; tap the door where each target was
+ function findR(r){flipAll(true);const tg=K.sample(items,r[1]),chain=r[0]==='chain';let k=0;tools.innerHTML='';peekBtn();
+  tgt.innerHTML='';const chips=tg.map(x=>{const e=K.h('div','tg',x[0]);tgt.appendChild(e);return e;});if(!chain)chips.forEach((c,i)=>c.style.display=i?'none':'');
+  const askOne=()=>{chips.forEach((c,i)=>{c.classList.toggle('cur',i===k);if(!chain)c.style.display=i===k?'':'none';});
+   const w=nm(tg[k]);K.sayLine(ask,chain&&k===0?`Find them in order. First, where was ${art(w)}?`:`Where was ${art(w)} hiding?`);};
+  let busy=false;
+  cells.forEach(c=>c.onclick=()=>{K.audio();if(busy||c.classList.contains('ok')||gone())return;
+   if(items[c._i]===tg[k]){c.classList.remove('flip');c.classList.add('ok');K.sfx.ok();chips[k].classList.add('got');k++;
+    if(k===tg.length){busy=true;tools.innerHTML='';K.sayLine(ask,K.pick(['Super memory!','You found it!','Brilliant brain!','Well remembered!']),{},()=>{if(gone())return;flipAll(false);setTimeout(next,900);});}
+    else askOne();}
+   else{busy=true;c.classList.remove('flip');c.classList.add('no');const was=nm(items[c._i]);
+    const dead=hurt(`That was ${art(was)}. Try another door!`);setTimeout(()=>{c.classList.remove('no');if(!dead){c.classList.add('flip');busy=false;}},1100);}});
+  askOne();}
+ // missing: a curtain drops, one picture is gone; pick it from four pictures
+ function missR(){const gi=Math.random()*items.length|0,lost=items[gi];curtain(()=>{setFace(cells[gi],null);
+   K.sayLine(ask,'Which picture went missing?');tools.innerHTML='';const ch=K.h('div','choices');tools.appendChild(ch);let done=false;
+   K.shuffle([lost,...K.sample(POOL.filter(p=>!items.some(i=>i[0]===p[0])&&p[0]!==lost[0]),3)]).forEach(o=>{const b=K.h('button','choice pic',o[0]);b._ok=o===lost;b.onclick=()=>{K.audio();if(done||gone())return;
+     if(o===lost){done=true;b.classList.add('good');setFace(cells[gi],lost);cells[gi].classList.add('ok');K.sfx.ok();
+      K.sayLine(ask,`Yes! ${art(nm(lost))} went missing.`,{},()=>{if(!gone())setTimeout(next,600);});}
+     else{b.classList.add('wrong');b.disabled=true;hurt(`Not ${art(nm(o))}. Look at the empty box. What was there?`);}};ch.appendChild(b);});});}
+ // swap: a curtain drops, two pictures change places; tap both
+ function swapR(){const[a,b]=K.sample([...items.keys()],2);curtain(()=>{const t=items[a];items[a]=items[b];items[b]=t;setFace(cells[a],items[a]);setFace(cells[b],items[b]);
+   cells[a]._sw=cells[b]._sw=true;K.sayLine(ask,'Two pictures swapped places. Tap them both!');tools.innerHTML='';let got=0;
+   cells.forEach(c=>c.onclick=()=>{K.audio();if(gone()||c.classList.contains('ok')||got>=2)return;
+    if(c._i===a||c._i===b){c.classList.add('ok');K.sfx.ok();got++;if(got===2)K.sayLine(ask,'Swap spotted! Great eyes!',{},()=>{if(!gone())setTimeout(next,600);});else K.say('One more!');}
+    else{c.classList.remove('wob');void c.offsetWidth;c.classList.add('wob');hurt('That one did not move. Look again!');}});});}
+ function curtain(after){tools.innerHTML='';flipAll(false);const cu=K.h('div','curtain','🎭');gw.appendChild(cu);K.sfx.whoosh();setTimeout(()=>{if(!gone())after();},700);setTimeout(()=>cu.remove(),1400);}
+ api.coach(['Look and remember!','Nice! Bigger grid now.','','','','Find two pictures!','','','','Three pictures now!','Something will go missing!','Watch for the swap!','','','Sixteen pictures!','Look-alikes! Look closely!','','Remember the order!','','Boss round! You can do it!'][li]||'Remember the pictures!',false);
+ drawBar();next();
+}
+K.start({id:'memory-matrix',title:'Memory Matrix',emoji:'🧠',worlds,levels,build});
+</script></body></html>
