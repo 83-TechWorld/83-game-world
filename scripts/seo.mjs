@@ -10,6 +10,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { GUIDES, NEW_GAMES, NEW_ABOUT } from './game-guides.mjs'
+import { sitePages, FOOTER_LINKS } from './site-pages.mjs'
 
 const SITE = 'https://kidsgames4u.com'          // <-- your domain (no trailing slash)
 const BRAND = 'Kids Games 4u'
@@ -38,6 +40,7 @@ const GAMES = [
   { slug: 'tick-tock-clock', name: 'Tick Tock Clock', title: 'Tick Tock Clock – Learn to Tell Time Game for Kids', age: [4, 9], genre: 'Educational',
     desc: 'Free clock game for kids aged 4-9. Learn to tell time: o\'clock, half past, quarter past, minutes and seconds. Drag the hour, minute and second hands in 21 levels.',
     kw: 'telling time game, learn to tell time, clock game for kids, analog clock game, hours and minutes game, AM PM game' },
+  ...NEW_GAMES,
   { slug: 'stick-spy-ops', name: 'Stick Spy Ops', title: 'Stick Spy Ops – Free Stick Figure Spy Game', age: [8, 99], genre: 'Action',
     desc: 'Free stick figure spy shooter with 20 missions. Sneak, hide in cover and take down enemies. Name your hero and enemies after your friends.',
     kw: 'stick figure game, spy game online, stickman shooter, free browser action game, stick game' },
@@ -65,8 +68,12 @@ const ABOUT = {
   'stick-cycle-race': { intro: 'Stick Cycle Race is a free 20-level cycling game. Choose your colour, pedal fast, grab boosters and try to beat the other riders and the ghost.', skills: [], how: 'Hold the pedal button (or Space or D) to go, press W and S to change lane, and hold Shift to sprint when you have stamina.' },
   'zombie-block-siege': { intro: 'Zombie Block Siege is a free stickman zombie shooter with 15 levels. Hide behind brick walls, choose your gun, rebuild your wall and defeat the fire-breathing boss at the end of every level.', skills: [], how: 'Move with A and D, crouch with S, aim and shoot with the mouse, reload with R and rebuild bricks with E. On a phone, touch the screen to aim and shoot.' },
   'rough-note-showdown': { intro: 'Rough Note Showdown is the classic school notebook dice game for 2 to 6 players or against the computer. Roll the dice, draw your stickman part by part, get a gun and shoot your rivals\' rows. The last player standing wins.', skills: [], how: 'Roll the dice. The number decides which row you hit: 0 or 1 is row 1, 2 or 3 is row 3, and so on. Every hit draws more of your stickman, and an armed row earns bullets.' },
+  ...NEW_ABOUT,
 };
-const LEARN = ['alphabet-safari', 'number-rocket', 'block-builder', 'shape-dash', 'word-zoo', 'planet-parade', 'tick-tock-clock']
+const LEARN = ['alphabet-safari', 'number-rocket', 'block-builder', 'shape-dash', 'word-zoo', 'planet-parade', 'tick-tock-clock', ...NEW_GAMES.map(g => g.slug)]
+
+// AdSense publisher ID lives in one place: public/games/_shared/ads.js
+const AD_CLIENT = (fs.readFileSync(path.join(root, 'public/games/_shared/ads.js'), 'utf8').match(/client: '(ca-pub-\d{16})'/) || [])[1]
 
 const HOME = {
   title: `${BRAND} – Free Online Learning Games for Kids`,
@@ -76,9 +83,10 @@ const HOME = {
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 const OG = `${SITE}/og-image.png`
 
-function head({ title, desc, kw, url, type = 'website', ld }) {
+function head({ title, desc, kw, url, type = 'website', ld, script }) {
   return `<!--SEO-->
-    <title>${esc(title)}</title>
+    <title>${esc(title)}</title>${AD_CLIENT ? `\n    <meta name="google-adsense-account" content="${AD_CLIENT}" />` : ''}
+    <script src="/games/_shared/${script}"></script>
     <meta name="description" content="${esc(desc)}" />
     <meta name="keywords" content="${esc(kw)}" />
     <meta name="robots" content="index,follow,max-image-preview:large" />
@@ -130,7 +138,7 @@ const noscript = `<!--SEO-BODY-->
       </main>
     </noscript>
     <!--/SEO-BODY-->`
-inject(path.join(root, 'index.html'), head({ ...HOME, url: SITE + '/', ld: homeLd }), noscript)
+inject(path.join(root, 'index.html'), head({ ...HOME, url: SITE + '/', ld: homeLd, script: 'ads.js' }), noscript)
 
 // ----- each game -----
 for (const g of GAMES) {
@@ -148,31 +156,43 @@ for (const g of GAMES) {
       { '@type': 'ListItem', position: 3, name: g.name, item: url }] },
   ]
   const A = ABOUT[g.slug], rel = GAMES.filter(x => x.slug !== g.slug && (LEARN.includes(x.slug) === LEARN.includes(g.slug))).slice(0, 6)
-  const data = { name: g.name, title: g.title, intro: A.intro, skills: A.skills, how: A.how, ages: g.age[1] < 99 ? `${g.age[0]}-${g.age[1]}` : `${g.age[0]}+`, related: rel.map(x => ({ name: x.name, url: `/games/${x.slug}/index.html` })) }
+  const G = GUIDES[g.slug], ages = g.age[1] < 99 ? `${g.age[0]}-${g.age[1]}` : `${g.age[0]}+`, skills = A.skills.length ? A.skills : G.skills
+  // Real HTML in the page. kids.js shows it under the level map; guide.js opens it on full-screen action games.
   const body = `<!--SEO-BODY-->
-    <script type="application/json" id="about-data">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>
-    <noscript>
-      <main style="font-family:system-ui,sans-serif;max-width:720px;margin:30px auto;padding:0 16px">
-        <p><a href="/">&larr; ${BRAND}</a></p>
-        <h1>${esc(g.title)}</h1>
-        <p>${esc(A.intro)}</p>
-        ${A.skills.length ? `<h2>What kids learn</h2><ul>${A.skills.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-        <h2>How to play</h2><p>${esc(A.how)}</p>
-        <h2>More free games</h2><ul>${rel.map(x => `<li><a href="/games/${x.slug}/index.html">${esc(x.title)}</a></li>`).join('')}</ul>
-        <p>Please turn on JavaScript to play.</p>
-      </main>
-    </noscript>
+    <noscript><style>html,body{height:auto!important;overflow:auto!important}#game-guide{display:block!important}</style></noscript>
+    <section id="game-guide" class="about-game" hidden>
+      <h2>About ${esc(g.name)}: a free game for ages ${ages}</h2>
+      <p>${esc(A.intro)}</p>
+      <p>${esc(G.more)}</p>
+      <h3>How to play</h3><p>${esc(A.how)}</p>
+      <h3>Controls</h3><p>${esc(G.controls)}</p>
+      <h3>Skills kids practise</h3><ul>${skills.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+      <h3>For parents and teachers</h3><p>${esc(G.parents)}</p>
+      <h3>More free games</h3><p>${rel.map(x => `<a href="/games/${x.slug}/index.html">${esc(x.name)}</a>`).join(' &middot; ')} &middot; <a href="/">All games</a></p>
+      <p>${FOOTER_LINKS.map(([t, u]) => `<a href="${u}">${t}</a>`).join(' &middot; ')}</p>
+    </section>
     <!--/SEO-BODY-->`
-  inject(file, head({ title: `${g.title} | ${BRAND}`, desc: g.desc, kw: g.kw + ', ' + BRAND, url, type: 'website', ld }), body)
+  inject(file, head({ title: `${g.title} | ${BRAND}`, desc: g.desc, kw: g.kw + ', ' + BRAND, url, type: 'website', ld, script: LEARN.includes(g.slug) ? 'ads.js' : 'guide.js' }), body)
 }
+
+// ----- about / contact / privacy -----
+const PAGES = sitePages({ BRAND, GAMES, LEARN })
+for (const p of PAGES) {
+  const url = `${SITE}/${p.slug}/index.html`
+  const tags = `<title>${esc(p.title)}</title>\n<meta name="description" content="${esc(p.desc)}" />\n<link rel="canonical" href="${url}" />${AD_CLIENT ? `\n<meta name="google-adsense-account" content="${AD_CLIENT}" />` : ''}\n</head>`
+  fs.mkdirSync(path.join(root, 'public', p.slug), { recursive: true })
+  fs.writeFileSync(path.join(root, 'public', p.slug, 'index.html'), p.html.replace('</head>', () => tags))
+}
+if (AD_CLIENT) fs.writeFileSync(path.join(root, 'public/ads.txt'), `google.com, ${AD_CLIENT.replace('ca-', '')}, DIRECT, f08c47fec0942fa0\n`)
+
 // template should never be indexed
 const tpl = path.join(root, 'public/games/_template/index.html')
 if (fs.existsSync(tpl)) { let s = fs.readFileSync(tpl, 'utf8'); if (!/name="robots"/.test(s)) s = s.replace(/<\/head>/i, '  <meta name="robots" content="noindex" />\n</head>'); fs.writeFileSync(tpl, s) }
 
 // ----- sitemap / robots / manifest -----
-const urls = [{ loc: SITE + '/', pr: '1.0', cf: 'weekly' }, ...GAMES.map(g => ({ loc: `${SITE}/games/${g.slug}/index.html`, pr: LEARN.includes(g.slug) ? '0.9' : '0.7', cf: 'monthly' }))]
+const urls = [{ loc: SITE + '/', pr: '1.0', cf: 'weekly' }, ...GAMES.map(g => ({ loc: `${SITE}/games/${g.slug}/index.html`, pr: LEARN.includes(g.slug) ? '0.9' : '0.7', cf: 'monthly' })), ...PAGES.map(p => ({ loc: `${SITE}/${p.slug}/index.html`, pr: '0.3', cf: 'yearly' }))]
 fs.writeFileSync(path.join(root, 'public/sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(u => `  <url><loc>${u.loc}</loc><lastmod>${TODAY}</lastmod><changefreq>${u.cf}</changefreq><priority>${u.pr}</priority></url>`).join('\n')}\n</urlset>\n`)
-fs.writeFileSync(path.join(root, 'public/robots.txt'), `User-agent: *\nAllow: /\nDisallow: /games/_template/\nDisallow: /games/_shared/\n\nSitemap: ${SITE}/sitemap.xml\n`)
+fs.writeFileSync(path.join(root, 'public/robots.txt'), `User-agent: *\nAllow: /\nDisallow: /games/_template/\n\nSitemap: ${SITE}/sitemap.xml\n`)
 fs.writeFileSync(path.join(root, 'public/manifest.webmanifest'), JSON.stringify({ name: BRAND, short_name: 'KidsGames4u', description: HOME.desc, start_url: '/', display: 'standalone', background_color: '#bfe9ff', theme_color: '#7cc6ff', categories: ['education', 'games', 'kids'],
   icons: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' }, { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }] }, null, 2))
 console.log('SEO written for', SITE, '-', urls.length, 'urls')

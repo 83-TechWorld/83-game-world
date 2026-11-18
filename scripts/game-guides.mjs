@@ -1,0 +1,115 @@
+// Parent-friendly text shown on every game page. Used by scripts/seo.mjs.
+// `more` follows the intro, `skills` is only set where the game has no list in ABOUT.
+export const GUIDES = {
+  'alphabet-safari': {
+    more: 'Each world turns a small alphabet skill into a short challenge, so children get plenty of practice without long lessons. Early levels help a child recognise letters and see how the alphabet runs from A to Z. Later levels look at capitals and small letters, vowels and the sounds letters make. Because every level is brief, it suits a few minutes before school or a quiet moment after dinner, and children can replay a favourite world whenever they like.',
+    controls: 'Works with a finger on a phone or tablet and with a mouse on a computer. Drag a letter, or tap it and then tap its box. The speaker button turns sound on or off, and the Levels button returns to the map.',
+    parents: 'Say each letter sound together rather than only the letter name, because sounds help most with early reading. Away from the screen, hunt for the same letters on cereal boxes, street signs and picture books. If a level feels hard, replay an easier one first. Confidence matters more than speed at this age.',
+  },
+  'number-rocket': {
+    more: 'The trip starts with counting things a child can see, which builds the link between a number and a real amount. From there, levels move on to putting numbers in order, counting in twos, comparing two numbers and adding small groups together. The space theme gives every level a clear goal, and the gentle steps mean a child who is just starting to count can still enjoy early success before trying harder sums.',
+    controls: 'Play by touch on a phone or tablet, or with a mouse on a computer. Tap an answer, or move numbers into place when a level asks for an order. The speaker button controls sound, and the Levels button opens the map.',
+    parents: 'Ask your child to count out loud and point at each object, which keeps one number matched to one thing. Try the same idea with spoons, toy cars or stairs at home. When adding, let fingers help. Using them is a normal stage and supports understanding instead of getting in its way.',
+  },
+  'block-builder': {
+    more: 'Building gives children a reason to look closely. To finish a blueprint they need to notice each colour, see where it belongs and work carefully across rows and shapes. Memory levels add a fresh challenge by showing the picture first and then taking the colours away, so a child must hold the design in mind. Finished houses, trees, rockets and forts give a satisfying result that makes children want to build one more.',
+    controls: 'Use a finger or a mouse. Pick a colour from the palette, then tap the box it belongs in. On memory levels, study the picture before it disappears. The speaker button changes sound, and the Levels button goes back to the map.',
+    parents: 'Before a memory level, ask your child to describe the picture aloud, such as “red roof, blue door”. Putting what they see into words is a helpful memory trick. Afterwards, rebuild a simple design with real blocks or coloured paper, then swap roles and let your child set the challenge for you.',
+  },
+  'shape-dash': {
+    more: 'Moving a shape to its matching hole asks a child to name what they see and compare it with the targets around them. Buzzy bees add a little excitement and encourage careful steering, so young players practise control as well as recognition. Circles, squares, triangles and stars are familiar first shapes, and seeing them again in different colours helps children understand that a shape stays the same even when its colour changes.',
+    controls: 'On a computer, use the arrow keys or press and drag. On a phone or tablet, use the arrow buttons or drag with a finger. Steer around the bees and into the hole with the same shape. The speaker button controls sound.',
+    parents: 'Name each shape together and talk about its sides and corners: a triangle has three, a square has four, and a circle has none. Then go on a shape hunt around your home. Very young children may enjoy steering while you help watch for bees, which makes it a good game to share.',
+  },
+  'word-zoo': {
+    more: 'Children meet everyday English words in groups that make sense to them, from fruit and vegetables to farm, wild and sea animals. Matching links a word to its picture, sorting shows how things belong together, listening trains the ear, and spelling draws attention to the letters inside a word. That mix makes the game useful for early readers and for children who are learning English as an additional language.',
+    controls: 'Use touch or a mouse. Drag or tap a word, then tap its picture. Sorting levels ask you to place each item in its home, and spelling levels ask you to tap letters in order. The speaker button controls spoken words and sound.',
+    parents: 'Repeat new words together and use them in real life, perhaps naming fruit at the shop or animals in a story. Ask simple sorting questions such as “Does it live on a farm or in the sea?” Children learning English benefit from hearing a word many times, so replaying a level is worthwhile.',
+  },
+  'planet-parade': {
+    more: 'Space is full of big ideas, and this game breaks them into simple comparisons a child can follow. Players learn the planet names first, then think about which is closest to the Sun, which is largest and which is hotter or colder. Fun facts after each answer add curiosity without feeling like a test. Across its 16 levels, the game gives children plenty of chances to remember the order of the solar system.',
+    controls: 'Use a finger or a mouse. Tap the correct planet, or drag planets into the order the level asks for. The owl coach shares a fact after your answer. The speaker button controls sound, and the Levels button opens the map.',
+    parents: 'Make up a silly sentence together to remember the planet order, using the first letter of each planet. You can also line up fruit or balls by size to compare planets at home. On a clear evening, step outside and look for the Moon or a bright planet together.',
+  },
+  'tick-tock-clock': {
+    more: 'Reading an analogue clock takes several separate skills, so the 21 levels introduce them gradually. Children start with whole hours and half past, then learn quarter times, exact minutes and seconds. Dragging the hands lets them see how the clock really moves, which is often clearer than a picture on a worksheet. Later questions connect time to AM, PM and daily routines, helping the idea feel useful in ordinary life.',
+    controls: 'Drag the hour, minute and second hands with a finger or a mouse, then press Check. Other levels ask you to read the clock and tap the right time. The speaker button controls sound, and the Levels button returns to the map.',
+    parents: 'Point out the time during routines: “It is half past seven, time to brush your teeth.” Keep an analogue clock where your child can see it if possible. Master o’clock and half past before moving on, and remind children that the short hand shows the hour.',
+  },
+  'where-is-kitty': {
+    more: 'Small position words can be hard to explain, but they become clear when a child sees them happen. Here each word is tied to a simple action with Kitty, a box or a house. Spoken sentences support children who are still learning to read, while dragging Kitty turns the meaning into something they do themselves. Fill-the-gap levels then bring the same words into short everyday sentences, which is a helpful step towards reading and writing.',
+    controls: 'Use touch or a mouse. Tap word cards to see and hear them, drag Kitty to the right place, and tap the word that fills each gap. The speaker button controls the voice and sound, and the Levels button opens the map.',
+    parents: 'Act the words out with a soft toy and a box: put it in, on and by the box, then ask your child to give you directions. Children learning English often mix up these little words, so short, playful repetition works better than explaining grammar rules.',
+  },
+  'spell-gaps': {
+    more: 'Missing-letter puzzles are a friendly first step into spelling, because children can focus on one sound at a time instead of a whole word. A picture gives the meaning, the spoken word gives the sound, and the gap shows exactly where to look. As levels progress, children meet two gaps, missing vowels and full words to spell by listening. Hearing each letter as it lights up reinforces the finished spelling.',
+    controls: 'Use a finger or a mouse. Look at the picture, listen to the word and tap the letter that fills the glowing gap. The speaker button controls the voice and sound, and the Levels button takes you back to the map.',
+    parents: 'Encourage your child to say the word slowly and listen for the missing sound before tapping. Praise good attempts, especially on tricky words that do not sound the way they look. Afterwards, write two or three of the words together on paper or trace them in sand or flour.',
+  },
+  'safety-scout': {
+    more: 'Safety lessons stick better when children practise making the decision themselves. Each round presents a familiar situation at school, on the playground, on the way somewhere or around people they do not know. A short rule after every answer explains why a choice is safe or unsafe, so mistakes become useful moments. Five levels lead to badges and a Junior Safety Inspector certificate, giving children a proud finish to work towards.',
+    controls: 'Use touch or a mouse. Listen to each situation and tap SAFE or UNSAFE. From level 2 a timer begins after the question is read. Your name for the certificate is optional and stays on your device. The speaker button controls sound.',
+    parents: 'Use the game to begin a conversation, then adapt its rules to your family, school and neighbourhood. Agree which adults your child can go to for help, and practise what to do if they feel unsure. A game supports these lessons but does not replace real supervision or road practice.',
+  },
+  'habit-hero': {
+    more: 'Instead of treating habits as a list of rules, the game walks through one full day so each choice appears at a natural moment. Children compare two picture cards, then try hands-on activities such as brushing germs away, building a healthy plate, washing hands in order, tidying toys and packing a school bag. Meters for Energy, Clean and Smile show how small good choices add up, with a badge for each part of the day.',
+    controls: 'Use touch or a mouse. Listen to the cards and tap the good habit. In mini-games, tap germs, drag food and toys into place, and tap steps in order. The speaker button controls sound, and the Levels button opens the map.',
+    parents: 'Connect each level to your own routine by asking, “What do we do next in the morning?” A simple picture chart at home can build on the game. Notice effort and celebrate one habit at a time, because steady encouragement usually works better than correcting everything at once.',
+  },
+  'memory-matrix': {
+    more: 'The game starts small and grows from 4 tiles to as many as 16, so children can build concentration step by step across 20 levels. Remembering where a picture sits is only the beginning. Later rounds ask players to recall a short sequence, notice which picture has gone or spot two that have swapped. Those changes keep the challenge fresh and encourage children to look carefully rather than guess quickly.',
+    controls: 'Use a finger or a mouse. Study the pictures until the timer ends, or tap Ready when you feel sure. Then tap the numbered door where the picture was hiding. The speaker button controls sound, and the Levels button opens the map.',
+    parents: 'Teach a simple strategy: say what you see and where it is, such as “cat in the top corner”. Stories can help too, linking pictures together in order. Take breaks when attention fades, since memory games work best in short sessions when a child still feels fresh and interested.',
+  },
+  'stick-spy-ops': {
+    more: 'Each of the 20 missions asks players to think before they act. Moving carelessly can leave the hero exposed, while using cover and choosing the right moment makes a mission easier. Simple stick figures keep the look light, and the name options let players personalise their game. It is an action game rather than a learning game, so it is best suited to older children who are comfortable with cartoon combat.',
+    controls: 'On a computer, move with A and D or the arrow keys, jump with W or Space, crouch with S and aim with the mouse. On a phone or tablet, use the on-screen buttons and touch the screen to aim.',
+    skills: ['Hand and eye coordination', 'Planning and patience', 'Timing and quick decisions'],
+    parents: 'This game includes cartoon stick-figure shooting and is recommended for ages 8 and up. Please try it first and decide whether it suits your child. If you use the naming feature, encourage made-up names rather than real classmates, and talk about the difference between game action and real life.',
+  },
+  'stick-cycle-race': {
+    more: 'Racing is about more than holding a button. Players choose when to change lanes, when to collect boosters and when to spend stamina on a sprint, all while rival riders and the ghost keep up the pressure. Twenty levels provide a steady climb in challenge, and choosing a colour makes the rider feel personal. Short races work well for quick play and encourage children to try again and improve.',
+    controls: 'Hold the pedal button, Space or D to ride. Press W and S to change lanes, and hold Shift to sprint when you have stamina. On a phone or tablet, use the on-screen buttons.',
+    skills: ['Timing and reaction speed', 'Managing stamina', 'Persistence and improving with practice'],
+    parents: 'This racing game is recommended for ages 6 and up and has no fighting. It can be a good moment to talk about trying again after losing. If your child enjoys cycling in real life, remind them that helmets, looking both ways and safe places to ride matter outside the game.',
+  },
+  'zombie-block-siege': {
+    more: 'Across 15 levels, players defend their position by combining movement, aim and careful use of their brick wall. Reloading at the right time and repairing cover can matter as much as fast shooting, and each level builds towards a boss fight. The stickman art keeps the presentation simple, but the theme and action are intended for older players, so this game sits apart from the learning collection.',
+    controls: 'On a computer, move with A and D, crouch with S, aim and shoot with the mouse, reload with R and rebuild bricks with E. On a phone or tablet, touch the screen to aim and shoot and use the on-screen buttons.',
+    skills: ['Hand and eye coordination', 'Managing resources', 'Staying calm under pressure'],
+    parents: 'This game contains zombies, guns and cartoon combat and is recommended for ages 10 and up. It is not meant for younger children, so please preview it first. If your child uses the naming feature, suggest invented names rather than the names of friends or classmates.',
+  },
+  'rough-note-showdown': {
+    more: 'This game brings a pen-and-paper school pastime to the screen. Every roll decides which row is affected, so players watch the dice, follow the rules and keep track of who is ahead. Luck plays a big part, but it is also a social game when friends or family share one device. Playing against the computer is available too, which makes it easy to learn the rules before challenging others.',
+    controls: 'Set up the players, then press Start Game. Press Roll Dice on your turn and follow the messages on the page. The question mark button explains the rules at any time. It works by touch or with a mouse.',
+    skills: ['Reading numbers and following rules', 'Taking turns', 'Handling wins and losses'],
+    parents: 'The game uses hand-drawn stick figures with paper guns and is recommended for ages 6 and up, so please check that it suits your family. Playing together is a good way to practise turn taking and being a kind winner. Encourage players to treat the shooting as part of the game only.',
+  },
+}
+
+// The five newest games were added to the site without entries in seo.mjs.
+export const NEW_GAMES = [
+  { slug: 'where-is-kitty', name: 'Where Is Kitty?', title: 'Where Is Kitty? – Free Prepositions Game for Kids: in, on, by, up', age: [4, 8], genre: 'Educational',
+    desc: 'Free English prepositions game for kids aged 4-8. Watch Kitty move and learn in, on, by, up, off, out, to and at with spoken sentences, drag-and-drop and fill-the-gap levels.',
+    kw: 'prepositions game for kids, in on by game, learn prepositions, english grammar game for kids, preposition worksheet online' },
+  { slug: 'spell-gaps', name: 'Spell Gaps', title: 'Spell Gaps – Free Missing Letters Spelling Game A to Z', age: [4, 8], genre: 'Educational',
+    desc: 'Free spelling game for kids aged 4-8. Find the missing letters in easy words from A to Z: apple, ball, cat... Every letter is spelled out loud as it lights up. 10 levels.',
+    kw: 'spelling game for kids, missing letters game, fill in the missing letter, phonics game, easy spelling words, a to z words for kids' },
+  { slug: 'safety-scout', name: 'Safety Scout', title: 'Safety Scout – Free Safe or Unsafe School Safety Game for Kids', age: [5, 10], genre: 'Educational',
+    desc: 'Free school safety game for kids aged 5-10. Decide safe or unsafe in the classroom, playground, bus, street, fire drills, field trips and with strangers. Earn badges and a Junior Safety Inspector certificate.',
+    kw: 'safety game for kids, safe or unsafe quiz, school safety for kids, road safety game, stranger danger game, fire drill for kids' },
+  { slug: 'habit-hero', name: 'Habit Hero', title: 'Habit Hero – Free Good Habits Game for Kids: Daily Routine', age: [4, 9], genre: 'Educational',
+    desc: 'Free good habits game for kids aged 4-9. Follow a whole day from sunrise to bedtime: brush away germs, pick healthy food, tidy toys, pack your bag and choose good habits over bad ones. 11 levels.',
+    kw: 'good habits for kids, good habits vs bad habits game, daily routine game for kids, healthy habits game, hygiene game for kids' },
+  { slug: 'memory-matrix', name: 'Memory Matrix', title: 'Memory Matrix – Free Picture Memory Game for Kids: 20 Levels', age: [4, 10], genre: 'Educational',
+    desc: 'Free visual memory game for kids aged 4-10. Remember where each picture hides behind the numbered doors, find missing pictures and spot swaps. 20 levels from 4 to 16 tiles.',
+    kw: 'memory game for kids, picture memory game, brain training for kids, concentration game, visual memory, find the missing picture' },
+]
+
+export const NEW_ABOUT = {
+  'where-is-kitty': { intro: 'Where Is Kitty? teaches small English prepositions: in, on, by, up, off, out, to and at. Kitty jumps into boxes, onto boxes, out of boxes and walks to the house, so children see what each word means while a friendly voice reads every sentence.', skills: ['Prepositions: in, on, by, up, off, out, to, at', 'Reading short sentences', 'Listening to English', 'Position words (where is it?)'], how: 'Tap each word card to watch Kitty and hear what the word means. Drag Kitty to the right spot, watch Kitty move and pick the word, and fill the gap in everyday sentences.' },
+  'spell-gaps': { intro: 'Spell Gaps is a free spelling game for children. Each word has a picture and is read aloud, and kids fill the gaps: a _ p l e becomes apple. The words cover every letter from A to Z, and when a word is finished every letter lights up while it is spelled out loud.', skills: ['Spelling easy words', 'Letters A to Z', 'Vowels a, e, i, o, u', 'Listening and letter sounds'], how: 'Look at the picture and listen to the word. Tap the letter that fills the glowing gap. Later levels have two gaps, missing vowels, and whole words to spell from the sound.' },
+  'safety-scout': { intro: 'Safety Scout teaches children everyday safety at school and outside. Kids decide if each situation is safe or unsafe and hear a short, friendly rule after every answer. They spot dangers on a busy street, put fire-drill steps in order, and finish with a stranger-safety and kindness round.', skills: ['Classroom and hallway safety', 'Playground and lunchtime safety', 'Bus and road safety', 'Fire drills and field trips', 'Stranger safety, privacy and kindness'], how: 'Listen to each situation, then tap SAFE or UNSAFE. You have three safety shields per level. From level 2 a timer starts after the question is read. Earn a badge for every level and collect all five to get your Junior Safety Inspector certificate.' },
+  'habit-hero': { intro: 'Habit Hero follows a child\'s whole day, from waking up at sunrise to sleeping under the stars. Kids pick the good habit from two picture cards, brush germs off a tooth, fill a healthy plate, wash hands step by step, tidy their toys and pack their school bag. Every good habit fills the Energy, Clean and Smile meters.', skills: ['Morning and bedtime routines', 'Hygiene: brushing, bathing, handwashing', 'Healthy food choices', 'Good manners and sharing', 'Tidiness and getting ready for school'], how: 'Listen to both cards, then tap the good habit. Play the mini-games: tap the germs, drag food to the right basket, tap the steps in order, drag toys into the toy box and pack the right things in your bag. Earn a badge for every part of the day.' },
+  'memory-matrix': { intro: 'Memory Matrix is a picture memory game that trains focus and visual memory. Kids look at a grid of numbered pictures, the pictures hide behind numbered doors, and they find where each one was. Later levels ask for two or three pictures in a row, which picture went missing, and which two pictures swapped places.', skills: ['Visual and spatial memory', 'Concentration', 'Numbers 1 to 16', 'Spotting differences', 'New words for animals, food, space and more'], how: 'Look carefully while the timer counts down, or tap Ready when you have remembered. Then tap the number door where the picture was hiding. You have three shields per level. In missing levels pick the picture that disappeared; in swap levels tap the two pictures that changed places.' },
+}

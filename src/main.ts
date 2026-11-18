@@ -127,10 +127,18 @@ addEventListener('pageshow', e => { if ((e as PageTransitionEvent).persisted) { 
 // ---- shelves + cards ----
 const SHELVES: [string, string][] = [['learn', '🧠 Learn &amp; Play'], ['action', '⚡ Action Zone']]
 const shelves: [string, HTMLElement][] = []
+// Banners appear only once ads.js has a publisher ID and slot IDs. The middle one hides with filtered views.
+const addBanner = (slot: string) => {
+  const ad: HTMLElement | null = (window as any).KGAds?.banner(slot) ?? null
+  if (ad) app.appendChild(ad)
+  return ad
+}
 let n = 0
 for (const [grp, title] of SHELVES) {
   const list = GAMES.filter(g => g.available && g.group === grp)
   if (!list.length) continue
+  const ad = addBanner(grp === 'learn' ? 'homeTop' : 'homeMiddle')
+  if (ad && grp === 'action') shelves.push(['ad', ad])
   const sec = h('section', 'shelf', `<h2>${title}</h2>`), grid = h('div', 'grid')
   list.forEach(g => {
     const p = progress(g.id)
@@ -160,6 +168,7 @@ for (const [grp, title] of SHELVES) {
     <p><b>Kids Games 4u</b> is a free collection of fun, safe browser games where children learn while they play: the alphabet and phonics, counting and adding numbers, shapes and colours, English words, the solar system and planets, and how to tell time on a clock. No sign-up and no downloads: just tap and play on a tablet, phone or computer.</p>
     <h3>Learn &amp; play games</h3><ul>${GAMES.filter(g => g.available && g.group === 'learn').map(g => `<li><a href="${g.url}">${g.emoji} ${g.title}</a> <span>${g.description}</span></li>`).join('')}</ul>
     <h3>Action games for bigger kids</h3><ul>${GAMES.filter(g => g.available && g.group === 'action').map(g => `<li><a href="${g.url}">${g.emoji} ${g.title}</a> <span>${g.description}</span></li>`).join('')}</ul>
+    <p class="links"><a href="/about/index.html">About</a> &middot; <a href="/contact/index.html">Contact</a> &middot; <a href="/privacy-policy/index.html">Privacy Policy</a></p>
     <p class="cp">&copy; ${new Date().getFullYear()} Kids Games 4u &middot; Free educational games for children</p>`)
   app.appendChild(f)
 })()
