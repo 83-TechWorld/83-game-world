@@ -6,11 +6,10 @@
      2. Create two display ad units in AdSense and paste their numeric IDs into `slots`.
      3. Run `npm run seo` to write ads.txt and the AdSense verification tag.
 
-   Every request is tagged for child treatment, which turns off personalised ads and remarketing.
-   Both tag names are sent: Google's H5 games docs list the older one, its current docs the newer. */
+   Every request is tagged for child treatment, which turns off personalised ads and remarketing. */
 (function () {
   var CONFIG = {
-    client: '',
+    client: 'ca-pub-3661874605610386',
     slots: { homeTop: '', homeMiddle: '' },
     nextClicksPerAd: 3,      // offer an ad on every 3rd "Next" press
     frequencyHint: '180s',   // ask Google for at least 3 minutes between full-screen ads
@@ -25,8 +24,6 @@
   function tagChild(el) {
     el.setAttribute('data-ad-client', CONFIG.client);
     el.setAttribute('data-tag-for-age-treatment', '1');
-    el.setAttribute('data-tag-for-child-directed-treatment', '1');
-    el.setAttribute('data-tag-for-under-age-of-consent', '1');
   }
 
   if (enabled) {
