@@ -60,7 +60,8 @@ export function sitePages({ BRAND, GAMES, LEARN }) {
 <h2>Changes to this policy</h2>
 <p>If our practices change, we will update this page and the date at the top.</p>
 <h2>Contact</h2>
-<p>${BRAND}<br>Email: ${mail}</p>` },
+<p>${BRAND} is operated by:</p>
+<p>Sathish Kumar<br>K.Sathish Kumar, S/O S.Kandaswamy<br>101-1, Muthumalai Amman Kovil 3rd Street<br>Tiruchendur 628215<br>Email: ${mail}</p>` },
   ].map(p => ({ ...p, html: pageHtml(p, BRAND) }))
 }
 
