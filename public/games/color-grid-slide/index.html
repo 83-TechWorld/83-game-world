@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.hud .lt{white-space:nowrap}
+.cg{width:min(620px,100%);display:flex;flex-direction:column;align-items:center;gap:8px}
+.bar2{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%}
+.pill{background:#fff;border-radius:999px;padding:6px 14px;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.12);font-size:16px;white-space:nowrap}
+.pill b{font-variant-numeric:tabular-nums}.pill.warn{background:#ffe0e3;color:#c81e3a}
+.ib{border:0;background:#fff;border-radius:16px;padding:7px 12px;font-weight:800;font-size:15px;box-shadow:0 4px 0 rgba(0,0,0,.14)}
+.ib:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.14)}.ib:disabled{opacity:.45}
+.ib.hint{background:#fff6c7}.ib.glow{animation:pulse .8s infinite;outline:4px solid #ffd23b}
+.tip{background:#ffffffd9;border-radius:16px;padding:6px 14px;font-weight:800;font-size:clamp(14px,2.4vw,17px);text-align:center}
+.wrapb{background:#fff;border-radius:26px;padding:10px;box-shadow:0 8px 0 rgba(0,0,0,.14)}
+.bd{position:relative;display:grid;grid-template-columns:repeat(var(--n),var(--cs));grid-auto-rows:var(--cs);touch-action:none}
+.cell{position:relative;border-radius:16px;margin:3px;background:var(--t);box-shadow:inset 0 3px 0 rgba(0,0,0,.06)}
+.cell.stone{background:radial-gradient(circle at 30% 30%,#b9bec7,#7e858f 70%);box-shadow:inset 0 -5px 0 #5f656e,0 3px 0 #0002}
+.cell.stone::after{content:'';position:absolute;inset:22%;border-radius:40%;background:radial-gradient(circle at 60% 40%,#0000 40%,#00000022 42% 52%,#0000 54%),radial-gradient(circle at 30% 70%,#0000 30%,#00000018 32% 40%,#0000 42%)}
+.cell .ar{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:calc(var(--cs)*.62);font-weight:900;color:#27315a;opacity:.32;line-height:1}
+.cell.gate{box-shadow:inset 0 0 0 3px #27315a33}
+/* gate badge and pad ring sit above the caps so they stay visible */
+.cell .ar{z-index:3;inset:auto;right:-4px;top:-4px;width:calc(var(--cs)*.34);height:calc(var(--cs)*.34);border-radius:50%;background:#27315a;color:#fff;opacity:1;font-size:calc(var(--cs)*.22);box-shadow:0 2px 0 #0003;pointer-events:none}
+.cell.pad::before{content:'';position:absolute;inset:-2px;border-radius:50%;z-index:3;pointer-events:none;background:conic-gradient(#3b82f6,#22c55e,#facc15,#ef4444,#a855f7,#3b82f6);animation:spin 4s linear infinite;
+ -webkit-mask:radial-gradient(circle,#0000 61%,#000 63% 70%,#0000 72%);mask:radial-gradient(circle,#0000 61%,#000 63% 70%,#0000 72%)}
+.cell.pad::after{content:'✨';position:absolute;left:-2px;bottom:-4px;z-index:3;font-size:calc(var(--cs)*.24);pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cap{position:absolute;left:0;top:0;width:var(--cs);height:var(--cs);display:flex;align-items:center;justify-content:center;transition:transform .17s cubic-bezier(.3,1.3,.6,1);z-index:2;cursor:pointer;touch-action:none}
+.cap i{position:relative;width:80%;height:80%;border-radius:50%;display:flex;align-items:center;justify-content:center;
+ background:radial-gradient(circle at 34% 28%,#ffffff99 0 10%,#0000 11%),radial-gradient(circle,var(--c) 0 56%,var(--d) 58% 62%,var(--c) 64%);box-shadow:0 5px 0 var(--d),0 7px 8px #0003;transition:background .3s}
+.cap i::before{content:'';position:absolute;inset:-4%;border-radius:50%;background:repeating-conic-gradient(var(--d) 0 7deg,#0000 7deg 14deg);-webkit-mask:radial-gradient(circle,#0000 64%,#000 66%);mask:radial-gradient(circle,#0000 64%,#000 66%)}
+.cap svg{position:relative;width:44%;height:44%;fill:var(--s)}
+.cap.ok i{box-shadow:0 5px 0 var(--d),0 0 0 4px #ffffffcc,0 7px 10px #0003}
+.cap.hint{z-index:4}.cap.hint i{animation:hint .7s infinite alternate;outline:5px solid #ffd23b;outline-offset:2px}
+@keyframes hint{to{transform:scale(1.12)}}
+.cap.swap i{animation:swp .45s}@keyframes swp{50%{transform:rotateY(90deg) scale(1.15)}}
+.cap.nope i{animation:shake .3s}
+.cap.party i{animation:party .6s ease-in-out infinite alternate}@keyframes party{to{transform:translateY(-10px) rotate(12deg)}}
+.harrow{position:absolute;z-index:5;font-size:calc(var(--cs)*.5);pointer-events:none;animation:pulse .7s infinite;filter:drop-shadow(0 2px 0 #fff)}
+.bans{display:grid;grid-template-columns:repeat(var(--n),var(--cs));margin-top:6px}
+.ban{margin:0 4px;border-radius:12px 12px 18px 18px;background:var(--c);box-shadow:0 4px 0 var(--d);display:flex;align-items:center;justify-content:center;gap:4px;height:clamp(30px,calc(var(--cs)*.55),42px);color:var(--s);font-weight:900;font-size:clamp(11px,calc(var(--cs)*.2),15px)}
+.ban svg{width:clamp(14px,calc(var(--cs)*.28),22px);height:clamp(14px,calc(var(--cs)*.28),22px);fill:var(--s)}
+.legend{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.legend span{background:#ffffffd9;border-radius:999px;padding:3px 12px;font-weight:800;font-size:13px}
+@media (max-width:480px){.pill{font-size:14px;padding:5px 10px}.ib{padding:6px 9px;font-size:13px}.ban span{display:none}}
+</style>
+  <script src="/games/_shared/nav.js"></script>
+      <!--SEO-->
+    <title>Color Grid Slide – Free Sliding Color Sorting Puzzle for Kids: 20 Levels | Kids Games 4u</title>
+    <meta name="google-adsense-account" content="ca-pub-3661874605610386" />
+    <script src="/games/_shared/ads.js"></script>
+    <meta name="description" content="Free sliding puzzle for kids aged 5-12. Slide the colored caps into their matching columns on 3x3, 4x4 and 5x5 boards, with stones, one-way arrows and rainbow color pads. 20 levels, all solvable, with hints." />
+    <meta name="keywords" content="sliding puzzle for kids, color sorting game, logic puzzle for kids, brain game, 8 puzzle, spatial reasoning game, Kids Games 4u" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#7cc6ff" />
+    <link rel="canonical" href="https://kidsgames4u.com/games/color-grid-slide/index.html" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:site_name" content="Kids Games 4u" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Color Grid Slide – Free Sliding Color Sorting Puzzle for Kids: 20 Levels | Kids Games 4u" />
+    <meta property="og:description" content="Free sliding puzzle for kids aged 5-12. Slide the colored caps into their matching columns on 3x3, 4x4 and 5x5 boards, with stones, one-way arrows and rainbow color pads. 20 levels, all solvable, with hints." />
+    <meta property="og:url" content="https://kidsgames4u.com/games/color-grid-slide/index.html" />
+    <meta property="og:image" content="https://kidsgames4u.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Color Grid Slide – Free Sliding Color Sorting Puzzle for Kids: 20 Levels | Kids Games 4u" />
+    <meta name="twitter:description" content="Free sliding puzzle for kids aged 5-12. Slide the colored caps into their matching columns on 3x3, 4x4 and 5x5 boards, with stones, one-way arrows and rainbow color pads. 20 levels, all solvable, with hints." />
+    <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Color Grid Slide","url":"https://kidsgames4u.com/games/color-grid-slide/index.html","description":"Free sliding puzzle for kids aged 5-12. Slide the colored caps into their matching columns on 3x3, 4x4 and 5x5 boards, with stones, one-way arrows and rainbow color pads. 20 levels, all solvable, with hints.","applicationCategory":"GameApplication","genre":"Puzzle","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":5,"suggestedMaxAge":12},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Learn & Play","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Color Grid Slide","item":"https://kidsgames4u.com/games/color-grid-slide/index.html"}]}]</script>
+    <!--/SEO-->
+  </head>
+<body><div id="app"></div>
+    <!--SEO-BODY-->
+    <noscript><style>html,body{height:auto!important;overflow:auto!important}#game-guide{display:block!important}</style></noscript>
+    <section id="game-guide" class="about-game" hidden>
+      <h2>About Color Grid Slide: a free game for ages 5-12</h2>
+      <p>Color Grid Slide is a sliding puzzle where colored caps must be sorted into matching columns: blue circles, yellow stars, red squares, green triangles and purple diamonds. A cap can only slide into an empty hole, so children plan routes, loop caps around each other and think a few moves ahead.</p>
+      <p>Sliding puzzles build spatial reasoning: children must picture a few moves ahead and work out an order, because a cap can only move into an empty hole. The game grows slowly from a 3 by 3 board with three colours to a 5 by 5 board with five, then adds stones that never move, one-way arrows and rainbow pads that change a cap's colour. Every level is made by scrambling a sorted board backwards with the real rules, so every puzzle can be solved.</p>
+      <h3>How to play</h3><p>Tap or swipe a cap that is next to an empty hole to slide it in. Get every cap into the column with its color and shape at the bottom. Finish within par moves, without hints, for three stars. Watch out for stones, one-way arrows and rainbow pads that change colors.</p>
+      <h3>Controls</h3><p>Tap a cap next to an empty hole to slide it in, or swipe it. Tap a cap in the same row or column as a hole to push the whole line. On a computer, the arrow keys work too. Undo takes back a move, Reset starts the level again, and Hint makes the next good cap glow.</p>
+      <h3>Skills kids practise</h3><ul><li>Spatial reasoning and planning ahead</li><li>Colors and shapes</li><li>Patience and problem solving</li><li>Learning from mistakes with Undo</li><li>Counting moves</li></ul>
+      <h3>For parents and teachers</h3><p>Encourage your child to say a plan out loud, such as “first I move the red one up, then the blue one across”. If they get stuck, Undo is a great teacher: going back a few moves shows how one choice changes the board. Short sessions work best, and the shape on every cap means the game works for colour-blind children too.</p>
+      <h3>More free games</h3><p><a href="/games/alphabet-safari/index.html">Alphabet Safari</a> &middot; <a href="/games/number-rocket/index.html">Number Rocket</a> &middot; <a href="/games/block-builder/index.html">Block Builder</a> &middot; <a href="/games/shape-dash/index.html">Shape Dash</a> &middot; <a href="/games/word-zoo/index.html">Word Zoo</a> &middot; <a href="/games/planet-parade/index.html">Planet Parade</a> &middot; <a href="/">All games</a></p>
+      <p><a href="/about/index.html">About</a> &middot; <a href="/contact/index.html">Contact</a> &middot; <a href="/privacy-policy/index.html">Privacy Policy</a></p>
+    </section>
+    <!--/SEO-BODY--><script src="../_shared/kids.js"></script>
+<script>
+// Ad hooks for the site (optional). Set these from outside the game:
+//   ColorGridSlide.onLevelComplete = n => {...}             called after level n (1-based) is won, before the result card
+//   ColorGridSlide.onRewardedHintRequested = grant => {...} call grant() after a rewarded ad to show the hint (without a handler the hint is free)
+window.ColorGridSlide=window.ColorGridSlide||{onLevelComplete:null,onRewardedHintRequested:null};
+//CORE-START  (rules + solver; scripts/color-grid-levels.mjs runs this same code to build guaranteed-solvable levels)
+// board: array of cells, token letters B Y R G P, '.' empty, '#' stone. floor: '.' plain, '^ v < >' one-way gate, '*' color-swap pad
+const DIRS={u:[-1,0],d:[1,0],l:[0,-1],r:[0,1]};
+const GATE={'^':'u',v:'d','<':'l','>':'r'};
+const isTok=ch=>ch!=='.'&&ch!=='#';
+const nextColor=(L,t)=>L.colors[(L.colors.indexOf(t)+1)%L.colors.length];
+const prevColor=(L,t)=>L.colors[(L.colors.indexOf(t)+L.colors.length-1)%L.colors.length];
+// can the token on `from` slide one step in `dir`? returns the target cell or -1
+function step(L,b,from,dir){const n=L.n,r=(from/n|0)+DIRS[dir][0],c=from%n+DIRS[dir][1];if(r<0||c<0||r>=n||c>=n)return -1;const to=r*n+c;
+ if(!isTok(b[from])||b[to]!=='.')return -1;const fg=GATE[L.floor[from]],tg=GATE[L.floor[to]];if((fg&&fg!==dir)||(tg&&tg!==dir))return -1;return to;}
+function apply(L,b,from,to){const o=b.slice();let t=o[from];if(L.floor[to]==='*')t=nextColor(L,t);o[to]=t;o[from]='.';return o;}
+function legal(L,b){const out=[];for(let e=0;e<b.length;e++){if(b[e]!=='.')continue;for(const d in DIRS){const n=L.n,r=(e/n|0)-DIRS[d][0],c=e%n-DIRS[d][1];if(r<0||c<0||r>=n||c>=n)continue;const f=r*n+c;if(step(L,b,f,d)===e)out.push([f,e]);}}return out;}
+const solved=(L,b)=>b.every((t,i)=>!isTok(t)||L.colors[i%L.n]===t);
+function hcost(L,b){let h=0;for(let i=0;i<b.length;i++){const t=b[i];if(isTok(t)){const d=Math.abs(i%L.n-L.colors.indexOf(t));h+=d?d+1:0;}}return h;}
+// weighted A*: returns the list of moves [from,to] or null when the node budget runs out
+function solve(L,start,budget,w){if(solved(L,start))return [];const key=b=>b.join('');const heap=[],seen=new Map();let cnt=0;
+ const push=nd=>{heap.push(nd);let i=heap.length-1;while(i){const p=(i-1)>>1;if(heap[p].f<=nd.f)break;heap[i]=heap[p];i=p;}heap[i]=nd;};
+ const pop=()=>{const top=heap[0],last=heap.pop();if(heap.length){let i=0;for(;;){let l=2*i+1,r=l+1,m=i;if(l<heap.length&&heap[l].f<(m===i?last.f:heap[m].f))m=l;if(r<heap.length&&heap[r].f<(m===i?last.f:heap[m].f))m=r;if(m===i)break;heap[i]=heap[m];i=m;}heap[i]=last;}return top;};
+ push({b:start,g:0,f:w*hcost(L,start),p:null,m:null});seen.set(key(start),0);
+ while(heap.length){const nd=pop();if(solved(L,nd.b)){const path=[];for(let x=nd;x.p;x=x.p)path.push(x.m);return path.reverse();}
+  if(++cnt>budget)return null;
+  for(const m of legal(L,nd.b)){const nb=apply(L,nd.b,m[0],m[1]),k=key(nb),g=nd.g+1;if(seen.has(k)&&seen.get(k)<=g)continue;seen.set(k,g);push({b:nb,g,f:g+w*hcost(L,nb),p:nd,m});}}
+ return null;}
+//CORE-END
+
+const COL={B:{n:'Blue',c:'#3b82f6',d:'#1d4ed8',s:'#ffffff',sh:'<circle cx="12" cy="12" r="7.5"/>'},
+ Y:{n:'Yellow',c:'#facc15',d:'#ca8a04',s:'#7a4a00',sh:'<polygon points="12,2.5 14.8,8.8 21.5,9.3 16.4,13.7 18,20.5 12,16.8 6,20.5 7.6,13.7 2.5,9.3 9.2,8.8"/>'},
+ R:{n:'Red',c:'#ef4444',d:'#b91c1c',s:'#ffffff',sh:'<rect x="5" y="5" width="14" height="14" rx="2.5"/>'},
+ G:{n:'Green',c:'#22c55e',d:'#15803d',s:'#ffffff',sh:'<polygon points="12,3.5 21,19.5 3,19.5"/>'},
+ P:{n:'Purple',c:'#a855f7',d:'#7e22ce',s:'#ffffff',sh:'<polygon points="12,2.5 20.5,12 12,21.5 3.5,12"/>'}};
+const svg=t=>`<svg viewBox="0 0 24 24">${COL[t].sh}</svg>`;
+const capVars=t=>`--c:${COL[t].c};--d:${COL[t].d};--s:${COL[t].s}`;
+const ARROW={'^':'⬆','v':'⬇','<':'⬅','>':'➡'};
+
+// 20 levels, made by scripts/color-grid-levels.mjs: every start board is scrambled backwards from a sorted board, so it can always be solved.
+// sol is a known solution (used when the hint search runs out of time); par is the solution length the solver found.
+const LV=/*LEVELS*/[{"name":"Slide In","n":3,"colors":"BYR","board":"YYR.BRBYR","floor":".........","par":3,"tip":"Tap a cap next to the empty hole to slide it in.","coach":"Slide each cap into its color column!","sol":[[4,3],[1,4],[0,1]]},{"name":"Column Swap","n":3,"colors":"BYR","board":"RRYY.BBYR","floor":".........","par":10,"tip":"Blue and Red swapped sides! Loop them around.","coach":"Blue and red are in the wrong columns!","sol":[[5,4],[2,5],[1,2],[0,1],[3,0],[4,3],[5,4],[2,5],[1,2],[0,1]]},{"name":"Corner Trap","n":3,"colors":"BYR","board":"YRYB.BYRB","floor":".........","par":13,"tip":"Plan a path through the corners.","coach":"Move the corner caps step by step!","sol":[[5,4],[8,5],[7,8],[6,7],[3,6],[4,3],[5,4],[2,5],[1,2],[0,1],[3,0],[4,3],[5,4]]},{"name":"Checkerboard","n":3,"colors":"BYR","board":"YRBRYRY.B","floor":".........","par":19,"tip":"No two caps of the same color touch. Sort them!","coach":"A checkerboard mix-up!","sol":[[8,7],[5,8],[2,5],[1,2],[4,1],[3,4],[6,3],[7,6],[4,7],[5,4],[8,5],[7,8],[4,7],[3,4],[6,3],[7,6],[4,7],[1,4],[0,1]]},{"name":"Classic Boss","n":3,"colors":"BYR","board":"RYBR.RYBY","floor":".........","par":19,"cap":27,"tip":"Boss level! Sort everything before you run out of moves.","coach":"Boss level! Watch your moves!","sol":[[3,4],[0,3],[1,0],[2,1],[5,2],[4,5],[3,4],[0,3],[1,0],[4,1],[3,4],[6,3],[7,6],[8,7],[5,8],[2,5],[1,2],[4,1],[3,4]]},{"name":"Stone Center","n":3,"colors":"BYR","board":"B.BY#BRRY","floor":".........","par":17,"tip":"The stone in the middle never moves. Go around it!","coach":"A stone! Slide around it.","sol":[[2,1],[5,2],[8,5],[7,8],[6,7],[3,6],[0,3],[1,0],[2,1],[5,2],[8,5],[7,8],[6,7],[3,6],[0,3],[1,0],[2,1]]},{"name":"Twisty Track","n":3,"colors":"BYR","board":".B#YBR#RY","floor":".........","par":10,"tip":"Two stones make a twisty track.","coach":"Two stones block the way!","sol":[[1,0],[4,1],[3,4],[0,3],[1,0],[4,1],[7,4],[8,7],[5,8],[4,5]]},{"name":"Hello Green","n":4,"colors":"BYRG","board":"B.BRRYGYBYR.BYGG","floor":"................","par":19,"tip":"A bigger board with a new Green column and two holes.","coach":"Green is here! Two empty holes.","sol":[[2,1],[3,2],[7,3],[6,7],[15,11],[14,15],[5,6],[4,5],[0,4],[1,0],[5,1],[6,5],[2,6],[1,2],[10,14],[6,10],[2,6],[3,2],[2,1]]},{"name":"Squeeze","n":4,"colors":"BYRG","board":"YBRG.RBGBYYGYBRR","floor":"................","par":23,"tip":"Only one hole now. Think before you slide!","coach":"Only one hole now!","sol":[[0,4],[1,0],[5,1],[4,5],[8,4],[12,8],[13,12],[9,13],[5,9],[6,5],[2,6],[1,2],[5,1],[9,5],[8,9],[4,8],[0,4],[1,0],[5,1],[9,5],[10,9],[14,10],[15,14]]},{"name":"The Maze","n":4,"colors":"BYRG","board":"BBRGB#YRY.#GYBRG","floor":"................","par":26,"tip":"Boss level! Two stones turn the board into a maze.","coach":"Boss level! A maze of stones!","sol":[[8,9],[12,8],[13,12],[14,13],[15,14],[11,15],[7,11],[3,7],[2,3],[6,2],[7,6],[11,7],[15,11],[14,15],[13,14],[9,13],[8,9],[4,8],[0,4],[1,0],[2,1],[3,2],[7,3],[6,7],[2,6],[3,2]]},{"name":"One-Way Arrows","n":4,"colors":"BYRG","board":"YBGYBRG.YBRGBYR.","floor":".....>....<.....","par":20,"tip":"Arrows only let caps slide the way they point.","coach":"Follow the arrows!","sol":[[6,7],[2,6],[3,2],[7,3],[6,7],[5,6],[14,15],[13,14],[9,13],[8,9],[4,8],[0,4],[1,0],[2,1],[4,5],[8,4],[12,8],[13,12],[14,13],[15,14]]},{"name":"Rainbow Pad","n":4,"colors":"BYRG","board":"BRYYBGRRBBRGY.GG","floor":".........*......","par":19,"tip":"A cap that lands on the rainbow pad changes color: Blue, Yellow, Red, Green.","coach":"The rainbow pad changes colors!","sol":[[12,13],[8,12],[9,8],[5,9],[9,5],[5,9],[1,5],[2,1],[3,2],[7,3],[11,7],[15,11],[14,15],[10,14],[6,10],[5,6],[1,5],[2,1],[3,2]]},{"name":"Uneven Stock","n":4,"colors":"BYRG","board":"RGGRG.RGBBYRBGRY","floor":".....*..........","par":30,"tip":"Too many of one color! Use the rainbow pad to fix it.","coach":"Too many of one color! Use the pad.","sol":[[4,5],[5,4],[1,5],[0,1],[4,0],[5,4],[9,5],[10,9],[14,10],[13,14],[9,13],[10,9],[11,10],[15,11],[14,15],[10,14],[11,10],[7,11],[3,7],[2,3],[1,2],[5,1],[9,5],[5,9],[9,5],[5,9],[9,5],[10,9],[6,10],[7,6]]},{"name":"Mirror Board","n":4,"colors":"BYRG","board":"GRYBRB.YYGBRBYRG","floor":"................","par":38,"tip":"The top row is the bottom row backwards!","coach":"A mirror board!","sol":[[2,6],[1,2],[0,1],[4,0],[5,4],[6,5],[10,6],[9,10],[5,9],[6,5],[2,6],[3,2],[7,3],[11,7],[10,11],[6,10],[2,6],[1,2],[0,1],[4,0],[5,4],[6,5],[2,6],[3,2],[7,3],[6,7],[2,6],[1,2],[5,1],[9,5],[8,9],[4,8],[0,4],[1,0],[5,1],[6,5],[2,6],[3,2]]},{"name":"Timed Rush","n":4,"colors":"BYRG","board":"YBYGRGBBB.GYBYGG","floor":".....>....*....^","par":36,"time":120,"tip":"Boss level! Arrows and a rainbow pad, against the clock.","coach":"Boss level! Beat the clock!","sol":[[10,9],[6,10],[5,6],[4,5],[0,4],[1,0],[2,1],[6,2],[10,6],[6,10],[10,6],[11,10],[7,11],[3,7],[2,3],[6,2],[10,6],[9,10],[10,9],[11,10],[7,11],[6,7],[5,6],[4,5],[8,4],[9,8],[10,9],[6,10],[7,6],[11,7],[10,11],[14,10],[10,14],[14,10],[10,14],[14,10]]},{"name":"Mega Grid","n":5,"colors":"BYRGP","board":"BBGPGBY..GBBRRP.YRGPYYYRP","floor":".........................","par":27,"tip":"Purple joins in! Three holes: push a whole line at once.","coach":"Purple is here! Tap a cap to push a whole line.","sol":[[9,8],[12,7],[13,12],[4,9],[3,4],[2,3],[8,13],[9,8],[10,15],[11,10],[16,11],[21,16],[20,21],[7,2],[12,7],[17,12],[22,17],[23,22],[15,20],[10,15],[5,10],[0,5],[1,0],[6,1],[11,6],[16,11],[17,16]]},{"name":"Four Pillars","n":5,"colors":"BYRGP","board":"BRYGP.#R#PBB.PPB#Y#GBRGRY","floor":".........................","par":33,"tip":"Four stone pillars split the board into rooms.","coach":"Four stone pillars!","sol":[[10,5],[11,10],[17,12],[12,11],[22,17],[23,22],[24,23],[19,24],[14,19],[13,14],[17,12],[12,13],[22,17],[21,22],[17,12],[22,17],[23,22],[22,21],[24,23],[19,24],[14,19],[9,14],[4,9],[3,4],[2,3],[1,2],[17,22],[12,17],[7,12],[2,7],[3,2],[2,1],[4,3]]},{"name":"Conveyor Loop","n":5,"colors":"BYRGP","board":"YGPPGBYRG.BPRGPBBY.RBYYRP","floor":"..>.......^...v.......<..","par":42,"tip":"The arrows on the edges go round like a conveyor belt.","coach":"A conveyor loop!","sol":[[19,18],[4,9],[3,4],[2,3],[1,2],[0,1],[14,19],[9,14],[4,9],[3,4],[2,3],[5,0],[10,5],[15,10],[16,15],[17,16],[12,17],[11,12],[6,11],[7,6],[12,7],[17,12],[18,17],[13,18],[8,13],[7,8],[6,7],[11,6],[16,11],[21,16],[22,21],[23,22],[24,23],[19,24],[14,19],[9,14],[8,9],[13,8],[18,13],[19,18],[24,19],[23,24]]},{"name":"Double Chameleon","n":5,"colors":"BYRGP","board":"BBRGPBYRGPYBYYPBBYGYYRR.G","floor":"......*...........*......","par":43,"tip":"Two rainbow pads! Plan a few moves ahead.","coach":"Two rainbow pads!","sol":[[18,23],[19,18],[18,19],[19,18],[18,19],[13,18],[18,13],[13,18],[18,13],[19,18],[18,19],[17,18],[18,17],[17,18],[22,17],[21,22],[20,21],[15,20],[10,15],[11,10],[16,11],[15,16],[10,15],[5,10],[0,5],[1,0],[6,1],[11,6],[12,11],[17,12],[18,17],[23,18],[24,23],[19,24],[18,19],[17,18],[18,17],[17,18],[18,17],[17,18],[18,17],[17,18],[18,17]]},{"name":"Grand Finale","n":5,"colors":"BYRGP","board":"GYRRGBRRYPB#G#PBBYPP.BYRR","floor":"............v........<.*.","par":40,"cap":60,"tip":"The grand finale: stones, arrows and a rainbow pad!","coach":"Grand finale! Use everything you learned.","sol":[[21,20],[22,21],[23,22],[24,23],[19,24],[14,19],[9,14],[8,9],[7,8],[6,7],[1,6],[0,1],[5,0],[10,5],[15,10],[16,15],[17,16],[12,17],[7,12],[8,7],[9,8],[14,9],[19,14],[18,19],[17,18],[12,17],[7,12],[8,7],[3,8],[2,3],[1,2],[6,1],[7,6],[8,7],[3,8],[2,3],[7,2],[8,7],[3,8],[4,3]]}]/*/LEVELS*/;
+const worlds={classic:{label:'Classic Caps',bg:['#e0f2ff','#93c5fd'],deco:['🔵','⭐','🟥','🧢']},
+ locked:{label:'Locked & Blocked',bg:['#eef0f3','#b6bcc6'],deco:['🪨','🔒','🟩','🧱']},
+ flow:{label:'Directional Flow',bg:['#e8fff1','#86efac'],deco:['➡️','🌈','⬆️','✨']},
+ master:{label:'Master Sorter',bg:['#f3e8ff','#c4b5fd'],deco:['💜','🏆','🔷','🎯']}};
+const levels=LV.map((L,i)=>({name:L.name,world:['classic','locked','flow','master'][i/5|0]}));
+
+function build(Lm,api,stage,li){
+ const L=LV[li];const n=L.n,start=L.board.split(''),floor=L.floor.split('');const LL={n,colors:L.colors.split(''),floor};
+ let b=start.slice(),ids=b.map((t,i)=>isTok(t)?i:null),hist=[],moves=0,hints=0,busy=false,over=false,lastE=-1;
+ const total=b.filter(isTok).length;
+ const gone=()=>!stage.isConnected||over;
+ const root=K.h('div','cg');stage.appendChild(root);
+ const bar=K.h('div','bar2');const tip=K.h('div','tip',L.tip);
+ const wrap=K.h('div','wrapb'),bd=K.h('div','bd'),bans=K.h('div','bans');wrap.append(bd,bans);
+ const legend=K.h('div','legend');root.append(bar,tip,wrap,legend);
+ const has=ch=>floor.includes(ch)||start.includes(ch);
+ if(has('#'))legend.appendChild(K.h('span','','🪨 Stones never move'));
+ if(floor.some(f=>GATE[f]))legend.appendChild(K.h('span','','➡️ Arrows: slide only that way'));
+ if(has('*'))legend.appendChild(K.h('span','','🌈 Rainbow pad: changes the color'));
+ // HUD: moves / par, cap, undo, reset, hint
+ const mv=K.h('div','pill'),un=K.h('button','ib','↩️ Undo'),rs=K.h('button','ib','🔄 Reset'),hb=K.h('button','ib hint','💡 Hint');
+ bar.append(mv,un,rs,hb);
+ const drawBar=()=>{mv.innerHTML=L.cap?`👣 <b>${moves}</b> / ${L.cap} max`:`👣 <b>${moves}</b> · ⭐ par ${L.par}`;mv.classList.toggle('warn',!!L.cap&&L.cap-moves<=5);un.disabled=!hist.length||busy;};
+ // board
+ let cs=80;const capEls={};
+ function size(){const W=Math.min(stage.clientWidth||innerWidth,620)-24,H=innerHeight*.52;cs=Math.max(46,Math.min(104,Math.floor(W/n),Math.floor(H/n)));
+  root.style.setProperty('--cs',cs+'px');root.style.setProperty('--n',n);place();}
+ const onResize=()=>{if(!stage.isConnected)return removeEventListener('resize',onResize);size();};addEventListener('resize',onResize);
+ for(let i=0;i<n*n;i++){const col=LL.colors[i%n],c=K.h('div','cell');c.style.setProperty('--t',COL[col].c+'26');
+  if(start[i]==='#')c.classList.add('stone');if(GATE[floor[i]]){c.classList.add('gate');c.appendChild(K.h('span','ar',ARROW[floor[i]]));}if(floor[i]==='*')c.classList.add('pad');bd.appendChild(c);}
+ LL.colors.forEach(t=>{const e=K.h('div','ban',`${svg(t)}<span>${COL[t].n}</span>`);e.setAttribute('style',capVars(t));bans.appendChild(e);});
+ function capEl(id){let e=capEls[id];if(!e){e=K.h('div','cap','<i></i>');bd.appendChild(e);capEls[id]=e;bindCap(e,id);}return e;}
+ function paint(e,t){if(e._t===t)return;e._t=t;e.setAttribute('style',capVars(t)+';'+(e.style.transform?'transform:'+e.style.transform:''));e.firstChild.innerHTML=svg(t);}
+ function place(){const live=new Set();b.forEach((t,i)=>{if(!isTok(t))return;const id=ids[i];live.add(String(id));const e=capEl(id);paint(e,t);e._i=i;
+   e.style.transform=`translate(${(i%n)*cs}px,${(i/n|0)*cs}px)`;e.classList.toggle('ok',LL.colors[i%n]===t);});
+  for(const id in capEls)if(!live.has(id)){capEls[id].remove();delete capEls[id];}
+  let ok=0;b.forEach((t,i)=>{if(isTok(t)&&LL.colors[i%n]===t)ok++;});api.progress(ok,total);drawBar();}
+ // ----- moving -----
+ function clearHint(){bd.querySelectorAll('.cap.hint').forEach(e=>e.classList.remove('hint'));bd.querySelectorAll('.harrow').forEach(e=>e.remove());un.classList.remove('glow');rs.classList.remove('glow');}
+ function doMoves(list){if(busy||gone()||!list.length)return false;clearHint();hist.push({b:b.slice(),ids:ids.slice(),moves});
+  let swapped=[];for(const [f,t] of list){const before=b[f];b=apply(LL,b,f,t);ids[t]=ids[f];ids[f]=null;if(b[t]!==before)swapped.push(ids[t]);lastE=f;moves++;}
+  K.sfx.pop();place();swapped.forEach(id=>{const e=capEls[id];if(e){e.classList.remove('swap');void e.offsetWidth;e.classList.add('swap');K.sfx.star();}});
+  if(solved(LL,b)){busy=true;over=true;win();return true;}
+  if(L.cap&&moves>=L.cap){busy=true;setTimeout(()=>{if(stage.isConnected)api.lose('Out of moves!');},450);}
+  return true;}
+ const nope=id=>{const e=capEls[id];if(!e)return;e.classList.remove('nope');void e.offsetWidth;e.classList.add('nope');K.sfx.bad();};
+ // slide the tapped cap: one step into an empty neighbour, or push the whole line toward an empty cell in the same row/column
+ function tapAt(i,dirPref){const dirs=dirPref?[dirPref]:Object.keys(DIRS);
+  for(const d of dirs){const t=step(LL,b,i,d);if(t>=0)return doMoves([[i,t]]);}
+  for(const d of dirs){const line=[i];let j=i;for(;;){const r=(j/n|0)+DIRS[d][0],c=j%n+DIRS[d][1];if(r<0||c<0||r>=n||c>=n){j=-1;break;}j=r*n+c;if(b[j]==='.')break;if(!isTok(b[j])){j=-1;break;}line.push(j);}
+   if(j<0)continue;let tmp=b.slice(),ok=true;const seq=[];for(let k=line.length-1;k>=0;k--){const f=line[k],t=step(LL,tmp,f,d);if(t<0){ok=false;break;}seq.push([f,t]);tmp=apply(LL,tmp,f,t);}
+   if(ok&&seq.length)return doMoves(seq);}
+  nope(ids[i]);return false;}
+ function bindCap(e,id){let sx=0,sy=0,down=false;
+  e.addEventListener('pointerdown',ev=>{if(busy||gone())return;K.audio();ev.preventDefault();down=true;sx=ev.clientX;sy=ev.clientY;try{e.setPointerCapture(ev.pointerId);}catch(_){}});
+  e.addEventListener('pointerup',ev=>{if(!down)return;down=false;const dx=ev.clientX-sx,dy=ev.clientY-sy;const i=e._i;
+   if(Math.hypot(dx,dy)>cs*.25)tapAt(i,Math.abs(dx)>Math.abs(dy)?(dx>0?'r':'l'):(dy>0?'d':'u'));else tapAt(i);});
+  e.addEventListener('pointercancel',()=>{down=false;});}
+ const onKey=ev=>{if(!stage.isConnected)return removeEventListener('keydown',onKey);const d={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r'}[ev.key];if(!d||busy||gone())return;ev.preventDefault();K.audio();
+  const cand=legal(LL,b).filter(([f,t])=>step(LL,b,f,d)===t);if(!cand.length)return K.sfx.bad();
+  doMoves([cand.find(m=>m[1]===lastE)||cand[0]]);};
+ addEventListener('keydown',onKey);
+ un.onclick=()=>{K.audio();if(busy||!hist.length)return;clearHint();const h=hist.pop();b=h.b;ids=h.ids;moves=h.moves;K.sfx.whoosh();place();};
+ rs.onclick=()=>{K.audio();if(busy)return;clearHint();if(moves){hist.push({b:b.slice(),ids:ids.slice(),moves});}b=start.slice();ids=b.map((t,i)=>isTok(t)?i:null);moves=0;hist=[];K.sfx.whoosh();place();};
+ // ----- hint: search from here; if the search is too big, follow the known solution, or suggest Undo/Reset -----
+ const planKeys=new Map();{let pb=start.slice();planKeys.set(pb.join(''),0);L.sol.forEach((m,k)=>{pb=apply(LL,pb,m[0],m[1]);planKeys.set(pb.join(''),k+1);});}
+ function showHint(){if(gone()||busy)return;clearHint();let m=null;const k=planKeys.get(b.join(''));
+  if(k!=null&&k<L.sol.length)m=L.sol[k];else{const p=solve(LL,b,n<=3?60000:90000,n<=3?1:2.5);if(p&&p.length)m=p[0];}
+  if(!m){const btn=hist.length?un:rs;btn.classList.add('glow');api.coach(hist.length?'Tricky! Try Undo a few times.':'Tricky! Try Reset.');return;}
+  hints++;const e=capEls[ids[m[0]]];if(e){e.classList.add('hint');const d=Object.keys(DIRS).find(d=>step(LL,b,m[0],d)===m[1]);
+   const a=K.h('div','harrow',{u:'⬆️',d:'⬇️',l:'⬅️',r:'➡️'}[d]);const r=(m[0]/n|0)+DIRS[d][0]*.62,c=m[0]%n+DIRS[d][1]*.62;a.style.left=(c*cs+cs*.25)+'px';a.style.top=(r*cs+cs*.22)+'px';bd.appendChild(a);}
+  K.say('Slide the glowing cap!');}
+ hb.onclick=()=>{K.audio();if(busy)return;try{if(typeof ColorGridSlide.onRewardedHintRequested==='function')ColorGridSlide.onRewardedHintRequested(showHint);else showHint();}catch(e){showHint();}};
+ function win(){drawBar();const stars=moves<=L.par&&!hints?3:moves<=Math.ceil(L.par*1.5)?2:1;
+  Object.values(capEls).forEach((e,k)=>setTimeout(()=>e.classList.add('party'),k*25));K.sfx.cheer();
+  setTimeout(()=>{if(!stage.isConnected)return;try{ColorGridSlide.onLevelComplete&&ColorGridSlide.onLevelComplete(li+1);}catch(e){}api.win(stars);
+   const p=document.querySelector('.modal .card p');if(p)p.insertAdjacentHTML('beforeend',`<br>👣 ${moves} moves · par ${L.par}${hints?` · 💡 ${hints} hint${hints>1?'s':''}`:''}`);},900);}
+ window.__CG={get board(){return b.join('');},get moves(){return moves;},L:LL,lv:L,tap:tapAt,solve:()=>{const p=L.sol.slice();(function go(){if(!p.length||gone())return;doMoves([p.shift()]);setTimeout(go,40);})();}};
+ size();place();
+ if(L.time)api.timer(L.time,'Time is up!');
+ api.coach(L.coach);}
+K.start({id:'color-grid-slide',title:'Color Grid Slide',emoji:'🧩',worlds,levels,build});
+</script></body></html>
