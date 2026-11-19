@@ -1,0 +1,8 @@
+{
+  "name": "kidsgames4u-shorts-tools",
+  "private": true,
+  "description": "Records real gameplay and renders 1080x1920 promo videos for Instagram Reels and YouTube Shorts",
+  "dependencies": {
+    "playwright-core": "1.48.2"
+  }
+}

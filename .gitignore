@@ -44,3 +44,10 @@ yarn-error.log*
 # scratch
 _to_delete/
 *.tgz
+
+# promo videos (large binaries)
+marketing/shorts/*.mp4
+marketing/shorts/tools/node_modules/
+marketing/shorts/tools/.venv/
+marketing/shorts/tools/models/
+marketing/shorts/tools/out/
