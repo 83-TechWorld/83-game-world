@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.hud .lt{white-space:nowrap}
+.bc{width:min(880px,100%);display:flex;flex-direction:column;align-items:center;gap:7px}
+.capn{display:flex;align-items:center;gap:10px;background:#fff;border-radius:20px;padding:6px 12px;box-shadow:0 4px 0 rgba(0,0,0,.12);width:100%;min-height:62px}
+.cav{font-size:40px;line-height:1;transition:transform .2s}.cav.talk{animation:bob .6s infinite}
+@keyframes bob{50%{transform:translateY(-3px) rotate(-4deg)}}
+.cb{flex:1;min-width:0}.cb small{font-weight:800;opacity:.6;font-size:12px;display:block}
+.sl{font-weight:700;font-size:clamp(14px,2.4vw,18px);line-height:1.25}
+.sl .w.lit{background:#ffd23b;border-radius:6px}
+.rules{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.rules span{background:#ffffffd9;border-radius:999px;padding:3px 10px;font-weight:800;font-size:13px;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.bw{position:relative;padding:8px 8px 0;border-radius:18px;background:linear-gradient(#bfe8ff,#effaff);box-shadow:0 6px 0 rgba(0,0,0,.12);max-width:100%}
+.gw{position:relative}
+.grid{position:relative;display:grid;grid-template-columns:repeat(var(--cols),var(--cs));grid-auto-rows:var(--cs);touch-action:none;cursor:crosshair;
+ background-image:linear-gradient(#0000000f 1px,transparent 1px),linear-gradient(90deg,#0000000f 1px,transparent 1px);background-size:var(--cs) var(--cs);transform-origin:50% 100%}
+.gnd{height:14px;margin:0 -8px;border-radius:0 0 18px 18px;background:linear-gradient(#5cc85c 0 45%,#a0703c 45%)}
+.c{position:relative;width:var(--cs);height:var(--cs)}
+.c.in{background:#fff4dc;background-image:repeating-linear-gradient(90deg,#f3dfb6 0 2px,transparent 2px 11px)}
+.c.ug{background:#a87b4f;background-image:radial-gradient(#7d5531 1.5px,transparent 2px);background-size:9px 9px}
+.c.clr::before{content:'';position:absolute;inset:3px;border:2px dashed #22a75a;border-radius:6px;background:#2fc76a22}
+.c.fix{box-shadow:inset 0 0 0 3px #ff3b5c;z-index:1}
+.gh{position:absolute;inset:0;opacity:.4;outline:2px dashed #3d5afe;outline-offset:-3px;border-radius:4px;pointer-events:none}
+.gh.gen{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:calc(var(--cs)*.4);opacity:.75;background:#3d5afe12;line-height:1}
+.gh.gen small{font-size:calc(var(--cs)*.28);font-weight:800;color:#3d5afe}
+.c.fix .gh{opacity:.7}
+.pt{position:absolute;inset:0}
+.pe{display:flex;align-items:center;justify-content:center}.pt>b{position:relative;font-size:calc(var(--cs)*.64);line-height:1;font-weight:400}
+.pt::before,.pt::after{content:none;position:absolute}
+/* parts */
+.pf{background:repeating-linear-gradient(135deg,#8a8f99 0 5px,#a3a8b2 5px 10px);border-top:3px solid #6b707a}
+.ptr{background:linear-gradient(90deg,#7a4a22,#a0652f 40%,#7a4a22);border-left:1px solid #5b3517;border-right:1px solid #5b3517}
+.pw{background-color:var(--pc,#e07a5f);background-image:linear-gradient(#0000 46%,#00000033 46% 54%,#0000 54%),linear-gradient(90deg,#0000 47%,#00000026 47% 53%,#0000 53%);background-size:100% 50%,50% 50%;box-shadow:inset 0 0 0 1px #00000026}
+.pu{background-color:var(--pc,#9d8cf0);background-image:radial-gradient(#ffffff55 28%,transparent 31%);background-size:8px 8px}
+.pu::after{content:'🔇';inset:0;display:flex;align-items:center;justify-content:center;font-size:calc(var(--cs)*.42)}
+.pd::before{content:'';left:16%;right:16%;top:8%;bottom:0;background:var(--pc,#9c6b3c);border-radius:45% 45% 0 0/22% 22% 0 0;border:2px solid #00000033}
+.pd::after{content:'';right:26%;top:55%;width:12%;height:12%;border-radius:50%;background:#ffd23b}
+.pdw::before{left:3%;right:3%;background:linear-gradient(90deg,var(--pc,#9c6b3c) 0 48%,#00000055 48% 52%,var(--pc,#9c6b3c) 52%)}
+.pdw::after{right:auto;left:40%;box-shadow:calc(var(--cs)*.12) 0 0 #ffd23b}
+.pn::before{content:'';inset:14%;background:linear-gradient(90deg,#0000 46%,#fff 46% 54%,#0000 54%),linear-gradient(#0000 46%,#fff 46% 54%,#0000 54%),linear-gradient(135deg,#d9f2ff,#8fd0ff);border:2px solid #fff;border-radius:3px}
+.sealed::before{border:4px solid #27315a;inset:10%;border-radius:6px}
+.prl{background:repeating-linear-gradient(0deg,var(--pc,#d1495b) 0 7px,#00000026 7px 9px);clip-path:polygon(100% 0,100% 100%,0 100%)}
+.prr{background:repeating-linear-gradient(0deg,var(--pc,#d1495b) 0 7px,#00000026 7px 9px);clip-path:polygon(0 0,100% 100%,0 100%)}
+.prf::before{content:'';left:0;right:0;bottom:0;height:46%;background:var(--pc,#7d8597);border-top:4px solid #5c6370}
+.pp::before{content:'';left:28%;right:28%;top:0;bottom:0;background:linear-gradient(90deg,#b8bdc7,#e4e7ec 50%,#b8bdc7);border-top:4px solid #8d93a0;border-bottom:4px solid #8d93a0}
+.pj::before{content:'';left:46%;right:46%;top:4%;bottom:0;background:#b07a45;border-radius:3px;transform:rotate(3deg)}
+.pb::before{content:'';left:0;right:0;bottom:0;height:42%;background:#8d99ae;border-top:3px solid #6c7891}
+.pl::before{content:'';left:20%;right:20%;top:0;bottom:0;border-left:4px solid #a0522d;border-right:4px solid #a0522d;background:repeating-linear-gradient(#0000 0 22%,#a0522d 22% 32%)}
+.pc::before{content:'';left:20%;right:20%;top:0;bottom:0;background-color:var(--pc,#b5523b);background-image:linear-gradient(#0000 46%,#00000033 46% 54%,#0000 54%);background-size:100% 50%;box-shadow:inset 0 0 0 1px #00000033}
+.pi .a,.pi .o,.pz .a,.pz .o{position:absolute}
+.pi .a{background:#3b82f6;box-shadow:inset 0 0 0 1px #1e40af}
+.pi .a.l{left:0;right:50%;top:36%;bottom:36%}.pi .a.r{left:50%;right:0;top:36%;bottom:36%}.pi .a.u{top:0;bottom:50%;left:36%;right:36%}.pi .a.d{top:50%;bottom:0;left:36%;right:36%}
+.pi .o{left:30%;right:30%;top:30%;bottom:30%;border-radius:5px;background:#2563eb}
+.pz .a{background:#f5b700}
+.pz .a.l{left:0;right:50%;top:44%;bottom:44%}.pz .a.r{left:50%;right:0;top:44%;bottom:44%}.pz .a.u{top:0;bottom:50%;left:44%;right:44%}.pz .a.d{top:50%;bottom:0;left:44%;right:44%}
+.pz .o{left:36%;right:36%;top:36%;bottom:36%;border-radius:50%;background:#e09f00}
+.pg{background:linear-gradient(135deg,#e6f8ffcc,#9ad8ffaa 60%,#e6f8ffcc);box-shadow:inset 0 0 0 1px #6cc4f0}
+.pgt{background:linear-gradient(135deg,#9fdcffdd,#3f9de0cc 60%,#9fdcffdd);box-shadow:inset 0 0 0 4px #1d6fa5}
+.pk::before{content:'';left:0;right:0;bottom:0;height:46%;background:linear-gradient(135deg,#e6f8ff,#8fd0ff);border:3px solid #27315a;border-radius:3px}
+.pk.open::before{background:#0000;border:3px dashed #7d8597}
+.pr{background:linear-gradient(135deg,#a8adb6,#8a909b);clip-path:polygon(0 0,100% 100%,0 100%)}
+.pst{background:#a8adb6;clip-path:polygon(0 0,34% 0,34% 34%,67% 34%,67% 67%,100% 67%,100% 100%,0 100%)}
+.pgv{background-color:#d8c79c;background-image:radial-gradient(#8a7a5a 1.6px,transparent 2px),radial-gradient(#fff8 1.4px,transparent 2px);background-size:7px 7px,9px 9px;background-position:0 0,3px 4px}
+.pm{background-color:#7a4b25;background-image:radial-gradient(#5a3418 2px,transparent 2.5px);background-size:10px 10px}
+.pdr::before{content:'';left:6%;right:6%;bottom:0;height:40%;background:repeating-linear-gradient(90deg,#3f444d 0 3px,#a5abb5 3px 6px);border:2px solid #3f444d;border-radius:3px}
+.px{box-shadow:inset 4px 0 0 #6c7891,inset -4px 0 0 #6c7891;background:linear-gradient(to top right,#0000 calc(50% - 3px),#d1495b calc(50% - 3px) calc(50% + 3px),#0000 calc(50% + 3px)),linear-gradient(to top left,#0000 calc(50% - 3px),#d1495b calc(50% - 3px) calc(50% + 3px),#0000 calc(50% + 3px))}
+.pbm::before{content:'';left:32%;right:32%;top:0;bottom:0;background:#8d99ae;border-left:4px solid #5c6782;border-right:4px solid #5c6782}
+.pgd::before{content:'';left:4%;right:4%;top:6%;bottom:0;background:repeating-linear-gradient(#d3d8e0 0 5px,#9aa2ae 5px 7px);border:2px solid #6c7891}
+.ppl::before{content:'';left:45%;right:45%;top:0;bottom:0;background:linear-gradient(90deg,#c99a2e,#ffe08a,#c99a2e)}
+.pso::before{content:'';left:2%;right:2%;bottom:6%;height:52%;background:linear-gradient(90deg,#0000 48%,#9fb3ff 48% 52%,#0000 52%),linear-gradient(#0000 46%,#9fb3ff 46% 54%,#0000 54%),#1e3a8a;border:2px solid #c9d3ff;transform:skewX(-12deg)}
+.pbox{background:#ffe9a8;border-radius:8px;box-shadow:inset 0 0 0 3px #e0b43a}
+.ptk{background:#cfe9ff;border-radius:10px 10px 4px 4px;box-shadow:inset 0 0 0 3px #3b82f6}
+.pbt::before{content:'';left:0;right:0;bottom:16%;height:34%;background:repeating-linear-gradient(90deg,#3d405b 0 6px,#5b5f80 6px 12px);border-radius:8px;border:2px solid #232539}
+.pbt::after{content:'📦';left:22%;bottom:48%;font-size:calc(var(--cs)*.42)}
+.pbin::before{content:'';left:12%;right:12%;top:26%;bottom:4%;background:var(--bc);border-radius:4px 4px 8px 8px;box-shadow:inset 0 4px 0 #0003}
+.pbin>b{font-size:calc(var(--cs)*.34);top:8%}
+.pln::before{content:'';left:0;right:0;bottom:6%;height:20%;background:var(--lc);border-radius:4px}
+.pseat::before{content:'';left:10%;right:10%;top:22%;bottom:4%;background:var(--sc);border-radius:8px 8px 3px 3px;box-shadow:inset 0 -6px 0 #0003}
+.prw{background:#3a3f4b}.prw::before{content:'';left:30%;right:30%;top:30%;bottom:30%;border-radius:50%;background:var(--rc);box-shadow:0 0 8px var(--rc)}
+.deco>b{font-size:calc(var(--cs)*.6)}
+/* x-ray + effects */
+.grid.xray .c:not(.leak){filter:grayscale(.7) brightness(.8)}
+.c.leak{z-index:3;animation:leak .6s infinite alternate;box-shadow:0 0 0 3px #ff3b5c,0 0 16px 5px #ff3b5caa}
+.c.leak .gh{opacity:.85}
+@keyframes leak{to{box-shadow:0 0 0 3px #ff3b5c,0 0 4px 1px #ff3b5c55}}
+.bang{position:absolute;right:-30%;top:-40%;font-size:calc(var(--cs)*.55);z-index:4;animation:pop .4s}
+.fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+.fx.rain{background:repeating-linear-gradient(100deg,transparent 0 13px,#4a90e2aa 13px 15px);background-size:60px 60px;animation:rain .35s linear infinite}
+.fx.rain.heavy{background-image:repeating-linear-gradient(100deg,transparent 0 7px,#2f6fc0cc 7px 9px)}
+.fx.flash{animation:rain .35s linear infinite,flash 1.7s infinite}
+@keyframes rain{to{background-position:-20px 60px}}
+@keyframes flash{0%,10%,100%{box-shadow:inset 0 0 0 999px #0000}5%{box-shadow:inset 0 0 0 999px #ffffffb0}}
+.grid.sway{animation:sway .45s ease-in-out infinite alternate}
+.grid.strong{animation-duration:.25s}
+@keyframes sway{from{transform:rotate(-1.1deg)}to{transform:rotate(1.1deg)}}
+.grid.bounce{animation:bnc .3s infinite}
+@keyframes bnc{50%{transform:translateY(-4px)}}
+.grid.flowing .pi .a,.grid.flowing .pi .o{animation:flow .4s infinite alternate}
+@keyframes flow{to{background:#9bd4ff;box-shadow:0 0 8px #3b82f6}}
+.grid.powered .pz .a,.grid.powered .pz .o{animation:zap .25s infinite alternate}
+.grid.powered .glow{filter:drop-shadow(0 0 8px #ffe14d)}
+@keyframes zap{to{background:#fff27a;box-shadow:0 0 10px #ffd400}}
+.grid.dark{filter:brightness(.32) saturate(.5);transition:filter .3s}
+.puff{position:absolute;font-size:calc(var(--cs)*.6);animation:puff 1.5s ease-out forwards;white-space:nowrap;font-weight:800;color:#27315a}
+@keyframes puff{from{transform:translateY(0) scale(.6);opacity:1}to{transform:translate(var(--dx,0),-80px) scale(1.5);opacity:0}}
+.hop{position:absolute;font-size:calc(var(--cs)*.7);animation:hop .35s infinite alternate}
+@keyframes hop{to{transform:translateY(-12px)}}
+.spr{position:absolute;font-size:calc(var(--cs)*.85);line-height:1;transition:left linear;z-index:6}
+.spr.flip{transform:scaleX(-1)}
+/* toolbox */
+.acts{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;min-height:50px}
+.acts .btn{padding:9px 18px;font-size:17px}
+.btn.test{background:#ff7a59;color:#fff}
+.lookb{display:flex;align-items:center;gap:10px;background:#fff;border-radius:999px;padding:6px 16px;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.lookb b{font-size:22px;color:#3d5afe;min-width:26px;text-align:center}
+.dbar{display:flex;gap:12px;align-items:center;background:#27315a;color:#fff;border-radius:999px;padding:7px 18px;font-weight:800;font-size:17px;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.dbar b{font-size:20px;color:#ffd23b;font-variant-numeric:tabular-nums}
+.tools{width:100%;background:#ffffffd9;border-radius:20px;padding:6px 8px;box-shadow:0 4px 0 rgba(0,0,0,.1);transition:opacity .3s}
+.tools.off{opacity:.4;pointer-events:none}
+.tabs{display:flex;gap:6px;margin-bottom:6px;justify-content:center}.tabs button{border:0;border-radius:999px;padding:4px 14px;font-weight:800;background:#eef1f8}.tabs button.on{background:#27315a;color:#fff}
+.pal{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:2px 2px 4px}
+.tb{flex:0 0 auto;border:0;background:#f4f6ff;border-radius:14px;padding:4px 4px 3px;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:800;font-size:11px;width:70px;line-height:1.1;box-shadow:0 3px 0 rgba(0,0,0,.12);transition:transform .12s}
+.tb.on{outline:3px solid #ffb703;background:#fff6d6;transform:translateY(-2px)}
+.mini{--cs:34px;position:relative;width:34px;height:34px;background:#dff3ff;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:22px}
+.sw{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #0002}
+.shelf{width:min(900px,100%);margin:4px auto 12px;background:#ffffffcc;border-radius:24px;padding:12px 16px;box-shadow:0 6px 0 rgba(0,0,0,.08);text-align:center}
+.shelf h2{margin:4px 0 8px;font-size:20px}
+.crew,.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cm,.bdg{width:120px;border-radius:18px;background:#fff;padding:8px 4px;box-shadow:0 4px 0 rgba(0,0,0,.12);font-weight:800;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.cm b,.bdg b{font-size:36px;line-height:1.1;font-weight:400}.cm small,.bdg small{font-weight:700;opacity:.65;font-size:11px}
+.bdg.no{filter:grayscale(1);opacity:.45}
+.got{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:4px 0 10px}
+.got .bdg{animation:pop .5s}
+@media (max-width:520px){.cav{font-size:32px}.capn{padding:5px 8px;min-height:54px}.tb{width:60px;font-size:10px}.mini{--cs:28px;width:28px;height:28px;font-size:18px}.rules span{font-size:11px;padding:2px 8px}.acts .btn{padding:8px 13px;font-size:15px}}
+</style>
+  <script src="/games/_shared/nav.js"></script>
+      <!--SEO-->
+    <title>Build Crew – Free Building &amp; Construction Game for Kids: 20 Levels | Kids Games 4u</title>
+    <meta name="google-adsense-account" content="ca-pub-3661874605610386" />
+    <script src="/games/_shared/ads.js"></script>
+    <meta name="description" content="Free construction game for kids aged 5-10. Remember the blueprint, build houses, a school, a fire station and a hospital, then survive the 2-minute disaster check: rain, wind, water pipes, power and fire drills. 20 levels." />
+    <meta name="keywords" content="building game for kids, construction game, blueprint memory game, engineering for kids, STEM game for kids, build a house game, Kids Games 4u" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#7cc6ff" />
+    <link rel="canonical" href="https://kidsgames4u.com/games/build-crew/index.html" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:site_name" content="Kids Games 4u" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Build Crew – Free Building &amp; Construction Game for Kids: 20 Levels | Kids Games 4u" />
+    <meta property="og:description" content="Free construction game for kids aged 5-10. Remember the blueprint, build houses, a school, a fire station and a hospital, then survive the 2-minute disaster check: rain, wind, water pipes, power and fire drills. 20 levels." />
+    <meta property="og:url" content="https://kidsgames4u.com/games/build-crew/index.html" />
+    <meta property="og:image" content="https://kidsgames4u.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Build Crew – Free Building &amp; Construction Game for Kids: 20 Levels | Kids Games 4u" />
+    <meta name="twitter:description" content="Free construction game for kids aged 5-10. Remember the blueprint, build houses, a school, a fire station and a hospital, then survive the 2-minute disaster check: rain, wind, water pipes, power and fire drills. 20 levels." />
+    <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Build Crew","url":"https://kidsgames4u.com/games/build-crew/index.html","description":"Free construction game for kids aged 5-10. Remember the blueprint, build houses, a school, a fire station and a hospital, then survive the 2-minute disaster check: rain, wind, water pipes, power and fire drills. 20 levels.","applicationCategory":"EducationalApplication","genre":"Educational","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":5,"suggestedMaxAge":10},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Learn & Play","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Build Crew","item":"https://kidsgames4u.com/games/build-crew/index.html"}]}]</script>
+    <!--/SEO-->
+  </head>
+<body><div id="app"></div>
+    <!--SEO-BODY-->
+    <noscript><style>html,body{height:auto!important;overflow:auto!important}#game-guide{display:block!important}</style></noscript>
+    <section id="game-guide" class="about-game" hidden>
+      <h2>About Build Crew: a free game for ages 5-10</h2>
+      <p>Build Crew turns children into junior builders. Captain Leo and Captain Maya show a blueprint, the crew builds it piece by piece, and then a 2-minute disaster check tests the building with rain, wind, water pressure, power cuts and fire drills. Twenty projects go from a treehouse to a whole eco-smart town.</p>
+      <p>Each level follows the same three steps a real building team uses: read the plan, build it, then test it. Early levels keep the blueprint on screen, while later ones hide it after a short look, so children practise visual memory. Look-alike pieces such as flat and sloped roofs, plain and sealed windows, or steps and ramps make children think about why a piece is needed, not just where it goes. When a test finds a loophole, X-ray mode shows the exact spot and the captain explains the reason.</p>
+      <h3>How to play</h3><p>Listen to the captains and study the blueprint. Pick a piece in the toolbox and tap or drag on the grid to build. Choose the right look-alike pieces, such as sealed windows or ramps. Press Test Build to start the disaster check. If something fails, X-ray mode shows the loophole in red, so fix it and test again.</p>
+      <h3>Controls</h3><p>Use a finger or a mouse. Pick a piece in the toolbox, then tap a square on the grid, or drag across several squares to build a row. Tap a placed piece again to remove it, or use the eraser. The Decorate tab has paints and stickers. Press Test Build when you are ready. The speaker button controls sound, and the Levels button opens the map.</p>
+      <h3>Skills kids practise</h3><ul><li>Visual memory: rebuild the blueprint after it hides</li><li>Why buildings need foundations, pillars and sloped roofs</li><li>Water and electricity safety</li><li>Safe exits, ramps and clear paths</li><li>Problem solving: find and fix the loophole</li></ul>
+      <h3>For parents and teachers</h3><p>Ask your child to explain a rule before testing, for example why a roof has two slopes or why wires stay away from water. Point out the same ideas around your home and town: drains in the road, ramps at shop doors and fire exits at school. A failed test is part of the fun, so praise the fix rather than the first try.</p>
+      <h3>More free games</h3><p><a href="/games/alphabet-safari/index.html">Alphabet Safari</a> &middot; <a href="/games/number-rocket/index.html">Number Rocket</a> &middot; <a href="/games/block-builder/index.html">Block Builder</a> &middot; <a href="/games/shape-dash/index.html">Shape Dash</a> &middot; <a href="/games/word-zoo/index.html">Word Zoo</a> &middot; <a href="/games/planet-parade/index.html">Planet Parade</a> &middot; <a href="/">All games</a></p>
+      <p><a href="/about/index.html">About</a> &middot; <a href="/contact/index.html">Contact</a> &middot; <a href="/privacy-policy/index.html">Privacy Policy</a></p>
+    </section>
+    <!--/SEO-BODY--><script src="../_shared/kids.js"></script>
+<script>
+// Ad hook for the site (optional):  BuildCrew.onLevelComplete = n => {...}  called after level n (1-based) is won, before the result card.
+window.BuildCrew=window.BuildCrew||{onLevelComplete:null};
+const FAST=/[?&]fast\b/.test(location.search); // test runs: short timers, no waiting for speech
+const CAP={L:{n:'Captain Leo',e:'👷🏾‍♂️'},M:{n:'Captain Maya',e:'👷🏻‍♀️'}};
+
+// ---------- parts ----------
+const P={};const def=(id,o)=>{P[id]=Object.assign({id},o);};
+def('found',{n:'Foundation',cat:'Base',cls:'pf',tag:'found'});
+def('trunk',{n:'Tree trunk',cat:'Trunk',cls:'ptr',tag:'found'});
+def('wall',{n:'Wall',cat:'Walls',cls:'pw',tag:'wall',paint:1,why:'Plain walls let the barking through. The middle wall must be soundproof!'});
+def('swall',{n:'Soundproof wall',cat:'Walls',cls:'pw pu',tag:'insul',paint:1});
+def('door',{n:'Door',cat:'Doors',cls:'pd',tag:'exit',paint:1,why:'A narrow door makes a traffic jam! Use the wide door.'});
+def('wdoor',{n:'Wide door',cat:'Doors',cls:'pd pdw',tag:'exit',paint:1});
+def('win',{n:'Window',cat:'Windows',cls:'pn',tag:'win',why:'Plain windows leak in a storm. Use sealed windows with rubber seals!'});
+def('swin',{n:'Sealed window',cat:'Windows',cls:'pn sealed',tag:'seal'});
+def('rl',{n:'Roof left',cat:'Roof',cls:'prl',tag:'roof',paint:1});
+def('rr',{n:'Roof right',cat:'Roof',cls:'prr',tag:'roof',paint:1});
+def('rf',{n:'Flat roof',cat:'Roof',cls:'prf',tag:'roof',paint:1,why:'Flat roofs make big puddles that leak. Use the sloped roof pieces!'});
+def('pillar',{n:'Pillar',cat:'Supports',cls:'pp',tag:'pillar'});
+def('stick',{n:'Thin stick',cat:'Supports',cls:'pj',tag:'pillar',why:'Snap! Thin sticks bend under a heavy floor. Use strong pillars.'});
+def('slab',{n:'Floor',cat:'Floors',cls:'pb',tag:'floor'});
+def('ladder',{n:'Ladder',cat:'Ladder',cls:'pl',tag:'exit'});
+def('pipe',{n:'Water pipe',cat:'Pipes',cls:'pi',tag:'pipe',flow:'w'});
+def('wire',{n:'Power wire',cat:'Wires',cls:'pz',tag:'wire',flow:'e'});
+def('chim',{n:'Chimney',cat:'Chimney',cls:'pc',tag:'chim',paint:1});
+def('glass',{n:'Thin glass',cat:'Glass',cls:'pg',tag:'glass',why:'Crack! Thin glass cannot hold all that water. Use thick glass.'});
+def('tglass',{n:'Thick glass',cat:'Glass',cls:'pg pgt',tag:'glass'});
+def('sky',{n:'Sealed skylight',cat:'Skylights',cls:'pk',tag:'seal'});
+def('osky',{n:'Open skylight',cat:'Skylights',cls:'pk open',tag:'seal',why:'An open skylight lets the rain pour in! Use a sealed skylight.'});
+def('ramp',{n:'Ramp',cat:'Ramps',cls:'pr',tag:'exit'});
+def('step',{n:'Steps',cat:'Ramps',cls:'pst',tag:'exit',why:'Carts and wheelchairs cannot roll up steps. Use a ramp!'});
+def('gravel',{n:'Gravel path',cat:'Paths',cls:'pgv',tag:'path'});
+def('dirt',{n:'Dirt path',cat:'Paths',cls:'pm',tag:'path',why:'Squelch! Dirt paths turn to mud. Gravel paths stay dry.'});
+def('drain',{n:'Drain grate',cat:'Drains',cls:'pdr',tag:'drain'});
+def('brace',{n:'Cross-brace',cat:'Frame',cls:'px',tag:'brace'});
+def('beam',{n:'Steel post',cat:'Frame',cls:'pbm',tag:'frame',why:'A straight post wobbles in strong wind. Cross-braces keep it steady!'});
+def('gen',{n:'Generator',cat:'Generator',cls:'pe pbox glow',e:'🔋',tag:'gen',flow:'e'});
+def('gdoor',{n:'Garage door',cat:'Garage',cls:'pgd',tag:'exit',flow:'e'});
+def('pole',{n:'Fire pole',cat:'Pole',cls:'ppl',tag:'exit'});
+def('solar',{n:'Solar panel',cat:'Solar',cls:'pso',tag:'power',flow:'e'});
+def('tank',{n:'Water tank',cat:'Tank',cls:'pe ptk',e:'💧',tag:'tank',flow:'w'});
+def('lamp',{n:'Light',cat:'Lights',cls:'pe glow',e:'💡',tag:'wire',flow:'e'});
+def('belt',{n:'Conveyor belt',cat:'Belt',cls:'pbt',tag:'sort'});
+const item=(id,n,e,o)=>def(id,Object.assign({n,cat:id,cls:'pe',e,tag:'mem'},o));
+item('bell','Bell','🔔');item('sofa','Sofa','🛋️');item('bed','Bed','🛏️');item('stove','Stove','🍳');
+item('tulip','Tulip','🌷');item('sunfl','Sunflower','🌻');item('slide','Slide','🛝');item('bench','Bench','🪑');
+item('cactus','Sun cactus','🌵');item('fern','Shade fern','🌿');item('oven','Oven','🥖',{cls:'pe pbox'});item('sink','Sink','🚰',{tag:'pipe',flow:'w'});
+item('binR','Red bin','✉️',{cls:'pe pbin',st:'--bc:#ef4444',tag:'sort'});item('binB','Blue bin','✉️',{cls:'pe pbin',st:'--bc:#3b82f6',tag:'sort'});item('binG','Green bin','✉️',{cls:'pe pbin',st:'--bc:#22c55e',tag:'sort'});
+item('desk','Desk','🪑');item('cone','Cone sign','🍦');item('fuse','Fuse box','⚡',{cls:'pe pbox',tag:'wire',flow:'e'});
+item('bookR','Red books','📕');item('bookB','Blue books','📘');item('bookG','Green books','📗');item('bookY','Yellow books','📒');
+item('seclight','Security light','🔦');item('switch','Door switch','🎛️',{tag:'wire',flow:'e'});item('police','Police car','🚓');item('antenna','Radio tower','📡');
+item('bunk','Bunk bed','🛏️');item('truck','Fire truck','🚒');
+item('cat','Cat room','🐱');item('dog','Dog room','🐶');item('yarn','Yarn ball','🧶');item('bone','Bone','🦴');item('wash','Wash tub','🛁',{tag:'pipe',flow:'w'});
+item('lift','Elevator','🛗',{tag:'exit'});item('xray','X-ray room','🩻');item('er','Emergency room','🚨');
+item('lineR','Red floor line','',{cls:'pln',st:'--lc:#ef4444'});item('lineB','Blue floor line','',{cls:'pln',st:'--lc:#3b82f6'});item('ambulance','Ambulance','🚑');
+item('clock','Clock','🕰️');item('train','Train car','🚃');
+item('fish','Fish','🐠');item('octo','Octopus','🐙');item('shark','Shark','🦈');item('turtle','Turtle','🐢');item('crab','Crab','🦀');
+item('dino','Dinosaur','🦖');item('rocket','Rocket','🚀');item('planet','Planet','🪐');
+item('seatR','Red seat','',{cls:'pseat',st:'--sc:#ef4444'});item('seatB','Blue seat','',{cls:'pseat',st:'--sc:#3b82f6'});
+item('radar','Radar dish','📡');item('rwG','Green light','',{cls:'prw',st:'--rc:#22e36b'});item('rwW','White light','',{cls:'prw',st:'--rc:#ffffff'});item('rwR','Red light','',{cls:'prw',st:'--rc:#ff3b3b'});
+item('tree','Tree','🌳');
+const CATIC={Walls:'🧱',Doors:'🚪',Windows:'🪟',Roof:'🔺',Supports:'🏛️',Glass:'🧊',Skylights:'🔆',Ramps:'♿',Paths:'🟫',Frame:'🗼'};
+// map letters shared by every level (a level can add its own in `k`)
+const CH={F:'found',W:'wall',U:'swall',D:'door',Q:'wdoor',N:'win',S:'swin','/':'rl','\\':'rr','=':'rf',P:'pillar',B:'slab',L:'ladder','~':'pipe',z:'wire',C:'chim',G:'glass',T:'tglass',K:'sky',r:'ramp',g:'gravel',d:'drain',x:'brace',H:'beam',E:'gen',O:'gdoor',I:'pole',Y:'solar',u:'tank',l:'lamp',c:'belt',b:'bell'};
+// . sky   i inside the building (no piece needed)   - keep-clear path inside   _ keep-clear path outside
+
+// ---------- what the captains say when a test finds a loophole ----------
+const REASON={
+ found:['L','Wobble wobble! Every building needs a strong base right under it.'],
+ wall:['L','Brrr, there is a hole in the wall! Fill every wall block.'],
+ insul:['M','Woof woof! The barking goes right through. The wall between cats and dogs must be soundproof.'],
+ exit:['M','Stop! The way out is not ready. Doors, ramps, stairs and lifts must all be in place.'],
+ blocked:['M','Uh-oh, something is standing on the green path! Keep the path clear so everyone gets out fast.'],
+ win:['L','A window is missing. Look at the blueprint!'],
+ seal:['M','Drip drip! Rain sneaks in. Windows and skylights need rubber seals.'],
+ roof:['L','Splash! Rain is leaking in. The roof needs every piece, sloped the right way.'],
+ pillar:['L','Creak! The floor is sagging. Strong pillars must hold it up.'],
+ floor:['L','Whoa! A floor piece is missing. Nobody can stand there!'],
+ pipe:['M','Whoosh! Water sprays everywhere. Every pipe piece must join up.'],
+ tank:['M','No water! The water tank is missing.'],
+ wire:['M','The lights stay off! A wire or a light is missing, so the power cannot flow.'],
+ spark:['M','Zap! Water and wires touched. Keep wires far away from water pipes!'],
+ chim:['M','Cough cough! Smoke fills the room. The oven needs a chimney right above it.'],
+ glass:['L','Crack! The glass leaks. Use the glass from the blueprint.'],
+ path:['L','Squelch! The path turned to mud. Paths need gravel.'],
+ drain:['M','Puddle alert! Water needs a drain grate to flow away.'],
+ brace:['L','Sway sway! Tall buildings need cross-braces to stay steady.'],
+ frame:['L','The tower needs steel posts on both sides.'],
+ gen:['M','Lights out! The backup generator is missing.'],
+ power:['M','No power! The solar panels are missing.'],
+ sort:['M','Oops! The parcels go the wrong way. The belt and the color bins must match the blueprint.'],
+ mem:['L','Hmm, that is not what the blueprint showed here. Look again!'],
+ deco:['L','A decoration is sitting on a building spot! Move it somewhere else.'],
+ wrong:['L','Oops, wrong piece here! The glowing ghost shows the right one.']};
+const BANG={found:'💥',wall:'🌬️',insul:'🔊',exit:'🚧',blocked:'🚧',win:'🪟',seal:'💧',roof:'💦',pillar:'💥',floor:'🕳️',pipe:'💦',tank:'🚱',wire:'🔌',spark:'⚡',chim:'💨',glass:'💦',path:'🟤',drain:'🌊',brace:'🌪️',frame:'🌪️',gen:'🔦',power:'🔌',sort:'📦',mem:'❓',deco:'🙈',wrong:'❓'};
+const WATER=['pipe','tank','roof','seal','drain','glass','spark','win'];
+
+// ---------- the 2-minute disaster check: each test checks some kinds of pieces ----------
+const EV={
+ breeze:{t:'Breeze',e:'🍃',tags:['found','floor','wall'],fx:'wind',say:'Here comes a breeze!'},
+ drizzle:{t:'Light Rain',e:'🌦️',tags:['roof'],fx:'rain',say:'Pitter patter, light rain!'},
+ storm:{t:'Heavy Rainstorm',e:'⛈️',tags:['roof','seal','win'],fx:'rain heavy',say:'Big rainstorm! Any leaks?'},
+ mud:{t:'Sprinkler & Mud',e:'💦',tags:['path','drain'],fx:'sprinkle',say:'Sprinklers on! Do the paths stay dry?'},
+ jump:{t:'Jump & Bounce',e:'🤸',tags:['floor','pillar','found'],fx:'jump',say:'The crew jumps upstairs! Boing boing!'},
+ pipes:{t:'Water Pressure',e:'🚿',tags:['pipe','tank'],fx:'flow',say:'Turning the water on!'},
+ smoke:{t:'Oven Smoke',e:'💨',tags:['chim'],fx:'smoke',say:'The oven is hot. Where does the smoke go?'},
+ drill:{t:'Fire Drill',e:'🚨',tags:['exit'],fx:'run alarm',sprite:'🏃',say:'Fire drill! Everybody out!'},
+ rush:{t:'Package Rush',e:'📦',tags:['exit','sort'],fx:'run',sprite:'🛒',say:'Package rush! Roll the cart!'},
+ power:{t:'Power Check',e:'⚡',tags:['wire','power'],fx:'power',say:'Switching the power on!'},
+ thunder:{t:'Thunderstorm',e:'🌩️',tags:['roof','seal','win'],fx:'rain heavy flash',say:'Thunder and lightning! Check the skylights!'},
+ patrol:{t:'Patrol Car Launch',e:'🚓',tags:['exit','wire'],fx:'run alarm',sprite:'🚓',say:'Emergency call! Open the garage!'},
+ alarm:{t:'Fire Alarm',e:'🚒',tags:['exit','pipe','tank','floor'],fx:'run alarm',sprite:'🚒',say:'Fire alarm! Slide down the pole!'},
+ woof:{t:'Woof Test',e:'🐶',tags:['insul'],fx:'woof',say:'The dogs are barking! Can the cats still nap?'},
+ outage:{t:'Power Outage',e:'🔦',tags:['gen','wire'],fx:'dark',say:'Power cut! Does the generator kick in?'},
+ ambulance:{t:'Ambulance Run',e:'🚑',tags:['exit'],fx:'run alarm',sprite:'🚑',say:'Ambulance coming through!'},
+ rumble:{t:'Train Rumble',e:'🚆',tags:['pillar','floor','found'],fx:'jump',say:'Here comes the train! Rumble rumble!'},
+ gale:{t:'Gale Force Wind',e:'🌪️',tags:['brace','roof','pillar','frame'],fx:'wind strong',say:'Super strong wind!'},
+ pressure:{t:'High Water Pressure',e:'🌊',tags:['glass','pipe'],fx:'flow',say:'Filling the tanks with water!'},
+ nightrain:{t:'Night Rain Match',e:'🌧️',tags:['drain','wire','power'],fx:'rain power',say:'Night match in the rain! Lights on!'},
+ crosswind:{t:'Storm & Crosswind',e:'🌬️',tags:['brace','frame','seal'],fx:'wind strong rain',say:'Storm and crosswind! Hold steady!'},
+ surge:{t:'Power Surge',e:'⚡',tags:['wire','power','gen'],fx:'power',say:'Power surge! Is the grid connected?'},
+ dispatch:{t:'Emergency Dispatch',e:'🚒',tags:['exit'],fx:'run alarm',sprite:'🚒',say:'Fire truck, go go go!'},
+ inspect:{t:"Captain's Inspection",e:'🔍',tags:'*',fx:'inspect',say:'Final inspection!'}};
+
+// ---------- 20 levels ----------
+const worlds={home:{label:'Home Street',bg:['#d9f4ff','#8fd3ff'],deco:['🏡','☁️','🌳','🔨']},
+ main:{label:'Main Street',bg:['#fff3d9','#ffc48a'],deco:['🏪','🧁','📮','📚']},
+ rescue:{label:'Rescue Row',bg:['#ffe5e5','#ffa3a3'],deco:['🚒','🚓','🏥','🐾']},
+ city:{label:'Big City',bg:['#e6eaff','#9fb0ff'],deco:['🏙️','🚉','🏟️','🗼']},
+ eco:{label:'Eco Town',bg:['#e8ffe8','#8ee08e'],deco:['🌱','☀️','💧','⚡']}};
+const M=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
+const levels=[
+ {name:'Kid Gang Treehouse',world:'home',look:0,tests:['breeze','drizzle'],k:{t:'trunk'},map:M(String.raw`
+  ..../\....
+  .../ii\...
+  ...WNiDL..
+  ...BBBBL..
+  ....tt.L..
+  ....tt.L..
+  ....tt.L..`),
+  brief:[['L','Hi, I am Captain Leo! Welcome to the Build Crew. Today we build a treehouse!'],['M','I am Captain Maya. Copy the blueprint: trunk, floor, walls, window, door, ladder and a pointy roof.']],
+  rules:['🌳 Trunk holds it up','🪜 Ladder to the door','🔺 Two roof slopes'],
+  done:'Two slopes let the rain slide off. You can paint it and hang a crew flag too!'},
+ {name:'Cozy Family House',world:'home',look:20,hide:'mem',dec:['win','rf'],tests:['storm','breeze'],k:{y:'sofa',M:'bed',J:'stove'},map:M(String.raw`
+  ..../\....
+  .../ii\...
+  ../iiii\..
+  ./iiiiii\.
+  .WiSiiSiW.
+  .WiMiiyiW.
+  .DiiJiiiW.
+  .FFFFFFFF.`),
+  brief:[['L','A family needs a cozy house! Start with the foundation at the bottom.'],['M','A storm is coming, so use sealed windows. And remember where the bed, sofa and stove go!']],
+  rules:['⬛ Foundation first','🪟 Sealed windows','🛋️ Remember the furniture'],
+  done:'Sealed windows keep the storm outside. Cozy!'},
+ {name:'Community Park',world:'home',look:18,hide:'mem',dec:['dirt'],tests:['mud'],k:{R:'tulip',V:'sunfl',s:'slide',n:'bench'},map:M(String.raw`
+  ...........
+  ss.RVRVR.nn
+  ggdgggggdgg`),
+  brief:[['L','Let us build a park for everyone, with slides and benches!'],['M','Sprinklers will test the paths. Use gravel, not dirt, and put drains where the blueprint shows. Remember the flower pattern!']],
+  rules:['🟫 Gravel paths stay dry','🕳️ Drains take the water','🌷 Flower pattern from memory'],
+  done:'Gravel and drains keep the park dry. Look how the flowers match on both sides!'},
+ {name:'Two-Story Villa',world:'home',look:20,dec:['stick','win','rf'],tests:['jump','storm'],map:M(String.raw`
+  ..../\....
+  .../ii\...
+  ../iiii\..
+  ./iiiiii\.
+  .WSiiiiSW.
+  .BBBBBBBB.
+  .WiPiiPiW.
+  .WSPiiPSW.
+  .DiPiiPiW.
+  .FFFFFFFF.`),
+  brief:[['L','Two floors! Strong pillars hold up the upstairs floor.'],['M','The crew will jump upstairs to test it. Line up the windows upstairs and downstairs. This time the blueprint hides, so look carefully!']],
+  rules:['🏛️ Pillars, not sticks','🪟 Windows line up','🔺 Sloped roof'],
+  done:'Pillars carry the weight of the upstairs floor down to the ground.'},
+ {name:'Botanical Garden',world:'home',look:18,tests:['pipes','storm'],k:{q:'cactus',w:'fern'},map:M(String.raw`
+  GGGGGG=====
+  GqiqiGiwiwW
+  u~~~~~~~~~W
+  FFFFFFFFFFF`),
+  brief:[['L','A glass greenhouse for plants!'],['M','Sunny cactus plants go under the glass roof. Shady ferns go under the solid roof. One long water pipe reaches every plant.']],
+  rules:['☀️ Cactus under glass','🌿 Ferns in the shade','🚰 One long water pipe'],
+  done:'Glass lets the sunshine in for plants that love the sun.'},
+ {name:'Neighborhood Bakery',world:'main',look:16,tests:['smoke','pipes','drill'],k:{o:'oven',',':'sink'},map:M(String.raw`
+  ......C...
+  .=====C==.
+  .WiiiiCiW.
+  .D--iio,W.
+  .FFFFFF~~~`),
+  brief:[['L','Fresh bread! The bakery needs a hot oven.'],['M','Ovens make smoke, so the chimney goes right above the oven. The sink needs its pipe, and the green path to the door stays clear. Decorate, but not on the path!']],
+  rules:['🏭 Chimney above the oven','🚰 Sink pipe','🟩 Keep the green path clear'],
+  done:'The chimney carries the smoke up and out. Yum!'},
+ {name:'Local Post Office',world:'main',look:16,dec:['door','step'],tests:['rush'],k:{5:'binR',6:'binB',7:'binG'},map:M(String.raw`
+  .=========.
+  .WiiiiiiiW.
+  .WcccccciW.
+  .Wi5i6i7-Qr
+  .FFFFFFFFFF`),
+  brief:[['L','Letters and parcels! The belt carries them to the color bins.'],['M','Delivery carts cannot bump up steps. Use a ramp and a wide door. Remember the bin colors!']],
+  rules:['📦 Belt above the bins','♿ Ramp, not steps','🚪 Wide loading door'],
+  done:'Ramps help carts, prams and wheelchairs roll in easily.'},
+ {name:'Village School',world:'main',look:15,dec:['door','win'],tests:['drill','storm'],k:{k:'desk'},map:M(String.raw`
+  .....b......
+  .==========.
+  .WSiSiSiSiW.
+  .Wk-kQk-k-Q_
+  .FFFFFFFFFF.`),
+  brief:[['L','A school with two classrooms and a bell on the roof!'],['M','In a fire drill everyone must get out fast. Wide doors, and clear aisles between the desks!']],
+  rules:['🚪 Wide doors','🟩 Clear aisles','🔔 Bell on the roof'],
+  done:'Wide doors and clear aisles mean nobody gets stuck in a fire drill.'},
+ {name:'Ice Cream Parlor',world:'main',look:15,tests:['power','pipes','drill'],k:{n:'cone',p:'fuse',',':'sink'},map:M(String.raw`
+  ....n.....
+  .=========
+  .Wlzzzzzlp
+  .WiiiiiiiW
+  .D--ii,iiW
+  .FFFFF~~~~`),
+  brief:[['M','Electricity time! Wires run along the ceiling from the fuse box to the lights.'],['L','Water pipes stay down low. Wires and water must never touch! And put a giant ice cream cone on the roof.']],
+  rules:['⚡ Wires up high','🚰 Pipes down low','🍦 Cone sign on top'],
+  done:'Wires up high, water down low. Safe and sweet!'},
+ {name:'Town Library',world:'main',look:14,dec:['osky','win'],tests:['thunder','drill'],k:{1:'bookR',2:'bookB',3:'bookG',4:'bookY'},map:M(String.raw`
+  .===KK===.
+  .WiiiiiiW.
+  .W12i34SW.
+  .W12i34iW.
+  .D--iiiiW.
+  .FFFFFFFF.`),
+  brief:[['L','A library with skylights to read by sunlight!'],['M','Thunderstorm tonight! Skylights and windows need seals. Remember the four book colors on the shelves.']],
+  rules:['🔆 Sealed skylights','📚 4 book colors','🟩 Clear path to the door'],
+  done:'Rubber seals keep the books dry, even in a thunderstorm.'},
+ {name:'Police Station',world:'rescue',look:14,tests:['patrol'],k:{';':'seclight',w:'switch','^':'police',a:'antenna'},map:M(String.raw`
+  ..;......a..
+  .==========.
+  .W;iiiWwzzz.
+  .DiiiiW^--O_
+  .FFFFFFFFFF.`),
+  brief:[['M','The garage door opens with a switch. Run a wire from the switch to the door.'],['L','The patrol car needs a clear road out. Remember where the security lights go!']],
+  rules:['🎛️ Switch wired to the door','🟩 Clear road out','🔦 Security lights'],
+  done:'The wire carries power from the switch to open the garage door.'},
+ {name:'Fire Station',world:'rescue',look:13,tests:['alarm'],k:{M:'bunk','@':'truck'},map:M(String.raw`
+  .==========.
+  .WMiM-IiiuW.
+  .BBBBBIBB~W.
+  .WiiiiIi~~W.
+  .WiiiiI-@-O_
+  .FFFFFFFFFF.`),
+  brief:[['L','Firefighters sleep upstairs and slide down the pole!'],['M','When the alarm rings: a clear path to the pole, a pipe from the water tank to the truck, and a garage door to drive out.']],
+  rules:['🧑‍🚒 Clear path to the pole','💧 Tank pipe to the truck','🚒 Garage door'],
+  done:'Sliding down a pole is faster than running down the stairs!'},
+ {name:'Veterinary Clinic',world:'rescue',look:13,dec:['wall'],tests:['woof','pipes'],k:{8:'cat',9:'dog',y:'yarn',o:'bone',e:'wash'},map:M(String.raw`
+  .=========.
+  .WiiiUiiiW.
+  .W8yiUi9oW.
+  .D--eUe--D.
+  .FFF~~~FFF.`),
+  brief:[['L','Cats on one side, dogs on the other side.'],['M','Dogs bark loudly! The middle wall must be soundproof. Give each pet the right toy, and connect the wash tubs.']],
+  rules:['🔇 Soundproof middle wall','🧶 Cats, 🦴 dogs','🛁 Wash tubs need pipes'],
+  done:'Soundproof walls keep the noise out, so the cats can nap.'},
+ {name:'City Hospital',world:'rescue',look:12,dec:['door','step'],tests:['outage','ambulance'],k:{v:'lift',X:'xray',R:'er','[':'lineR',']':'lineB','$':'ambulance'},map:M(String.raw`
+  .==========..
+  .WviXiiiRiW..
+  .BvBBBBBBBW..
+  .Wv]]-[[[EQr$
+  .FFFFFFFFFFFF`),
+  brief:[['M','A hospital must never lose power. The backup generator kicks in when the lights go out.'],['L','Ambulances need a ramp and a wide door. Remember: the blue line goes to X-ray, the red line goes to the emergency room!']],
+  rules:['🔋 Backup generator','♿ Ramp and wide door','🟦 X-ray, 🟥 emergency'],
+  done:'Hospitals keep a backup generator so machines never stop.'},
+ {name:'Train Station',world:'city',look:12,dec:['stick'],tests:['rumble','gale'],k:{0:'clock',n:'bench',t:'train'},map:M(String.raw`
+  .====0=====.
+  .P........P.
+  .PBBBBBBBBP.
+  .PL......LP.
+  .PLnttttnLP.
+  .FFFggggFFF.`),
+  brief:[['L','All aboard! A footbridge goes over the train tracks.'],['M','Trains rumble and shake the ground. Strong pillars hold up the roof and the bridge, with stairs on both sides.']],
+  rules:['🏛️ Strong pillars','🌉 Bridge over the tracks','🪜 Stairs on both sides'],
+  done:'Strong pillars stay still, even when a heavy train rumbles past.'},
+ {name:'Aquarium & Marine Lab',world:'city',look:12,dec:['glass'],tests:['pressure'],k:{a:'fish',f:'octo',e:'shark',n:'turtle',s:'crab'},map:M(String.raw`
+  .===========.
+  .WiiiiiiiiiW.
+  .WaTfTeTnTsW.
+  .W~~~~~~~~~W.
+  .D--iiiii--D.
+  .FFFFFFFFFFF.`),
+  brief:[['L','Five ocean animals need their own tanks.'],['M','Water pushes hard on glass! Use thick glass between the tanks, and a filter pipe underneath. Remember who lives where!']],
+  rules:['🧊 Thick glass only','🚰 Filter pipe','🐠 5 animals from memory'],
+  done:'Deep water pushes really hard, so aquarium glass is extra thick.'},
+ {name:'Science Museum',world:'city',look:11,dec:['beam'],tests:['gale','power'],k:{Z:'dino',X:'rocket',o:'planet'},map:M(String.raw`
+  ..YYYYYY....
+  ==========..
+  x.WlzzzzlW..
+  x.WZ-X-o-D..
+  FFFFFFFFFF..`),
+  brief:[['L','Our museum roof sticks out over the entrance. That is called a cantilever!'],['M','Strong wind could tip it, so cross-braces hold up the overhang. Solar panels on the roof power the lights.']],
+  rules:['❌ Cross-braces under the overhang','🔆 Solar panels on top','🦖 Clear walkways'],
+  done:'Cross-braces make triangles, and triangles are super strong shapes.'},
+ {name:'Sports Stadium',world:'city',look:11,tests:['nightrain'],k:{'(':'seatR',')':'seatB'},map:M(String.raw`
+  l..........l
+  z(........)z
+  z)(......()z
+  z()(....)()z
+  FFFF.dd.FFFF`),
+  brief:[['M','Night match in the rain! The floodlights need wires, and the field needs drains.'],['L','Copy our team pattern on the seats, red and blue, just like the blueprint!']],
+  rules:['💡 Floodlights wired','🕳️ Field drains','🟥🟦 Seat pattern from memory'],
+  done:'Drains keep the field dry so the match goes on, even in the rain.'},
+ {name:'Airport Control Tower',world:'city',look:10,dec:['beam'],tests:['crosswind'],k:{A:'radar',1:'rwG',2:'rwW',3:'rwR'},map:M(String.raw`
+  ..A.........
+  .SSS........
+  .HxH........
+  .HxH........
+  .HxH........
+  FFFF1231231.`),
+  brief:[['L','A tall tower! Steel posts on the sides, cross-braces in the middle.'],['M','A radar dish on top, sealed windows for the control room, and remember the runway light pattern!']],
+  rules:['🗼 Posts outside, braces inside','📡 Radar on top','🟢⚪🔴 Runway light pattern'],
+  done:'The cross-braces stop the tall tower from swaying in the wind.'},
+ {name:'Mega Eco-Smart Town',world:'eco',look:16,under:2,dec:['win','rf'],tests:['storm','surge','dispatch'],k:{t:'tree',n:'bench','@':'truck'},map:M(String.raw`
+  ./\..YYYY.....
+  /ii\.====.====
+  WSiW.WSlW.WiiW
+  DiiWtQiEWnWi@O
+  FFFFgFFFFgFFFF
+  zzzzzzzzzzzzzz
+  u~~~~~~~~~~~~~`),
+  brief:[['L','Grand finale! A house, a hospital and a fire station, with a little park in between.'],['M','Under the ground, everything shares one power line and one water pipe. Keep them connected!']],
+  rules:['⚡ One power line','💧 One water pipe','🚒 Truck drives out'],
+  done:'One shared grid powers and waters the whole town. You are a master builder!'}];
+
+// ---------- sounds (soft, made on the fly) ----------
+let AC2=null;
+const ac=()=>{try{if(localStorage.getItem('dg_muted')==='1')return null;}catch(e){}if(!AC2){try{AC2=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}if(AC2.state==='suspended')try{AC2.resume();}catch(e){}return AC2;};
+function tn(f,d,type,v,delay,f2){const a=ac();if(!a)return;try{const t=a.currentTime+(delay||0),o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v||.1,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.05);}catch(e){}}
+function noise(d,freq,q,v){const a=ac();if(!a)return;try{const n=Math.max(1,Math.floor(a.sampleRate*d)),b=a.createBuffer(1,n,a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<n;i++)ch[i]=Math.random()*2-1;
+ const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain(),t=a.currentTime;s.buffer=b;f.type='bandpass';f.frequency.value=freq;f.Q.value=q;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+.25);g.gain.setValueAtTime(v,t+Math.max(.3,d-.4));g.gain.linearRampToValueAtTime(.0001,t+d);s.connect(f).connect(g).connect(a.destination);s.start(t);s.stop(t+d);}catch(e){}}
+const SND={squeak(){tn(900,.09,'sine',.13,0,1600);tn(1500,.12,'sine',.11,.1,950);tn(1100,.1,'sine',.1,.24,1700);},
+ thunder(){noise(1.4,110,.6,.5);},siren(n){for(let i=0;i<n;i++)tn(i%2?960:720,.32,'triangle',.05,i*.34);},
+ boing(){tn(220,.25,'sine',.13,0,520);},woof(){tn(330,.12,'triangle',.13,0,200);tn(310,.14,'triangle',.13,.2,190);},
+ zap(){tn(1400,.06,'triangle',.06,0,2400);tn(900,.08,'triangle',.05,.07,1800);},ding(){tn(1568,.5,'sine',.1);tn(2093,.6,'sine',.07,.12);},
+ click(){tn(700,.05,'sine',.07,0,1000);}};
+
+// ---------- level setup ----------
+function prep(L){if(L._p)return;const rows=L.map.length,cols=L.map[0].length;L.rows=rows;L.cols=cols;
+ L.req=[];L.clr=[];L.int=[];
+ for(let y=0;y<rows;y++){const s=L.map[y];if(s.length!==cols)console.error(L.name,'row',y,'has',s.length,'cells, not',cols);
+  L.req.push([]);L.clr.push([]);L.int.push([]);
+  for(let x=0;x<cols;x++){const ch=s[x];const id=(L.k&&L.k[ch])||CH[ch]||null;
+   if(id&&!P[id])console.error(L.name,'unknown part',id);if(!id&&!'.i-_'.includes(ch))console.error(L.name,'unknown map letter',ch);
+   L.req[y][x]=id;L.clr[y][x]=ch==='-'||ch==='_';L.int[y][x]=ch==='i'||ch==='-';}}
+ // wallpaper: spread from the inside cells (i, -) through see-through pieces; walls, doors and floors get it but stop it; roofs and outdoor pieces never do
+ const q=[];for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(L.int[y][x])q.push([x,y]);
+ while(q.length){const [x,y]=q.shift();for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=cols||ny>=rows||L.int[ny][nx])continue;
+   const ch=L.map[ny][nx],id=L.req[ny][nx];if(ch==='.'||ch==='_'||(id&&OUT.has(id)))continue;L.int[ny][nx]=true;if(!(id&&STOP.has(id)))q.push([nx,ny]);}}
+ L._p=true;}
+const STOP=new Set(['wall','swall','door','wdoor','gdoor','slab','chim']);
+const OUT=new Set(['rl','rr','rf','found','trunk','ladder','ramp','step','sky','osky','solar','drain','gravel','dirt','tree','bench','bell','cone','antenna','radar','rwG','rwW','rwR','seatR','seatB','ambulance','tulip','sunfl','slide','clock','train']);
+levels.forEach(prep);
+
+// ---------- the game ----------
+function build(L,api,stage,li){
+ const {rows,cols,req:REQ,clr:CLR,int:INT}=L,under=L.under||0;
+ const G=REQ.map(r=>r.map(()=>null)),FIX=REQ.map(r=>r.map(()=>false));
+ const reqCount=REQ.flat().filter(Boolean).length;
+ // toolbox: every piece in the blueprint plus look-alike pieces, grouped by kind
+ const ids=[];REQ.flat().forEach(id=>{if(id&&!ids.includes(id))ids.push(id);});(L.dec||[]).forEach(id=>{if(!ids.includes(id))ids.push(id);});
+ const catOrder=[];ids.forEach(id=>{if(!catOrder.includes(P[id].cat))catOrder.push(P[id].cat);});
+ const TOOLS=catOrder.flatMap(c=>ids.filter(id=>P[id].cat===c));
+ // kinds that have a look-alike: the blueprint only shows "which kind", the rules say which one
+ const GEN=new Set((L.dec||[]).map(id=>P[id].cat));
+ let phase='brief',tool={k:'part',id:TOOLS[0]},peeks=0,peeking=false,fails=0,wet=false,deco=0,painted=0,color='#e07a5f',lookT=null,tmo=[];
+ const gone=()=>!stage.isConnected;
+ const later=(f,ms)=>{const t=setTimeout(()=>{if(!gone())f();},ms);tmo.push(t);return t;};
+
+ const root=K.h('div','bc');stage.appendChild(root);
+ const capn=K.h('div','capn','<div class="cav"></div><div class="cb"><small></small><div class="sl"></div></div>');
+ const rules=K.h('div','rules',L.rules.map(r=>`<span>${r}</span>`).join(''));
+ const bw=K.h('div','bw'),gw=K.h('div','gw'),grid=K.h('div','grid');gw.appendChild(grid);bw.append(gw,K.h('div','gnd'));
+ const acts=K.h('div','acts'),tools=K.h('div','tools');
+ root.append(capn,rules,bw,acts,tools);
+ const cav=capn.querySelector('.cav'),cname=capn.querySelector('small'),sl=capn.querySelector('.sl');
+ function talk(who,text,cb){const c=CAP[who]||CAP.L;cav.textContent=c.e;cname.textContent=c.n;cav.classList.add('talk');
+  const end=()=>{cav.classList.remove('talk');if(cb&&!gone())cb();};
+  if(FAST){sl.textContent=text;setTimeout(end,20);}else K.sayLine(sl,text,{},end);}
+
+ // ----- sizing -----
+ let cs=40;
+ function size(){const W=Math.min(stage.clientWidth||innerWidth,880)-20,H=Math.max(200,innerHeight*.46);
+  cs=Math.max(22,Math.min(58,Math.floor(W/cols),Math.floor(H/rows)));grid.style.setProperty('--cs',cs+'px');grid.style.setProperty('--cols',cols);}
+ const onResize=()=>{if(gone())return removeEventListener('resize',onResize);size();};addEventListener('resize',onResize);
+
+ // ----- drawing -----
+ const idOf=v=>v&&(v.id||v);
+ function arms(x,y,src,fl){const nb=(dx,dy)=>{const r=src[y+dy];const id=r&&idOf(r[x+dx]);return !!(id&&P[id]&&P[id].flow===fl);};
+  const m={u:nb(0,-1),d:nb(0,1),l:nb(-1,0),r:nb(1,0)};if(!m.u&&!m.d&&!m.l&&!m.r)m.l=m.r=true;
+  return Object.keys(m).filter(k=>m[k]).map(k=>`<i class="a ${k}"></i>`).join('')+'<i class="o"></i>';}
+ function partHTML(id,c,x,y,src){if(id==='deco')return `<div class="pt pe deco"><b>${c}</b></div>`;const d=P[id];
+  const inner=(d.cls==='pi'||d.cls==='pz')?arms(x,y,src,d.flow):d.e?`<b>${d.e}</b>`:'';
+  return `<div class="pt ${d.cls}" style="${c?'--pc:'+c+';':''}${d.st||''}">${inner}</div>`;}
+ function ghostHTML(id,x,y){const d=P[id];if(GEN.has(d.cat))return `<div class="gh gen">${CATIC[d.cat]||'❓'}<small>?</small></div>`;
+  return `<div class="gh">${partHTML(id,null,x,y,REQ)}</div>`;}
+ function ghostOn(x,y){const id=REQ[y][x];if(!id)return false;if(FIX[y][x]||peeking||phase==='brief'||phase==='look'||!L.look)return true;
+  if(phase!=='build')return false;return L.hide==='mem'&&P[id].tag!=='mem';}
+ let leaks=[];
+ function render(){let h='';for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){const g=G[y][x],lk=leaks.find(o=>o.x===x&&o.y===y);
+   let cl='c'+(INT[y][x]?' in':'')+(CLR[y][x]?' clr':'')+(y>=rows-under?' ug':'')+(FIX[y][x]?' fix':'')+(lk?' leak':'');
+   h+=`<div class="${cl}">${ghostOn(x,y)?ghostHTML(REQ[y][x],x,y):''}${g?partHTML(g.id,g.c,x,y,G):''}${lk?`<span class="bang">${BANG[lk.why]||'❓'}</span>`:''}</div>`;}
+  grid.innerHTML=h;
+  let n=0;for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(REQ[y][x]&&G[y][x]&&G[y][x].id!=='deco')n++;api.progress(n,reqCount);}
+
+ // ----- building: tap or drag across cells -----
+ let stroke=null,lastSnd=0;
+ const cellAt=e=>{const r=grid.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/(r.width/cols)),y=Math.floor((e.clientY-r.top)/(r.height/rows));return x>=0&&y>=0&&x<cols&&y<rows?{x,y}:null;};
+ function apply(c){const {x,y}=c,g=G[y][x];let ch=false;
+  if(tool.k==='part'){if(stroke.mode==null)stroke.mode=g&&g.id===tool.id?'erase':'place';
+   if(stroke.mode==='erase'){if(g&&g.id===tool.id){G[y][x]=null;ch=true;}}
+   else if(!g||g.id!==tool.id){G[y][x]={id:tool.id,c:g&&P[g.id]&&P[g.id].paint&&P[tool.id].paint?g.c:null};ch=true;}}
+  else if(tool.k==='erase'){if(g){G[y][x]=null;ch=true;}}
+  else if(tool.k==='deco'){if(!g){G[y][x]={id:'deco',c:tool.e};deco++;ch=true;}}
+  else if(tool.k==='paint'){if(g&&g.id!=='deco'&&P[g.id].paint&&g.c!==tool.c){g.c=tool.c;painted++;ch=true;}}
+  if(!ch)return;const ng=G[y][x];if(FIX[y][x]&&ng&&ng.id===REQ[y][x])FIX[y][x]=false;
+  const now=Date.now();if(now-lastSnd>70){lastSnd=now;tool.k==='erase'||stroke.mode==='erase'?K.sfx.whoosh():K.sfx.pop();}render();}
+ grid.addEventListener('pointerdown',e=>{if(phase!=='build'||e.button>0)return;K.audio();e.preventDefault();try{grid.setPointerCapture(e.pointerId);}catch(_){}
+  stroke={mode:null,last:null};const c=cellAt(e);if(c){stroke.last=c.x+','+c.y;apply(c);}});
+ grid.addEventListener('pointermove',e=>{if(!stroke||phase!=='build')return;const c=cellAt(e);if(!c)return;const k=c.x+','+c.y;if(k===stroke.last)return;stroke.last=k;apply(c);});
+ const endStroke=()=>{stroke=null;};grid.addEventListener('pointerup',endStroke);grid.addEventListener('pointercancel',endStroke);
+
+ // ----- toolbox -----
+ const PAINTS=['#e07a5f','#f4a261','#e9c46a','#90be6d','#43aa8b','#4d96ff','#9b5de5','#f15bb5','#f8f9fa','#6c757d'];
+ const DECOS=['🚩','🌻','🌳','🪴','🎈','⭐','🐦','🏮','🧁','🐈','🎨','🌈'];
+ let tab='build';
+ function drawTools(){const t=tab;tools.innerHTML='';const tabs=K.h('div','tabs');
+  [['build','🔨 Build'],['deco','🎨 Decorate']].forEach(([k,n])=>{const b=K.h('button',k===t?'on':'',n);b.onclick=()=>{K.audio();K.sfx.pop();tab=k;if(k==='build'&&tool.k!=='part'&&tool.k!=='erase')tool={k:'part',id:TOOLS[0]};if(k==='deco')tool={k:'paint',c:color};drawTools();};tabs.appendChild(b);});
+  const pal=K.h('div','pal');tools.append(tabs,pal);
+  const btn=(on,mini,label,f)=>{const b=K.h('button','tb'+(on?' on':''),`<span class="mini">${mini}</span>${label}`);b.onclick=()=>{K.audio();K.sfx.pop();f();drawTools();};pal.appendChild(b);};
+  if(t==='build'){TOOLS.forEach(id=>btn(tool.k==='part'&&tool.id===id,partHTML(id,null,0,0,[]),P[id].n,()=>{tool={k:'part',id};}));
+   btn(tool.k==='erase','🧽','Eraser',()=>{tool={k:'erase'};});}
+  else{PAINTS.forEach(c=>btn(tool.k==='paint'&&tool.c===c,`<span class="sw" style="background:${c}"></span>`,'Paint',()=>{color=c;tool={k:'paint',c};}));
+   DECOS.forEach(e=>btn(tool.k==='deco'&&tool.e===e,e,'Sticker',()=>{tool={k:'deco',e};}));
+   btn(tool.k==='erase','🧽','Eraser',()=>{tool={k:'erase'};});}}
+
+ // ----- phase bar -----
+ function bar(){acts.innerHTML='';tools.classList.toggle('off',phase!=='build');
+  if(phase==='brief'&&!L.look){const s=K.h('button','btn pri','🔨 Start building!');s.onclick=()=>{K.audio();startBuild();};acts.appendChild(s);}
+  else if(phase==='look'||phase==='brief'&&L.look){const lb=K.h('div','lookb',`👀 Remember the blueprint! <b>${phase==='look'?lookLeft:'…'}</b>`);const r=K.h('button','btn pri','✋ I remember!');r.onclick=()=>{K.audio();startBuild();};acts.append(lb,r);}
+  else if(phase==='build'){if(L.look){const p=K.h('button','btn',`👀 Peek${peeks?' ('+peeks+')':''}`);p.onclick=()=>{K.audio();if(peeking)return;peeks++;peeking=true;K.sfx.whoosh();render();bar();later(()=>{peeking=false;render();},FAST?50:2500);};acts.appendChild(p);}
+   const tb=K.h('button','btn test','🌧️ Test Build!');tb.onclick=()=>{K.audio();runTest();};acts.appendChild(tb);}}
+ let lookLeft=0;
+ function startLook(){if(gone()||phase!=='brief')return;if(!L.look)return startBuild();phase='look';lookLeft=FAST?1:L.look;bar();
+  lookT=setInterval(()=>{if(gone()||phase!=='look')return clearInterval(lookT);lookLeft--;const b=acts.querySelector('.lookb b');if(b)b.textContent=lookLeft;if(lookLeft<=3&&lookLeft>0)K.sfx.tick();if(lookLeft<=0){clearInterval(lookT);startBuild();}},1000);}
+ function startBuild(){clearInterval(lookT);if(phase==='build')return;const hid=L.look&&phase!=='build';phase='build';leaks=[];grid.classList.remove('xray');render();bar();drawTools();
+  if(hid&&!fails)talk('M',L.hide==='mem'?'Now build! The furniture and special pieces are hidden. Use your memory!':'The blueprint is hidden! Build from memory. Tap Peek if you get stuck.');}
+
+ // ----- the disaster check -----
+ function whyFor(r,g){const t=P[r].tag;if(!g)return t;if(g.id==='deco')return 'deco';const d=P[g.id];
+  if(P[r].flow&&d.flow&&P[r].flow!==d.flow)return 'spark';if(d.why&&d.cat===P[r].cat)return {k:t,why:d.why};return 'wrong';}
+ function check(ev){const all=ev.tags==='*',out=[];
+  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){const r=REQ[y][x],g=G[y][x];
+   if(r){if((all||ev.tags.includes(P[r].tag))&&!(g&&g.id===r)){const w=whyFor(r,g);out.push(typeof w==='string'?{x,y,why:w}:{x,y,why:w.k,txt:w.why});}}
+   else if(CLR[y][x]&&g&&(all||ev.tags.includes('exit')))out.push({x,y,why:'blocked'});}
+  return out;}
+ function runRow(){for(let y=rows-1-under;y>=0;y--)if(CLR[y].some(Boolean))return y;
+  for(let y=rows-1-under;y>=0;y--)if(REQ[y].some(id=>id&&P[id].tag==='exit'))return y;return Math.max(0,rows-2-under);}
+ function fxOn(ev,holes,dur){const f=ev.fx.split(' '),fx=K.h('div','fx');gw.appendChild(fx);const cls=[],iv=[];
+  const add=c=>{grid.classList.add(c);cls.push(c);};
+  const puff=(e,x,y,dx)=>{const p=K.h('span','puff',e);p.style.left=x*cs+'px';p.style.top=y*cs+'px';if(dx)p.style.setProperty('--dx',dx+'px');fx.appendChild(p);setTimeout(()=>p.remove(),1600);};
+  const cellsOf=pred=>{const o=[];for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(REQ[y][x]&&pred(REQ[y][x]))o.push({x,y});return o;};
+  const every=(ms,f2)=>{f2();iv.push(setInterval(f2,ms));};
+  const s=dur/1000;
+  if(f.includes('rain')){fx.classList.add('rain');if(f.includes('heavy'))fx.classList.add('heavy');noise(s,2600,.5,f.includes('heavy')?.12:.07);}
+  if(f.includes('flash')){fx.classList.add('flash');later(SND.thunder,500);}
+  if(f.includes('wind')){add('sway');if(f.includes('strong'))add('strong');noise(s,420,1.1,.16);every(450,()=>puff('💨',-0.5,Math.random()*rows,cols*cs*.9));}
+  if(f.includes('sprinkle')){fx.classList.add('rain');noise(s,3200,.6,.06);every(300,()=>puff('💦',Math.random()*cols,rows-1.4));}
+  if(f.includes('jump')){add('bounce');const fl=cellsOf(id=>P[id].tag==='floor'||P[id].tag==='found');K.sample(fl,Math.min(4,fl.length)).forEach(c=>{const k=K.h('span','hop',K.pick(['🧒','👧','👦','🧒🏽']));k.style.left=c.x*cs+'px';k.style.top=(c.y-0.75)*cs+'px';fx.appendChild(k);});every(380,SND.boing);}
+  if(f.includes('flow')){add('flowing');noise(s,900,.8,.06);const sp=cellsOf(id=>P[id].tag==='pipe'||P[id].tag==='glass');every(500,()=>{const c=K.pick(sp);if(c)puff('🫧',c.x,c.y);});}
+  if(f.includes('power')){add('powered');every(500,SND.zap);}
+  if(f.includes('smoke')){const ch=cellsOf(id=>id==='chim'||id==='oven').sort((a,b)=>a.y-b.y)[0];if(ch)every(400,()=>puff('💨',ch.x,ch.y-0.3,(Math.random()-.5)*30));}
+  if(f.includes('woof')){const d=cellsOf(id=>id==='dog')[0];every(700,()=>{SND.woof();if(d)puff('WOOF!',d.x-0.3,d.y-0.2,-60);});}
+  if(f.includes('dark')){add('dark');later(()=>{SND.ding();if(!holes.length)grid.classList.remove('dark');},dur*.5);}
+  if(f.includes('alarm'))SND.siren(Math.min(10,Math.round(s*2.8)));
+  if(f.includes('run')||f.includes('inspect')){const y=f.includes('run')?runRow():Math.floor(rows/2);const sp=K.h('span','spr'+(f.includes('run')?' flip':''),f.includes('run')?ev.sprite:'🔍');
+   const stop=holes.length?Math.max(0,Math.min(...holes.map(h=>h.x))-1):cols;sp.style.top=(y+0.05)*cs+'px';sp.style.left='0px';fx.appendChild(sp);
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{sp.style.transitionDuration=(dur*.8)+'ms';sp.style.left=stop*cs+'px';}));}
+  return ()=>{cls.forEach(c=>grid.classList.remove(c));iv.forEach(clearInterval);fx.remove();};}
+ function runTest(){if(phase!=='build')return;phase='test';peeking=false;leaks=[];render();bar();K.stopVoice();
+  const evs=[...L.tests.map(k=>EV[k]),EV.inspect],per=120/evs.length,dur=FAST?200:4200;let i=0;
+  acts.innerHTML='<div class="dbar">⏱ <b class="clk">2:00</b><span class="evn"></span></div>';
+  const clk=acts.querySelector('.clk'),evn=acts.querySelector('.evn');
+  const show=t=>{t=Math.max(0,Math.round(t));clk.textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');};
+  const step=()=>{if(gone())return;if(i>=evs.length)return passed();const ev=evs[i],holes=check(ev);evn.textContent=ev.e+' '+ev.t;
+   if(!FAST)K.say(ev.say);talkSilent('M',ev.e+' '+ev.say);
+   const off=fxOn(ev,holes,dur),t0=Date.now(),start=120-per*i;
+   const tick=setInterval(()=>{if(gone())return clearInterval(tick);show(start-per*Math.min(1,(Date.now()-t0)/dur));},100);
+   later(()=>{clearInterval(tick);off();if(holes.length)return xray(ev,holes);K.sfx.ok();i++;step();},dur);};
+  step();}
+ function talkSilent(who,text){const c=CAP[who];cav.textContent=c.e;cname.textContent=c.n;sl.textContent=text;}
+ function xray(ev,holes){phase='xray';fails++;if(holes.some(h=>WATER.includes(h.why)))wet=true;
+  holes.forEach(h=>FIX[h.y][h.x]=true);leaks=holes;grid.classList.add('xray');render();SND.squeak();K.sfx.bad();
+  const h=holes[0],r=REASON[h.why]||REASON.wrong,msg=(h.txt||r[1])+(holes.length>1?` I found ${holes.length} loopholes, glowing in red.`:'');
+  acts.innerHTML='';const fb=K.h('button','btn pri','🔧 Fix it!');fb.onclick=()=>{K.audio();K.stopVoice();startBuild();};acts.appendChild(fb);
+  talk(r[0],`X-ray! ${msg}`);}
+ function passed(){phase='done';bar();K.sfx.cheer();K.confetti(120);
+  talk('L','The building passed the Disaster Check! '+L.done,()=>finish());}
+ function finish(){if(gone())return;const pen=fails+Math.floor(peeks/2),stars=pen===0?3:pen<=2?2:1;
+  const got=[];if(!wet&&L.tests.some(k=>EV[k].tags.some(t=>WATER.includes(t))))got.push('plumber');if(L.look&&!peeks)got.push('eagle');if(deco>=2||painted>=1)got.push('creative');
+  const all=loadBadges();all[li]=[...new Set([...(all[li]||[]),...got])];try{localStorage.setItem(BKEY,JSON.stringify(all));}catch(e){}
+  try{BuildCrew.onLevelComplete&&BuildCrew.onLevelComplete(li+1);}catch(e){}
+  api.win(stars);
+  const card=document.querySelector('.modal .card');if(card&&got.length){const row=K.h('div','got',got.map(b=>{const B=BADGES[b];return `<div class="bdg"><b>${B[0]}</b>${B[1]}<small>${B[2]}</small></div>`;}).join(''));card.insertBefore(row,card.querySelector('.btns'));}}
+
+ // test hook: fills in the blueprint (used by the automated checks)
+ window.__BC={solve(){for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){G[y][x]=REQ[y][x]?{id:REQ[y][x],c:null}:null;FIX[y][x]=false;}render();},
+  put(x,y,id){G[y][x]=id?{id,c:null}:null;render();},start:startBuild,test:runTest,get phase(){return phase;},get fails(){return fails;},get leaks(){return leaks;},level:L};
+
+ size();render();bar();drawTools();
+ L.brief.reduceRight((cb,[who,t])=>()=>talk(who,t,cb),()=>later(startLook,FAST?10:400))();}
+
+// ---------- badges + crew on the level map ----------
+const BKEY='dg_build-crew_badges';
+const BADGES={plumber:['🔧','Master Plumber','No leaks'],eagle:['🦅','Eagle Eye','No peeking'],creative:['🎨','Creative Architect','Paint & decorate']};
+function loadBadges(){try{return JSON.parse(localStorage.getItem(BKEY)||'{}')||{};}catch(e){return {};}}
+const CREW=[[CAP.L.e,'Captain Leo','Blueprints & building'],[CAP.M.e,'Captain Maya','Pipes, power & safety'],['🧒🏽','Base Crew','Foundations'],['👧🏼','Wall Crew','Walls & windows'],['👦🏿','Roof Crew','Roofs'],['🧒🏻','Garden Crew','Paths & parks']];
+function mapExtras(main,save,wrap){const b=loadBadges(),cnt=k=>Object.values(b).filter(a=>a.includes(k)).length;
+ const sh=K.h('section','shelf',`<h2>👷 Meet the Build Crew</h2><div class="crew">${CREW.map(c=>`<div class="cm"><b>${c[0]}</b>${c[1]}<small>${c[2]}</small></div>`).join('')}</div>
+  <h2>🏅 Captain Badges</h2><div class="badges">${Object.entries(BADGES).map(([k,B])=>`<div class="bdg${cnt(k)?'':' no'}"><b>${B[0]}</b>${B[1]}<small>${B[2]} · ×${cnt(k)}</small></div>`).join('')}</div>`);
+ main.insertBefore(sh,wrap);}
+K.start({id:'build-crew',title:'Build Crew',emoji:'👷',worlds,levels,build,onMap:mapExtras});
+</script></body></html>
