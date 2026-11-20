@@ -26,6 +26,8 @@
 .gh.gen{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:calc(var(--cs)*.4);opacity:.75;background:#3d5afe12;line-height:1}
 .gh.gen small{font-size:calc(var(--cs)*.28);font-weight:800;color:#3d5afe}
 .c.fix .gh{opacity:.7}
+.c.hint{z-index:2;animation:hintc .7s infinite alternate;box-shadow:inset 0 0 0 3px #ffb703,0 0 14px 4px #ffd23bcc}.c.hint .gh{opacity:.85;outline-color:#ff9f1c}
+@keyframes hintc{to{box-shadow:inset 0 0 0 3px #ffb703,0 0 4px 1px #ffd23b88}}
 .pt{position:absolute;inset:0}
 .pe{display:flex;align-items:center;justify-content:center}.pt>b{position:relative;font-size:calc(var(--cs)*.64);line-height:1;font-weight:400}
 .pt::before,.pt::after{content:none;position:absolute}
@@ -179,8 +181,10 @@
     </section>
     <!--/SEO-BODY--><script src="../_shared/kids.js"></script>
 <script>
-// Ad hook for the site (optional):  BuildCrew.onLevelComplete = n => {...}  called after level n (1-based) is won, before the result card.
-window.BuildCrew=window.BuildCrew||{onLevelComplete:null};
+// Ad hooks for the site (optional):
+//   BuildCrew.onLevelComplete = n => {...}             called after level n (1-based) is won, before the result card
+//   BuildCrew.onRewardedHintRequested = grant => {...} call grant() after a rewarded ad to give the hint (without a handler the hint is free)
+window.BuildCrew=window.BuildCrew||{onLevelComplete:null,onRewardedHintRequested:null};
 const FAST=/[?&]fast\b/.test(location.search); // test runs: short timers, no waiting for speech
 const CAP={L:{n:'Captain Leo',e:'👷🏾‍♂️'},M:{n:'Captain Maya',e:'👷🏻‍♀️'}};
 
@@ -539,7 +543,7 @@ levels.forEach(prep);
 // ---------- the game ----------
 function build(L,api,stage,li){
  const {rows,cols,req:REQ,clr:CLR,int:INT}=L,under=L.under||0;
- const G=REQ.map(r=>r.map(()=>null)),FIX=REQ.map(r=>r.map(()=>false));
+ const G=REQ.map(r=>r.map(()=>null)),FIX=REQ.map(r=>r.map(()=>false)),HINT=REQ.map(r=>r.map(()=>false));let hintsLeft=3,hintsUsed=0;
  const reqCount=REQ.flat().filter(Boolean).length;
  // toolbox: every piece in the blueprint plus look-alike pieces, grouped by kind
  const ids=[];REQ.flat().forEach(id=>{if(id&&!ids.includes(id))ids.push(id);});(L.dec||[]).forEach(id=>{if(!ids.includes(id))ids.push(id);});
@@ -578,11 +582,11 @@ function build(L,api,stage,li){
   return `<div class="pt ${d.cls}" style="${c?'--pc:'+c+';':''}${d.st||''}">${inner}</div>`;}
  function ghostHTML(id,x,y){const d=P[id];if(GEN.has(d.cat))return `<div class="gh gen">${CATIC[d.cat]||'❓'}<small>?</small></div>`;
   return `<div class="gh">${partHTML(id,null,x,y,REQ)}</div>`;}
- function ghostOn(x,y){const id=REQ[y][x];if(!id)return false;if(FIX[y][x]||peeking||phase==='brief'||phase==='look'||!L.look)return true;
+ function ghostOn(x,y){const id=REQ[y][x];if(!id)return false;if(FIX[y][x]||HINT[y][x]||peeking||phase==='brief'||phase==='look'||!L.look)return true;
   if(phase!=='build')return false;return L.hide==='mem'&&P[id].tag!=='mem';}
  let leaks=[];
  function render(){let h='';for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){const g=G[y][x],lk=leaks.find(o=>o.x===x&&o.y===y);
-   let cl='c'+(INT[y][x]?' in':'')+(CLR[y][x]?' clr':'')+(y>=rows-under?' ug':'')+(FIX[y][x]?' fix':'')+(lk?' leak':'');
+   let cl='c'+(INT[y][x]?' in':'')+(CLR[y][x]?' clr':'')+(y>=rows-under?' ug':'')+(FIX[y][x]?' fix':'')+(HINT[y][x]?' hint':'')+(lk?' leak':'');
    h+=`<div class="${cl}">${ghostOn(x,y)?ghostHTML(REQ[y][x],x,y):''}${g?partHTML(g.id,g.c,x,y,G):''}${lk?`<span class="bang">${BANG[lk.why]||'❓'}</span>`:''}</div>`;}
   grid.innerHTML=h;
   let n=0;for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(REQ[y][x]&&G[y][x]&&G[y][x].id!=='deco')n++;api.progress(n,reqCount);}
@@ -597,7 +601,7 @@ function build(L,api,stage,li){
   else if(tool.k==='erase'){if(g){G[y][x]=null;ch=true;}}
   else if(tool.k==='deco'){if(!g){G[y][x]={id:'deco',c:tool.e};deco++;ch=true;}}
   else if(tool.k==='paint'){if(g&&g.id!=='deco'&&P[g.id].paint&&g.c!==tool.c){g.c=tool.c;painted++;ch=true;}}
-  if(!ch)return;const ng=G[y][x];if(FIX[y][x]&&ng&&ng.id===REQ[y][x])FIX[y][x]=false;
+  if(!ch)return;const ng=G[y][x];if(FIX[y][x]&&ng&&ng.id===REQ[y][x])FIX[y][x]=false;if(HINT[y][x]&&(REQ[y][x]?ng&&ng.id===REQ[y][x]:!ng))HINT[y][x]=false;
   const now=Date.now();if(now-lastSnd>70){lastSnd=now;tool.k==='erase'||stroke.mode==='erase'?K.sfx.whoosh():K.sfx.pop();}render();}
  grid.addEventListener('pointerdown',e=>{if(phase!=='build'||e.button>0)return;K.audio();e.preventDefault();try{grid.setPointerCapture(e.pointerId);}catch(_){}
   stroke={mode:null,last:null};const c=cellAt(e);if(c){stroke.last=c.x+','+c.y;apply(c);}});
@@ -623,12 +627,25 @@ function build(L,api,stage,li){
   if(phase==='brief'&&!L.look){const s=K.h('button','btn pri','🔨 Start building!');s.onclick=()=>{K.audio();startBuild();};acts.appendChild(s);}
   else if(phase==='look'||phase==='brief'&&L.look){const lb=K.h('div','lookb',`👀 Remember the blueprint! <b>${phase==='look'?lookLeft:'…'}</b>`);const r=K.h('button','btn pri','✋ I remember!');r.onclick=()=>{K.audio();startBuild();};acts.append(lb,r);}
   else if(phase==='build'){if(L.look){const p=K.h('button','btn',`👀 Peek${peeks?' ('+peeks+')':''}`);p.onclick=()=>{K.audio();if(peeking)return;peeks++;peeking=true;K.sfx.whoosh();render();bar();later(()=>{peeking=false;render();},FAST?50:2500);};acts.appendChild(p);}
+   const hb=K.h('button','btn',`💡 Hint (${hintsLeft})`);hb.disabled=!hintsLeft;hb.onclick=()=>{K.audio();if(!hintsLeft||phase!=='build')return;
+    try{if(typeof BuildCrew.onRewardedHintRequested==='function')BuildCrew.onRewardedHintRequested(giveHint);else giveHint();}catch(e){giveHint();}};acts.appendChild(hb);
    const tb=K.h('button','btn test','🌧️ Test Build!');tb.onclick=()=>{K.audio();runTest();};acts.appendChild(tb);}}
  let lookLeft=0;
  function startLook(){if(gone()||phase!=='brief')return;if(!L.look)return startBuild();phase='look';lookLeft=FAST?1:L.look;bar();
   lookT=setInterval(()=>{if(gone()||phase!=='look')return clearInterval(lookT);lookLeft--;const b=acts.querySelector('.lookb b');if(b)b.textContent=lookLeft;if(lookLeft<=3&&lookLeft>0)K.sfx.tick();if(lookLeft<=0){clearInterval(lookT);startBuild();}},1000);}
  function startBuild(){clearInterval(lookT);if(phase==='build')return;const hid=L.look&&phase!=='build';phase='build';leaks=[];grid.classList.remove('xray');render();bar();drawTools();
   if(hid&&!fails)talk('M',L.hide==='mem'?'Now build! The furniture and special pieces are hidden. Use your memory!':'The blueprint is hidden! Build from memory. Tap Peek if you get stuck.');}
+
+ // ----- hint: 3 per level. Finds one spot that is wrong (or missing), makes it glow with the right piece and picks that piece in the toolbox -----
+ function giveHint(){if(gone()||phase!=='build'||!hintsLeft)return;let wrong=null,miss=null;
+  for(let y=rows-1;y>=0;y--)for(let x=0;x<cols;x++){if(HINT[y][x])continue;const r=REQ[y][x],g=G[y][x];
+   if(r){if(g&&g.id!==r){if(!wrong)wrong={x,y};}else if(!g&&!miss)miss={x,y};}else if(CLR[y][x]&&g&&!wrong)wrong={x,y};}
+  const c=wrong||miss;if(!c){K.sfx.pop();return talk('L',HINT.flat().some(Boolean)?'Fix the glowing spots first! The glowing ghost shows the right piece.':'Everything matches the blueprint! Press Test Build.');}
+  hintsLeft--;hintsUsed++;HINT[c.y][c.x]=true;const r=REQ[c.y][c.x],g=G[c.y][c.x];K.sfx.star();
+  if(r){tab='build';tool={k:'part',id:r};const n=P[r].n,had=g?(g.id==='deco'?'a sticker':'the '+P[g.id].n):'';
+   talk(P[r].tag==='pipe'||P[r].tag==='wire'||P[r].tag==='seal'?'M':'L',had?`This glowing spot needs the ${n}, not ${had}. I picked the ${n} for you. Tap the spot!`:`Put the ${n} on the glowing spot. I picked it for you in the toolbox!`);}
+  else{tool={k:'erase'};talk('M','Keep the green path clear! I picked the eraser. Tap the glowing spot.');}
+  render();bar();drawTools();}
 
  // ----- the disaster check -----
  function whyFor(r,g){const t=P[r].tag;if(!g)return t;if(g.id==='deco')return 'deco';const d=P[g.id];
@@ -680,8 +697,8 @@ function build(L,api,stage,li){
   talk(r[0],`X-ray! ${msg}`);}
  function passed(){phase='done';bar();K.sfx.cheer();K.confetti(120);
   talk('L','The building passed the Disaster Check! '+L.done,()=>finish());}
- function finish(){if(gone())return;const pen=fails+Math.floor(peeks/2),stars=pen===0?3:pen<=2?2:1;
-  const got=[];if(!wet&&L.tests.some(k=>EV[k].tags.some(t=>WATER.includes(t))))got.push('plumber');if(L.look&&!peeks)got.push('eagle');if(deco>=2||painted>=1)got.push('creative');
+ function finish(){if(gone())return;const pen=fails+Math.floor((peeks+hintsUsed)/2),stars=pen===0?3:pen<=2?2:1;
+  const got=[];if(!wet&&L.tests.some(k=>EV[k].tags.some(t=>WATER.includes(t))))got.push('plumber');if(L.look&&!peeks&&!hintsUsed)got.push('eagle');if(deco>=2||painted>=1)got.push('creative');
   const all=loadBadges();all[li]=[...new Set([...(all[li]||[]),...got])];try{localStorage.setItem(BKEY,JSON.stringify(all));}catch(e){}
   try{BuildCrew.onLevelComplete&&BuildCrew.onLevelComplete(li+1);}catch(e){}
   api.win(stars);
