@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" href="../_shared/kids.css">
+<style>
+.hud .lt{white-space:nowrap}
+.ms{width:min(700px,100%);display:flex;flex-direction:column;align-items:center;gap:7px}
+.bot{display:flex;align-items:center;gap:10px;background:#fff;border-radius:20px;padding:6px 12px;box-shadow:0 4px 0 rgba(0,0,0,.12);width:100%;min-height:58px;box-sizing:border-box}
+.bot .face{font-size:40px;line-height:1;transition:transform .2s}.bot .face.oops{animation:shake .5s}.bot .face.yay{animation:bob .5s 3}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-8deg)}}
+.bot .sl{flex:1;font-weight:700;font-size:clamp(14px,2.4vw,18px);line-height:1.25}.sl .w.lit{background:#ffd23b;border-radius:6px}
+.task{background:#27315a;color:#fff;border-radius:16px;padding:7px 14px;font-weight:800;font-size:clamp(14px,2.5vw,18px);text-align:center;width:100%;box-sizing:border-box}
+svg.brd{width:100%;height:auto;display:block;border-radius:22px;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 8px 0 rgba(0,0,0,.15)}
+svg.brd text{pointer-events:none;font-family:'Baloo 2','Fredoka','Chalkboard SE','Comic Sans MS',system-ui,sans-serif;font-weight:800}
+.math{background:#2f5d3e;box-shadow:inset 0 0 0 10px #9a6532,0 8px 0 rgba(0,0,0,.15)}
+.phys{background:linear-gradient(90deg,#c9dcf833 1px,transparent 1px) 0 0/24px 24px,linear-gradient(#c9dcf833 1px,transparent 1px) 0 0/24px 24px,linear-gradient(#f2f7ff,#dce9ff)}
+.chem{background:radial-gradient(circle at 50% 30%,#4b3685,#21183f)}
+.acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;width:100%}
+.ib{border:0;background:#fff;border-radius:16px;padding:8px 14px;font-weight:800;font-size:15px;box-shadow:0 4px 0 rgba(0,0,0,.14);cursor:pointer}
+.ib:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.14)}.ib.hint{background:#fff6c7}.ib.go{background:#2fc76a;color:#fff}.ib:disabled{opacity:.45}
+.pill{background:#ffffffd9;border-radius:999px;padding:6px 12px;font-weight:800;font-size:14px}
+.tries{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:0}
+.tries span{background:#2f5d3e;color:#fff;border-radius:10px;padding:3px 10px;font-weight:800;font-size:14px;text-decoration:line-through;text-decoration-color:#ff6b6b;text-decoration-thickness:3px}
+/* svg pieces */
+.hit{stroke:transparent;fill:transparent;stroke-width:30;stroke-linecap:round}
+[data-pick],[data-tap]{cursor:pointer}
+[data-tgt]{opacity:0;pointer-events:none;transition:opacity .2s}
+svg.picking [data-tgt].on,[data-tgt].keep{opacity:1;pointer-events:all}
+[data-tgt].hot .slot{stroke:#ffd23b;stroke-opacity:1}
+.slot{stroke:#fff;stroke-opacity:.45;stroke-width:8;stroke-dasharray:6 8;stroke-linecap:round;fill:none}
+.sel{filter:drop-shadow(0 0 6px #ffd23b)}
+.nudge{animation:nudge .7s infinite alternate}
+@keyframes nudge{from{filter:drop-shadow(0 0 2px #ffd23b)}to{filter:drop-shadow(0 0 12px #ffe600) drop-shadow(0 0 4px #fff)}}
+.ghost{stroke:#ffd23b;fill:none;stroke-width:6;stroke-dasharray:4 8;stroke-linecap:round;animation:march .6s linear infinite}
+.ghostf{fill:#ffd23b33;stroke:#ffd23b;stroke-width:4;stroke-dasharray:4 8;animation:march .6s linear infinite}
+@keyframes march{to{stroke-dashoffset:-24}}
+.spin{animation:spin 1s linear infinite;transform-box:fill-box;transform-origin:center}.spin.rev{animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.beam{transition:transform .6s cubic-bezier(.3,1.5,.5,1)}svg.picking .beam{transform:none!important}
+.anim{transition:transform .9s cubic-bezier(.3,1.2,.5,1),fill .6s,opacity .4s}
+.flipc{transform-box:fill-box;transform-origin:center;transition:transform .5s}.flipc.go{transform:rotate(180deg)}
+.drop{animation:dropf .5s ease-in forwards}@keyframes dropf{from{transform:translateY(-60px);opacity:1}to{transform:translateY(40px);opacity:0}}
+.rise{animation:rise 1.4s ease-out infinite}@keyframes rise{from{transform:translateY(0);opacity:.9}to{transform:translateY(-120px);opacity:0}}
+.pop{animation:popc 1.2s ease-out forwards}@keyframes popc{to{transform:translate(40px,-200px) rotate(260deg)}}
+.grow{transform-box:fill-box;transform-origin:50% 100%;animation:grow 1.4s ease-out forwards}@keyframes grow{from{transform:scale(.1)}to{transform:scale(1)}}
+.shk{animation:shake .4s 2}
+.glow{filter:drop-shadow(0 0 14px #ffe14d) drop-shadow(0 0 4px #fff)}
+.brain{margin:6px 0 10px;background:#eef6ff;border-radius:16px;padding:8px 12px;font-weight:700;font-size:15px;text-align:left}
+.brain b{color:#7c3aed}
+.shelf{width:min(900px,100%);margin:4px auto 12px;background:#ffffffcc;border-radius:24px;padding:12px 16px;box-shadow:0 6px 0 rgba(0,0,0,.08);text-align:center}
+.shelf h2{margin:4px 0 8px;font-size:20px}.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bdg{width:120px;border-radius:18px;background:#fff;padding:8px 4px;box-shadow:0 4px 0 rgba(0,0,0,.12);font-weight:800;font-size:12px;display:flex;flex-direction:column;align-items:center}
+.bdg b{font-size:36px;font-weight:400;line-height:1.1}.bdg small{opacity:.65;font-size:11px}.bdg.no{filter:grayscale(1);opacity:.45}
+.got{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:4px 0 8px}.got .bdg{animation:pop .5s}
+@media (max-width:480px){.bot .face{font-size:32px}.ib{padding:7px 10px;font-size:13px}}
+</style>
+  <script src="/games/_shared/nav.js"></script>
+      <!--SEO-->
+    <title>MindSpark – 50 Free STEM Brain Puzzles for Kids: Math, Physics &amp; Chemistry | Kids Games 4u</title>
+    <meta name="google-adsense-account" content="ca-pub-3661874605610386" />
+    <script src="/games/_shared/ads.js"></script>
+    <meta name="description" content="Free STEM brain game for kids aged 6-12. Move matchsticks to fix equations, balance see-saws, bounce lasers with mirrors, float keys with water, change cabbage-juice colours and light bulbs with conductors. 50 levels with 3-step hints." />
+    <meta name="keywords" content="STEM games for kids, matchstick puzzles for kids, science games for kids, physics puzzles, chemistry games for kids, brain teasers for kids, Kids Games 4u" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#7cc6ff" />
+    <link rel="canonical" href="https://kidsgames4u.com/games/mindspark/index.html" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:site_name" content="Kids Games 4u" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MindSpark – 50 Free STEM Brain Puzzles for Kids: Math, Physics &amp; Chemistry | Kids Games 4u" />
+    <meta property="og:description" content="Free STEM brain game for kids aged 6-12. Move matchsticks to fix equations, balance see-saws, bounce lasers with mirrors, float keys with water, change cabbage-juice colours and light bulbs with conductors. 50 levels with 3-step hints." />
+    <meta property="og:url" content="https://kidsgames4u.com/games/mindspark/index.html" />
+    <meta property="og:image" content="https://kidsgames4u.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MindSpark – 50 Free STEM Brain Puzzles for Kids: Math, Physics &amp; Chemistry | Kids Games 4u" />
+    <meta name="twitter:description" content="Free STEM brain game for kids aged 6-12. Move matchsticks to fix equations, balance see-saws, bounce lasers with mirrors, float keys with water, change cabbage-juice colours and light bulbs with conductors. 50 levels with 3-step hints." />
+    <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"MindSpark","url":"https://kidsgames4u.com/games/mindspark/index.html","description":"Free STEM brain game for kids aged 6-12. Move matchsticks to fix equations, balance see-saws, bounce lasers with mirrors, float keys with water, change cabbage-juice colours and light bulbs with conductors. 50 levels with 3-step hints.","applicationCategory":"EducationalApplication","genre":"Educational","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":6,"suggestedMaxAge":12},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Learn & Play","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"MindSpark","item":"https://kidsgames4u.com/games/mindspark/index.html"}]}]</script>
+    <!--/SEO-->
+  </head>
+<body><div id="app"></div>
+    <!--SEO-BODY-->
+    <noscript><style>html,body{height:auto!important;overflow:auto!important}#game-guide{display:block!important}</style></noscript>
+    <section id="game-guide" class="about-game" hidden>
+      <h2>About MindSpark: a free game for ages 6-12</h2>
+      <p>MindSpark is a 50-level brain game with a friendly robot guide. Kids solve visual Aha! puzzles across three labs: a chalkboard Math Lab, an inventor's Physics Workshop and a bubbly Chemistry Lab. Every level teaches one real idea, from minus signs made of a single line to torque, reflection, displacement, pH, states of matter and electric circuits.</p>
+      <p>The puzzles are grouped into three labs. In the Math Lab, children move matchsticks and chalk lines to fix equations, count squares hidden inside grids and turn number cards upside down. The Physics Lab has see-saws, laser mirrors, gears and belts, and a water tank that shows displacement. The Chemistry Lab covers cabbage-juice pH colours, ice, water and steam, conductors and insulators, and safe kitchen reactions. Wrong tries are shown and explained, and every solved level ends with a short Brain Power fact.</p>
+      <h3>How to play</h3><p>Read the task, then drag or tap pieces to change the puzzle. Matchstick levels allow one or two moves; wrong tries are explained and put back. Physics and chemistry levels react straight away, like a real experiment. Stuck? The lightbulb gives three hints: a glow, a clue, and a dotted ghost of the answer.</p>
+      <h3>Controls</h3><p>Use a finger or a mouse. Drag a piece onto a glowing spot, or tap the piece and then tap the spot; pieces snap into place. Tap mirrors, belts, cards, bottles and chambers to change them. The Hint button gives three steps: a glow on what to change, a clue, and a dotted ghost of the move. Reset starts the level again.</p>
+      <h3>Skills kids practise</h3><ul><li>Lateral thinking and number sense</li><li>Levers, light reflection, gears and buoyancy</li><li>Acids, bases and the pH scale</li><li>Ice, water and steam</li><li>Conductors and insulators</li><li>Testing ideas and learning from mistakes</li></ul>
+      <h3>For parents and teachers</h3><p>Many of these puzzles can be tried at home: matchstick sums with toothpicks, a ruler see-saw with coins, red cabbage juice with lemon and baking soda, or vinegar and baking soda in a bottle. Please do kitchen experiments together, and keep the hydrogen peroxide demo for adults. Ask your child to explain why their answer works, because explaining builds real understanding.</p>
+      <h3>More free games</h3><p><a href="/games/alphabet-safari/index.html">Alphabet Safari</a> &middot; <a href="/games/number-rocket/index.html">Number Rocket</a> &middot; <a href="/games/block-builder/index.html">Block Builder</a> &middot; <a href="/games/shape-dash/index.html">Shape Dash</a> &middot; <a href="/games/word-zoo/index.html">Word Zoo</a> &middot; <a href="/games/planet-parade/index.html">Planet Parade</a> &middot; <a href="/">All games</a></p>
+      <p><a href="/about/index.html">About</a> &middot; <a href="/contact/index.html">Contact</a> &middot; <a href="/privacy-policy/index.html">Privacy Policy</a></p>
+    </section>
+    <!--/SEO-BODY--><script src="../_shared/kids.js"></script>
+<script>
+// Ad hooks for the site (optional):
+//   MindSpark.onLevelComplete = n => {...}             called after level n (1-based) is won, before the result card
+//   MindSpark.onRewardedHintRequested = grant => {...} call grant() after a rewarded ad to give the hint (without a handler hints are free)
+window.MindSpark=window.MindSpark||{onLevelComplete:null,onRewardedHintRequested:null};
+const W=640;
+// ---------- sounds ----------
+let AC2=null;
+const ac=()=>{try{if(localStorage.getItem('dg_muted')==='1')return null;}catch(e){}if(!AC2){try{AC2=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}if(AC2.state==='suspended')try{AC2.resume();}catch(e){}return AC2;};
+function tn(f,d,type,v,delay,f2){const a=ac();if(!a)return;try{const t=a.currentTime+(delay||0),o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v||.1,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.05);}catch(e){}}
+function noise(d,freq,q,v){const a=ac();if(!a)return;try{const n=Math.floor(a.sampleRate*d),b=a.createBuffer(1,n,a.sampleRate),c=b.getChannelData(0);for(let i=0;i<n;i++)c[i]=(Math.random()*2-1)*(1-i/n);
+ const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=b;f.type='bandpass';f.frequency.value=freq;f.Q.value=q;g.gain.value=v;s.connect(f).connect(g).connect(a.destination);s.start();}catch(e){}}
+const SND={chalk:()=>noise(.18,3200,2,.18),place:()=>tn(520,.1,'sine',.1,0,780),boing:()=>{tn(180,.35,'sine',.14,0,420);tn(420,.25,'sine',.08,.12,160);},
+ zap:()=>tn(1400,.12,'triangle',.06,0,500),splash:()=>noise(.5,700,.8,.3),fizz:()=>noise(1.4,4200,.6,.12),clank:()=>{tn(260,.08,'square',.04);tn(390,.08,'square',.03,.06);},
+ drip:()=>tn(900,.12,'sine',.1,0,1500),whoosh:()=>noise(.35,1200,.7,.15),ding:()=>{tn(1568,.5,'sine',.1);tn(2093,.6,'sine',.07,.12);},puff:()=>noise(.4,500,.7,.2)};
+
+// ---------- tiny svg helpers ----------
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const txt=(x,y,s,size,fill,extra)=>`<text x="${x}" y="${y}" font-size="${size}" fill="${fill||'#fff'}" text-anchor="middle" dominant-baseline="central" ${extra||''}>${esc(s)}</text>`;
+const emo=(x,y,s,size,extra)=>`<text x="${x}" y="${y}" font-size="${size}" text-anchor="middle" dominant-baseline="central" ${extra||''}>${s}</text>`;
+function stick(x1,y1,x2,y2,chalk,cls){return chalk?`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f8f8f0" stroke-width="10" stroke-linecap="round" class="${cls||''}"/>`
+ :`<g class="${cls||''}"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f2c27a" stroke-width="9" stroke-linecap="round"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d99a45" stroke-width="3" stroke-linecap="round" opacity=".5"/><circle cx="${x1}" cy="${y1}" r="6.5" fill="#e53935"/></g>`;}
+
+// ================= ENGINES =================
+// Every engine: render(), solve() -> list of steps from the current state (or null), apply(step) for tests.
+// A step has focus (what Hint 1 makes glow) and ghost info (what Hint 3 outlines).
+const E={};
+
+// ----- 1. matchstick / chalk-line equations -----
+const SEG={0:'abcdef',1:'bc',2:'abdeg',3:'abcdg',4:'bcfg',5:'acdfg',6:'acdefg',7:'abc',8:'abcdefg',9:'abcdfg'};
+const DEC=Object.fromEntries(Object.entries(SEG).map(([d,s])=>[s,d]));DEC['']='';DEC.g='-';
+const OPS={'':'',h:'-',hv:'+',bt:'='},COPS={'':'',h:'-',hv:'+'};
+const GEO={D:{w:72,s:{a:[14,8,58,8],b:[64,14,64,56],c:[64,66,64,108],d:[14,114,58,114],e:[8,66,8,108],f:[8,14,8,56],g:[14,61,58,61]}},
+ O:{w:58,s:{h:[10,61,48,61],v:[29,42,29,80],t:[10,50,48,50],b:[10,72,48,72]}},C:{w:36,s:{v:[18,8,18,114]}},c:{w:46,s:{h:[6,61,40,61],v:[23,40,23,82]}}};
+const sumVal=e=>{if(!/^\d+([+\-]\d+)*$/.test(e)||/(^|[+\-])0\d/.test(e))return null;return e.match(/[+\-]?\d+/g).reduce((a,b)=>a+ +b,0);};
+const pretty=s=>s.replace(/-/g,' − ').replace(/\+/g,' + ').replace(/=/g,' = ');
+E.match=function(L,ui){const chalk=!!L.chalk,cells=[];
+ if(chalk){for(let i=0;i<L.chalk;i++){if(i)cells.push({t:'c'});cells.push({t:'C'});}}else for(const ch of L.eq)cells.push(/\d/.test(ch)?{t:'D',ch}:{t:'O',ch});
+ const start=new Set();cells.forEach((c,i)=>{const on=c.t==='C'?'v':c.t==='c'?'':c.t==='D'?SEG[c.ch]:{'+':'hv','-':'h','=':'bt'}[c.ch];for(const k of on)start.add(i+':'+k);});
+ const slots=[];cells.forEach((c,i)=>{for(const k in GEO[c.t].s)slots.push(i+':'+k);});
+ const xs=[];let x=0;cells.forEach(c=>{xs.push(x);x+=GEO[c.t].w+8;});const tail=L.target!=null?150:0,SC=Math.min(1,600/(x+tail)),ox=Math.round((W-(x+tail)*SC)/2),oy=40+Math.round((1-SC)*60);
+ let on=new Set(start),left=L.k||1,busy=false;ui.svg.setAttribute('viewBox',`0 0 ${W} ${Math.ceil(oy+124*SC+36)}`);
+ const geo=k=>{const [i,s]=k.split(':');const g=GEO[cells[i].t].s[s];return [ox+(g[0]+xs[i])*SC,oy+g[1]*SC,ox+(g[2]+xs[i])*SC,oy+g[3]*SC];};
+ const dec=set=>{let o='';for(let i=0;i<cells.length;i++){const c=cells[i],k=Object.keys(GEO[c.t].s).filter(s=>set.has(i+':'+s)).sort().join('');
+   const m=c.t==='D'?DEC[k]:c.t==='O'?OPS[k]:c.t==='C'?(k?'1':''):COPS[k];if(m===undefined)return null;o+=m;}return o;};
+ function judge(s){if(s==null)return {ok:false,msg:'Those sticks do not make real numbers.'};
+  if(L.target!=null){const v=sumVal(s);if(v==null)return {ok:false,msg:'That does not read as a sum.'};return v===L.target?{ok:true}:{ok:false,msg:`That makes ${v}, not ${L.target}.`,read:`${pretty(s)} = ${v}`};}
+  const p=s.split('=');if(p.length!==2)return {ok:false,msg:'We need exactly one equals sign.'};const a=sumVal(p[0]),b=sumVal(p[1]);
+  if(a==null||b==null)return {ok:false,msg:'That does not read as a sum.'};return a===b?{ok:true}:{ok:false,msg:`${pretty(p[0])} makes ${a}, not ${b}.`,read:pretty(s)};}
+ function render(){const H=ui.hint;let h='';
+  if(L.target!=null)h+=txt(ox+(x+72)*SC,oy+61*SC,'= '+L.target,Math.round(54*SC),'#fff');
+  for(const k of slots){const [x1,y1,x2,y2]=geo(k);
+   if(on.has(k))h+=`<g data-pick="${k}" class="${H&&H.step.from===k?'nudge':''}">${stick(x1,y1,x2,y2,chalk)}<line class="hit" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/></g>`;
+   else h+=`<g data-tgt="${k}" data-x="${(x1+x2)/2}" data-y="${(y1+y2)/2}"><line class="slot" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><line class="hit" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/></g>`;}
+  if(H&&H.mode==='ghost'){const [x1,y1,x2,y2]=geo(H.step.to);h+=`<line class="ghost" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;}
+  ui.draw(h);ui.status(`Moves left: ${left}`);}
+ function move(a,b){if(busy||!on.has(a)||on.has(b))return;on.delete(a);on.add(b);left--;ui.moved();chalk?SND.chalk():SND.place();render();
+  if(left>0)return ui.say(`Good! ${left} more move.`);busy=true;
+  setTimeout(()=>{const j=judge(dec(on));if(j.ok)return ui.win();ui.wrong(j.msg+' Let us put it back and try again!',j.read);
+   setTimeout(()=>{on=new Set(start);left=L.k||1;busy=false;render();},1600);},350);}
+ function search(set,k,path){if(!k)return judge(dec(set)).ok?path:null;const f=[...set],e=slots.filter(s=>!set.has(s));
+  for(const a of f)for(const b of e){set.delete(a);set.add(b);const r=search(set,k-1,[...path,{from:a,to:b}]);set.delete(b);set.add(a);if(r)return r;}return null;}
+ return {render,drop:(p,t)=>move(p,t),solve:()=>busy?null:search(new Set(on),left,[]),apply:s=>move(s.from,s.to)};};
+
+// ----- 2. stick squares -----
+E.sq=function(L,ui){const n=L.n,U=Math.min(84,250/n),ox=(W-U*n)/2,oy=30;
+ const all=[];for(let y=0;y<=n;y++)for(let x=0;x<n;x++)all.push(`h${x},${y}`);for(let y=0;y<n;y++)for(let x=0;x<=n;x++)all.push(`v${x},${y}`);
+ const [gw,gh,gx=0,gy=0]=L.g,start=new Set();for(let y=0;y<=gh;y++)for(let x=0;x<gw;x++)start.add(`h${x+gx},${y+gy}`);for(let y=0;y<gh;y++)for(let x=0;x<=gw;x++)start.add(`v${x+gx},${y+gy}`);
+ let on=new Set(start),left=L.k,busy=false;
+ function count(set){let c=0;const used=new Set();for(let s=1;s<=n;s++)for(let y=0;y+s<=n;y++)for(let x=0;x+s<=n;x++){const e=[];let ok=true;
+   for(let k=0;k<s&&ok;k++)for(const id of [`h${x+k},${y}`,`h${x+k},${y+s}`,`v${x},${y+k}`,`v${x+s},${y+k}`]){if(!set.has(id)){ok=false;break;}e.push(id);}
+   if(ok){c++;e.forEach(i=>used.add(i));}}return {c,loose:[...set].some(i=>!used.has(i))};}
+ const judge=set=>{const q=count(set);return q.c===L.target&&!q.loose?{ok:true}:{ok:false,msg:q.c!==L.target?`That makes ${q.c} squares, not ${L.target}.`:'A stick is left over that is not part of any square.'};};
+ const geo=k=>{const [x,y]=k.slice(1).split(',').map(Number);return k[0]==='h'?[ox+x*U+6,oy+y*U,ox+(x+1)*U-6,oy+y*U]:[ox+x*U,oy+y*U+6,ox+x*U,oy+(y+1)*U-6];};
+ function render(){const H=ui.hint;let h='';
+  for(let y=0;y<=n;y++)for(let x=0;x<=n;x++)h+=`<circle cx="${ox+x*U}" cy="${oy+y*U}" r="3" fill="#ffffff55"/>`;
+  for(const k of all){const [x1,y1,x2,y2]=geo(k);
+   if(on.has(k)){const attr=L.mode==='remove'?`data-tap="${k}"`:`data-pick="${k}"`;h+=`<g ${attr} class="${H&&H.step.from===k?'nudge':''}">${stick(x1,y1,x2,y2)}<line class="hit" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/></g>`;}
+   else if(L.mode==='move')h+=`<g data-tgt="${k}" data-x="${(x1+x2)/2}" data-y="${(y1+y2)/2}"><line class="slot" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><line class="hit" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/></g>`;}
+  if(H&&H.mode==='ghost'){if(H.step.to){const [x1,y1,x2,y2]=geo(H.step.to);h+=`<line class="ghost" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;}else{const [x1,y1,x2,y2]=geo(H.step.from);h+=txt((x1+x2)/2,(y1+y2)/2-18,'✖',26,'#ffd23b');}}
+  h+=txt(W-70,24,`Squares: ${count(on).c}`,20,'#ffe9a8');ui.draw(h);ui.status(`${L.mode==='remove'?'Sticks to take away':'Moves left'}: ${left}`);}
+ function after(){left--;ui.moved();SND.place();render();if(left>0)return;busy=true;
+  setTimeout(()=>{const j=judge(on);if(j.ok)return ui.win();ui.wrong(j.msg+' Let us try again!');setTimeout(()=>{on=new Set(start);left=L.k;busy=false;render();},1600);},350);}
+ const remove=k=>{if(busy||!on.has(k)||L.mode!=='remove')return;on.delete(k);after();};
+ const move=(a,b)=>{if(busy||!on.has(a)||on.has(b))return;on.delete(a);on.add(b);after();};
+ function solve(){if(busy)return null;
+  if(L.mode==='remove'){const f=[...on];const rec=(i,k,set,p)=>{if(!k)return judge(set).ok?p:null;for(let j=i;j<f.length;j++){set.delete(f[j]);const r=rec(j+1,k-1,set,[...p,{from:f[j]}]);set.add(f[j]);if(r)return r;}return null;};return rec(0,left,new Set(on),[]);}
+  const rec=(set,k,p)=>{if(!k)return judge(set).ok?p:null;for(const a of [...set])for(const b of all)if(!set.has(b)){set.delete(a);set.add(b);const r=rec(set,k-1,[...p,{from:a,to:b}]);set.delete(b);set.add(a);if(r)return r;}return null;};
+  return rec(new Set(on),left,[]);}
+ return {render,tap:remove,drop:move,solve,apply:s=>s.to?move(s.from,s.to):remove(s.from)};};
+
+// ----- 3. flip a number card to balance the scale -----
+const flipNum=v=>+[...String(v)].reverse().map(d=>({6:9,9:6}[d]??d)).join('');
+E.flip=function(L,ui){let A=L.L.slice(),B=L.R.slice(),busy=false;const sum=a=>a.reduce((x,y)=>x+y,0);
+ function render(){const H=ui.hint,d=sum(A)-sum(B),ang=d===0?0:d>0?-8:8;let h='';
+  h+=`<rect x="312" y="80" width="16" height="200" rx="6" fill="#c7a26a"/><rect x="250" y="270" width="140" height="18" rx="8" fill="#9a6532"/>`;
+  h+=`<g class="beam" style="transform-origin:320px 86px;transform:rotate(${ang}deg)"><rect x="90" y="80" width="460" height="12" rx="6" fill="#e8c27a"/><circle cx="320" cy="86" r="10" fill="#9a6532"/>`;
+  const pan=(cx,arr,side)=>{let s=`<line x1="${cx}" y1="90" x2="${cx-60}" y2="190" stroke="#e8c27a" stroke-width="3"/><line x1="${cx}" y1="90" x2="${cx+60}" y2="190" stroke="#e8c27a" stroke-width="3"/><path d="M${cx-80},190 Q${cx},235 ${cx+80},190 Z" fill="#c9cfd8"/>`;
+   arr.forEach((v,i)=>{const x=cx+(i-(arr.length-1)/2)*78,y=158,k=side+i,nd=H&&H.step.card===k;
+    s+=`<g data-tap="${k}" class="flipc ${nd?'nudge':''}" id="card${k}"><rect x="${x-34}" y="${y-28}" width="68" height="56" rx="10" fill="#fff" stroke="#27315a" stroke-width="3"/>${txt(x,y+2,v,34,'#27315a')}</g>`;
+    if(H&&H.mode==='ghost'&&nd)s+=`<rect class="ghostf" x="${x-34}" y="${y-100}" width="68" height="56" rx="10"/>`+txt(x,y-70,flipNum(v),30,'#ffd23b');});return s;};
+  h+=pan(150,A,'L')+pan(490,B,'R')+'</g>';
+  h+=txt(150,300,`${A.join(' + ')} = ${sum(A)}`,20,'#27315a')+txt(490,300,`${B.join(' + ')} = ${sum(B)}`,20,'#27315a');ui.draw(h);ui.status('Turn ONE card');}
+ function flip(k){if(busy)return;busy=true;ui.moved();const el=ui.svg.querySelector('#card'+k);if(el)el.classList.add('go');SND.whoosh();
+  setTimeout(()=>{const arr=k[0]==='L'?A:B,i=+k.slice(1);arr[i]=flipNum(arr[i]);render();
+   setTimeout(()=>{if(sum(A)===sum(B))return ui.win();ui.wrong(`Now it is ${sum(A)} and ${sum(B)}. Not balanced!`,`${A.join('+')} vs ${B.join('+')}`);
+    setTimeout(()=>{A=L.L.slice();B=L.R.slice();busy=false;render();},1500);},450);},500);}
+ function solve(){if(busy)return null;for(const [arr,s] of [[A,'L'],[B,'R']])for(let i=0;i<arr.length;i++){const a=A.slice(),b=B.slice();(s==='L'?a:b)[i]=flipNum(arr[i]);if(sum(a)===sum(b))return [{card:s+i}];}return null;}
+ return {render,tap:flip,solve,apply:s=>flip(s.card)};};
+
+// ----- 4. lever: move the fulcrum (or a weight) so the beam balances -----
+E.lever=function(L,ui){const U=52,cx=320,by=150;let f=L.f||0,ws=L.ws.map(w=>({...w}));
+ const torque=()=>ws.reduce((t,w)=>t+w.w*(w.x-f),0);
+ function render(){const H=ui.hint,T=torque(),ang=Math.max(-12,Math.min(12,T*1.6)),fx=cx+f*U;let h='';
+  h+=`<rect x="40" y="250" width="560" height="14" rx="7" fill="#9aa7c2"/>`;
+  h+=`<g class="beam" style="transform-origin:${fx}px ${by+8}px;transform:rotate(${ang}deg)"><rect x="${cx-5.5*U}" y="${by}" width="${11*U}" height="16" rx="8" fill="#b9814a"/>`;
+  for(let x=-5;x<=5;x++)h+=`<circle cx="${cx+x*U}" cy="${by+8}" r="3" fill="#6b4220"/>`;
+  ws.forEach((w,i)=>{const X=cx+w.x*U,mv=L.mv===i,nd=H&&H.step.w===i;h+=`<g ${mv?`data-pick="w${i}"`:''} class="${nd?'nudge':''}">${emo(X,by-26-w.w*2,w.e,30+w.w*5)}<circle cx="${X}" cy="${by-62-w.w*5}" r="13" fill="#27315a"/>${txt(X,by-62-w.w*5,w.w,16)}${mv?`<circle class="hit" cx="${X}" cy="${by-30}" r="34"/>`:''}</g>`;});
+  if(L.mv!=null)for(let x=-5;x<=5;x++)h+=`<g data-tgt="n${x}" data-x="${cx+x*U}" data-y="${by-20}"><circle class="slot" cx="${cx+x*U}" cy="${by-20}" r="14"/><circle class="hit" cx="${cx+x*U}" cy="${by-20}" r="20"/></g>`;
+  h+='</g>';
+  const fn=H&&H.step.f!=null;h+=`<g ${L.mv==null?'data-pick="F"':''} class="${fn?'nudge':''}"><path d="M${fx},${by+18} L${fx-30},250 L${fx+30},250 Z" fill="#ff7a59" stroke="#c2410c" stroke-width="3"/>${L.mv==null?`<circle class="hit" cx="${fx}" cy="220" r="34"/>`:''}</g>`;
+  if(L.mv==null)for(let x=-4;x<=4;x++)h+=`<g data-tgt="n${x}" data-x="${cx+x*U}" data-y="225"><path class="slot" d="M${cx+x*U},${by+22} L${cx+x*U-24},246 L${cx+x*U+24},246 Z"/><circle class="hit" cx="${cx+x*U}" cy="225" r="24"/></g>`;
+  if(H&&H.mode==='ghost'){if(H.step.f!=null){const gx=cx+H.step.f*U;h+=`<path class="ghostf" d="M${gx},${by+18} L${gx-30},250 L${gx+30},250 Z"/>`;}else h+=`<circle class="ghostf" cx="${cx+H.step.x*U}" cy="${by-30}" r="26"/>`;}
+  h+=txt(cx,296,T===0?'Balanced! ⚖️':T>0?'Right side goes down ↘':'Left side goes down ↙',22,'#27315a');ui.draw(h);ui.status(L.mv==null?'Drag the triangle':'Drag the '+ws[L.mv].e);}
+ function place(p,t){const x=+t.slice(1);if(p==='F')f=x;else ws[+p.slice(1)].x=x;ui.moved();SND.clank();render();
+  setTimeout(()=>{if(torque()===0)return ui.win();SND.boing();ui.wrong(torque()>0?'Boing! The right side is still too heavy.':'Boing! The left side is still too heavy.');},650);}
+ function solve(){if(L.mv==null){for(let x=-4;x<=4;x++)if(x!==f&&ws.reduce((t,w)=>t+w.w*(w.x-x),0)===0)return [{f:x}];return null;}
+  const w=ws[L.mv];for(let x=-5;x<=5;x++){const o=w.x;w.x=x;const ok=torque()===0;w.x=o;if(ok&&x!==o)return [{w:L.mv,x}];}return null;}
+ return {render,drop:place,solve,apply:s=>s.f!=null?place('F','n'+s.f):place('w'+s.w,'n'+s.x)};};
+
+// ----- 5. laser + mirrors: tap a mirror to turn it -----
+E.laser=function(L,ui){const cs=Math.min(Math.floor(600/L.w),Math.floor(300/L.h)),ox=(W-cs*L.w)/2,oy=(320-cs*L.h)/2;let ms=L.m.map(m=>({x:m[0],y:m[1],o:m[2],lock:!!m[3]})),taps=0,won=false;
+ const D={r:[1,0],l:[-1,0],u:[0,-1],d:[0,1]};
+ function trace(mm){let [x,y]=L.src,[dx,dy]=D[L.src[2]];const pts=[[x,y]];for(let i=0;i<200;i++){x+=dx;y+=dy;
+   if(x<0||y<0||x>=L.w||y>=L.h){pts.push([x-dx*.5,y-dy*.5]);return {pts,hit:false};}
+   if(L.walls.some(w=>w[0]===x&&w[1]===y)){pts.push([x-dx*.5,y-dy*.5]);return {pts,hit:false};}
+   if(x===L.tgt[0]&&y===L.tgt[1]){pts.push([x,y]);return {pts,hit:true};}
+   const m=mm.find(m=>m.x===x&&m.y===y);if(m){pts.push([x,y]);[dx,dy]=m.o==='f'?[-dy,-dx]:[dy,dx];}}return {pts,hit:false};}
+ const C=(x,y)=>[ox+x*cs+cs/2,oy+y*cs+cs/2];
+ function render(){const H=ui.hint,t=trace(ms);let h='';
+  for(let y=0;y<L.h;y++)for(let x=0;x<L.w;x++)h+=`<rect x="${ox+x*cs+2}" y="${oy+y*cs+2}" width="${cs-4}" height="${cs-4}" rx="8" fill="#ffffff66"/>`;
+  L.walls.forEach(([x,y])=>{h+=`<rect x="${ox+x*cs+3}" y="${oy+y*cs+3}" width="${cs-6}" height="${cs-6}" rx="6" fill="#b5523b"/><path d="M${ox+x*cs+3},${oy+y*cs+cs/2} h${cs-6} M${ox+x*cs+cs/2},${oy+y*cs+3} v${cs/2-3}" stroke="#7e3426" stroke-width="3"/>`;});
+  const [sx,sy]=C(L.src[0],L.src[1]);h+=`<rect x="${sx-cs*.38}" y="${sy-cs*.28}" width="${cs*.76}" height="${cs*.56}" rx="8" fill="#27315a"/><circle cx="${sx+(L.src[2]==='r'?cs*.38:0)}" cy="${sy}" r="7" fill="#ff3b5c"/>`;
+  const [tx,ty]=C(L.tgt[0],L.tgt[1]);h+=`<g class="${t.hit?'glow':''}"><polygon points="${tx},${ty-cs*.36} ${tx+cs*.3},${ty} ${tx},${ty+cs*.36} ${tx-cs*.3},${ty}" fill="${t.hit?'#7ff7ff':'#8fb8d8'}" stroke="#2a6f97" stroke-width="3"/></g>`;
+  h+=`<polyline points="${t.pts.map(p=>C(p[0],p[1]).join(',')).join(' ')}" fill="none" stroke="#ff2d55" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px #ff2d55)"/>`;
+  ms.forEach((m,i)=>{const [x,y]=C(m.x,m.y),r=cs*.38,nd=H&&H.step.m===i;const [a,b,c,d]=m.o==='f'?[x-r,y+r,x+r,y-r]:[x-r,y-r,x+r,y+r];
+   h+=`<g ${m.lock?'':`data-tap="m${i}"`} class="${nd?'nudge':''}"><circle cx="${x}" cy="${y}" r="${cs*.45}" fill="${m.lock?'#cfd4dc':'#fff'}" stroke="${m.lock?'#8d99ae':'#3d5afe'}" stroke-width="3"/><line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="#7d8597" stroke-width="10" stroke-linecap="round"/><line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="#e8f6ff" stroke-width="5" stroke-linecap="round"/>${m.lock?emo(x+cs*.3,y-cs*.3,'🔒',14):''}</g>`;
+   if(nd&&H.mode==='ghost'){const [a2,b2,c2,d2]=m.o==='f'?[x-r,y-r,x+r,y+r]:[x-r,y+r,x+r,y-r];h+=`<line class="ghost" x1="${a2}" y1="${b2}" x2="${c2}" y2="${d2}"/>`;}});
+  ui.draw(h);ui.status(`Mirror turns: ${taps}`);return t.hit;}
+ const best=(()=>{const r=search(ms);return r?r.length:0;})();
+ function search(mm){const free=mm.map((m,i)=>i).filter(i=>!mm[i].lock);for(let k=0;k<=free.length;k++){const rec=(st,kk,pick)=>{if(!kk){const t=mm.map((m,i)=>({...m,o:pick.includes(i)?(m.o==='f'?'b':'f'):m.o}));return trace(t).hit?pick:null;}
+    for(let j=st;j<free.length;j++){const r=rec(j+1,kk-1,[...pick,free[j]]);if(r)return r;}return null;};const r=rec(0,k,[]);if(r)return r.map(i=>({m:i}));}return null;}
+ function turn(k){if(won)return;const m=ms[+k.slice(1)];m.o=m.o==='f'?'b':'f';taps++;ui.moved();SND.zap();if(render()){won=true;setTimeout(()=>ui.win(Math.max(0,taps-best)),500);}}
+ return {render,tap:turn,solve:()=>won?null:search(ms),apply:s=>turn('m'+s.m)};};
+
+// ----- 6. gears + belts: make the last wheel turn clockwise to lift the flag -----
+E.gear=function(L,ui){let links=L.links.map(l=>({...l})),jams=(L.jams||[]).map(i=>({at:i,on:true})),running=false,won=false;
+ const r=30;function layout(){const xs=[0];links.forEach(l=>xs.push(xs[xs.length-1]+(l.t==='mesh'?2*r+4:l.t==='gap'?4*r+8:150)));const off=(W-80-xs[xs.length-1])/2;return xs.map(x=>x+off);}
+ function result(lk,jm){if(jm.some(j=>j.on))return {stuck:true,dirs:[]};let d=1;const dirs=[1];for(const l of lk){if(l.t==='gap'&&!l.on)return {broken:true,dirs};
+   if(l.t==='mesh')d=-d;else if(l.t==='belt'&&l.cross)d=-d;dirs.push(d);}return {dirs,ok:d===1};}
+ const gearPath=(x,y,R,teeth)=>{let p='';for(let i=0;i<teeth*2;i++){const a=i*Math.PI/teeth,rr=i%2?R:R+6;p+=(i?'L':'M')+(x+Math.cos(a)*rr).toFixed(1)+','+(y+Math.sin(a)*rr).toFixed(1);}return p+'Z';};
+ function render(spin){const H=ui.hint,xs=layout(),y=150,res=spin?result(links,jams):null;let h='';
+  links.forEach((l,i)=>{const a=xs[i],b=xs[i+1],nd=H&&H.step.tap===(l.t==='belt'?'b':'g')+i;
+   if(l.t==='belt'){const p=l.cross?`M${a},${y-r} L${b},${y+r} M${a},${y+r} L${b},${y-r}`:`M${a},${y-r} L${b},${y-r} M${a},${y+r} L${b},${y+r}`;
+    h+=`<g ${l.tog?`data-tap="b${i}"`:''} class="${nd?'nudge':''}"><path d="${p}" stroke="#27315a" stroke-width="7" fill="none"/>${l.tog?`<rect class="hit" x="${a+r}" y="${y-r-12}" width="${b-a-2*r}" height="${2*r+24}"/>`+emo((a+b)/2,y-r-26,'🔁',22):''}</g>`;
+    if(nd&&H.mode==='ghost'){const g=!l.cross?`M${a},${y-r} L${b},${y+r} M${a},${y+r} L${b},${y-r}`:`M${a},${y-r} L${b},${y-r} M${a},${y+r} L${b},${y+r}`;h+=`<path class="ghost" d="${g}"/>`;}}
+   if(l.t==='gap'){const m=(a+b)/2;h+=`<g data-tap="g${i}" class="${nd?'nudge':''}">${l.on?`<path d="${gearPath(m,y,r,10)}" fill="#ffb703" stroke="#b7791f" stroke-width="3" class="${spin&&res.dirs.length>i+1?'spin'+(res.dirs[i+1]<0?'':' rev'):''}"/>`:`<circle cx="${m}" cy="${y}" r="${r+4}" fill="none" stroke="#7d8597" stroke-width="3" stroke-dasharray="6 6"/>`+txt(m,y,'+',30,'#7d8597')}<circle class="hit" cx="${m}" cy="${y}" r="${r+8}"/></g>`;
+    if(nd&&H.mode==='ghost'&&!l.on)h+=`<path class="ghostf" d="${gearPath(m,y,r,10)}"/>`;}});
+  xs.forEach((x,i)=>{const d=res&&res.dirs[i],cls=d?('spin'+(d<0?' rev':'')):'';const motor=i===0,last=i===xs.length-1;
+   h+=`<g><path d="${gearPath(x,y,r,12)}" fill="${motor?'#3d5afe':last?'#2fc76a':'#c9cfd8'}" stroke="#27315a" stroke-width="3" class="${cls}"/><circle cx="${x}" cy="${y}" r="7" fill="#27315a"/>${motor?emo(x,y+r+22,'⚡',22)+txt(x,y+r+44,'motor',13,'#27315a'):''}</g>`;});
+  jams.forEach((j,k)=>{const x=(xs[j.at]+xs[j.at+1])/2,nd=H&&H.step.tap==='j'+k;if(j.on)h+=`<g data-tap="j${k}" class="${nd?'nudge':''} ${spin&&res.stuck?'shk':''}"><path d="${gearPath(x,y-r-18,18,8)}" fill="#ff5a6a" stroke="#9b1c31" stroke-width="3"/><circle class="hit" cx="${x}" cy="${y-r-18}" r="28"/></g>`;
+   if(nd&&H.mode==='ghost')h+=txt(x,y-r-56,'✖ remove',16,'#c2410c');});
+  const lx=xs[xs.length-1],up=spin&&res.ok;h+=`<line x1="${lx}" y1="${y}" x2="${lx+60}" y2="40" stroke="#8d99ae" stroke-width="3"/><rect x="${lx+58}" y="36" width="6" height="250" fill="#8d99ae"/>`;
+  h+=`<g class="anim" style="transform:translateY(${up?-150:spin&&res.dirs.length===xs.length?40:0}px)">${emo(lx+82,230,'🚩',40)}</g>`;
+  ui.draw(h);ui.status(won?'The flag is up!':'Tap 🔁 belts, + gaps and red gears, then press Run');}
+ function tap(k){if(running||won)return;const i=+k.slice(1);if(k[0]==='b'){links[i].cross=!links[i].cross;SND.whoosh();}else if(k[0]==='g'){links[i].on=!links[i].on;SND.clank();}else{jams[i].on=!jams[i].on;SND.clank();}ui.moved();render();}
+ function run(){if(running||won)return;running=true;const res=result(links,jams);render(true);SND.clank();
+  setTimeout(()=>{if(res.ok){won=true;SND.ding();return ui.win();}
+   ui.wrong(res.stuck?'Stuck! A red gear touches two gears at once and jams them.':res.broken?'The chain is broken: the wheels after the gap do not turn.':'Oh no, the flag went DOWN! The last wheel spins the wrong way.');
+   setTimeout(()=>{running=false;render();},1300);},1300);}
+ function solve(){if(running||won)return null;const opts=[];links.forEach((l,i)=>{if(l.tog||l.t==='gap')opts.push(l.t==='belt'?'b'+i:'g'+i);});jams.forEach((j,k)=>opts.push('j'+k));
+  for(let n=0;n<=opts.length;n++){const rec=(s,k,p)=>{if(!k){const lk=links.map(l=>({...l})),jm=jams.map(j=>({...j}));for(const t of p){const i=+t.slice(1);if(t[0]==='b')lk[i].cross=!lk[i].cross;else if(t[0]==='g')lk[i].on=!lk[i].on;else jm[i].on=!jm[i].on;}return result(lk,jm).ok?p:null;}
+    for(let j=s;j<opts.length;j++){const r=rec(j+1,k-1,[...p,opts[j]]);if(r)return r;}return null;};const r=rec(0,n,[]);if(r)return r.length?r.map(t=>({tap:t})):[{run:1}];}return null;}
+ ui.button('▶ Run motor',run);
+ return {render,tap,solve,apply:s=>s.run?run():tap(s.tap),run};};
+
+// ----- 7. buoyancy: drop things in the tank to raise the water to the star line -----
+E.buoy=function(L,ui){const U=24,bx=300,bw=220,by=310;let lv=L.lv0,shown=L.lv0,used=[],busy=false;
+ function render(){const H=ui.hint,top=L.top;let h='';
+  const ty=by-top*U-6;h+=`<rect x="${bx}" y="${ty}" width="${bw}" height="${by-ty}" fill="#ffffff55" stroke="#5a6b8c" stroke-width="5" rx="6" data-tgt="tank" class="on keep" data-x="${bx+bw/2}" data-y="${by-80}"/>`;
+  h+=`<g class="anim" id="wat" pointer-events="none" style="transform-origin:${bx}px ${by}px;transform:scaleY(${shown/10})"><rect x="${bx+3}" y="${by-10*U}" width="${bw-6}" height="${10*U}" fill="#4aa8ff" opacity=".75"/></g>`;
+  h+=`<line x1="${bx-20}" y1="${by-L.tgt*U}" x2="${bx+bw+20}" y2="${by-L.tgt*U}" stroke="#ffb703" stroke-width="4" stroke-dasharray="10 6"/>`+emo(bx-34,by-L.tgt*U,'⭐',24)+emo(bx+bw+40,by-L.tgt*U-4,'🔐',30);
+  for(let i=1;i<=top;i++)h+=txt(bx+bw+14,by-i*U+12,i,12,'#5a6b8c');
+  h+=`<g class="anim" id="cork" pointer-events="none" style="transform:translateY(${-(Math.min(lv,top+1)-L.lv0)*U}px)">${emo(bx+bw-40,by-L.lv0*U-14,'🗝️',30)}</g>`;
+  let sx=bx+20;used.forEach(i=>{const it=L.items[i],s=26+it.v*8;h+=emo(sx+s/2,it.float?by-Math.min(lv,top)*U-4:by-s/2,it.e,s,'pointer-events="none"');sx+=s*.8;});
+  L.items.forEach((it,i)=>{if(used.includes(i))return;const col=i%2,row=Math.floor(i/2),x=70+col*110,y=60+row*90,s=26+it.v*8,nd=H&&H.step.i===i;
+   h+=`<g data-pick="i${i}" class="${nd?'nudge':''}">${emo(x,y,it.e,s)}${txt(x,y+s/2+10,it.n,13,'#27315a')}<circle class="hit" cx="${x}" cy="${y}" r="40"/></g>`;
+   if(nd&&H.mode==='ghost')h+=`<rect class="ghostf" x="${bx+20}" y="${by-150}" width="${bw-40}" height="60" rx="12"/>`+emo(bx+bw/2,by-120,it.e,40,'opacity=".6"');});
+  ui.draw(h);ui.after(()=>{shown=lv;const w=ui.svg.querySelector('#wat');if(w)w.style.transform=`scaleY(${lv/10})`;});ui.status(`Water: ${lv} · Star line: ${L.tgt}`);}
+ function drop(p){if(busy)return;const i=+p.slice(1);if(used.includes(i))return;used.push(i);lv+=L.items[i].d;ui.moved();SND.splash();render();
+  if(lv>L.top){busy=true;setTimeout(()=>{ui.wrong('Splash! The water went over the top. Let us empty the tank.');setTimeout(reset,1500);},700);return;}
+  if(lv>=L.tgt){busy=true;setTimeout(()=>ui.win(),900);return;}
+  if(used.length===L.items.length){busy=true;setTimeout(()=>{ui.wrong('Not high enough yet. Let us try different things.');setTimeout(reset,1500);},700);}}
+ function reset(){lv=L.lv0;used=[];busy=false;render();}
+ function solve(){if(busy)return null;const rest=L.items.map((_,i)=>i).filter(i=>!used.includes(i));
+  for(let k=1;k<=rest.length;k++){const rec=(s,kk,p,sum)=>{if(!kk)return lv+sum>=L.tgt&&lv+sum<=L.top?p:null;for(let j=s;j<rest.length;j++){const r=rec(j+1,kk-1,[...p,rest[j]],sum+L.items[rest[j]].d);if(r)return r;}return null;};const r=rec(0,k,[],0);if(r)return r.map(i=>({i}));}return null;}
+ return {render,drop:(p)=>drop(p),solve,apply:s=>drop('i'+s.i)};};
+
+// ----- 8. pH colors: red-cabbage juice changes color with acids and bases -----
+const PHC=[[2,'red','#e53935'],[4,'pink','#ff5fa2'],[7,'purple','#7b4fd8'],[8,'blue','#3f6fe0'],[10,'green','#2fb36d'],[14,'yellow','#e7c51b']];
+const band=p=>PHC.find(b=>p<=b[0]);
+const BOT={lemon:['🍋','Lemon juice',-2,'#ffe066'],vinegar:['🫙','Vinegar',-1,'#fff3c4'],soda:['🧁','Baking soda',1,'#ffffff'],soap:['🧼','Soapy water',2,'#bde8ff'],water:['💧','Water',0,'#d8f0ff']};
+E.ph=function(L,ui){let ph=L.ph0,cnt=L.bottles.map(b=>b[1]),drops=0,won=false,shownCol=band(L.ph0)[2];
+ const step=(p,k)=>k==='water'?p+Math.sign(7-p):Math.max(1,Math.min(13,p+BOT[k][2]));
+ function render(){const H=ui.hint,b=band(ph),tb=PHC.find(x=>x[1]===L.tgt);let h='';
+  h+=`<path d="M240,80 L240,280 Q240,300 260,300 L380,300 Q400,300 400,280 L400,80" fill="#ffffff22" stroke="#e8f6ff" stroke-width="5"/>`;
+  h+=`<rect id="liq" x="243" y="140" width="154" height="157" rx="12" fill="${shownCol}" class="anim"/>`;
+  h+=`<g>${emo(530,100,'🔒',54)}<circle cx="530" cy="170" r="30" fill="${tb[2]}" stroke="#fff" stroke-width="4"/>${txt(530,220,'Make it '+tb[1],18)}</g>`;
+  for(let p=1;p<=13;p++)h+=`<rect x="${30+(p-1)*14}" y="34" width="14" height="16" fill="${band(p)[2]}"/>`;
+  h+=`<path d="M${30+(ph-1)*14+7},56 l-7,10 h14 z" fill="#fff"/>`+txt(121,22,'pH '+ph,16);
+  L.bottles.forEach((bt,i)=>{const [e,n,,col]=BOT[bt[0]],x=60+i*(520/Math.max(1,L.bottles.length-1||1)),X=L.bottles.length===1?100:60+i*(150/Math.max(1,L.bottles.length-1)),nd=H&&H.step.b===i;
+   const bxp=L.bottles.length>1?40+i*Math.min(80,170/(L.bottles.length-1)):100;
+   h+=`<g data-tap="b${i}" class="${nd?'nudge':''}" opacity="${cnt[i]?1:.35}"><rect x="${bxp-26}" y="110" width="52" height="96" rx="14" fill="${col}" stroke="#fff" stroke-width="3"/>${emo(bxp,148,e,28)}${txt(bxp,186,'×'+cnt[i],16,'#27315a')}${txt(bxp,222,n,12)}<rect class="hit" x="${bxp-30}" y="104" width="60" height="110"/></g>`;
+   if(nd&&H.mode==='ghost')h+=`<circle class="ghostf" cx="${bxp}" cy="150" r="40"/>`;});
+  ui.draw(h);ui.after(()=>{shownCol=b[2];const e=ui.svg.querySelector('#liq');if(e)e.setAttribute('fill',b[2]);});ui.status(`Drops: ${drops}`);}
+ const best=(()=>{const r=search(L.ph0,L.bottles.map(b=>b[1]));return r?r.length:0;})();
+ function search(p0,c0){const key=(p,c)=>p+'|'+c.join(',');const q=[[p0,c0,[]]],seen=new Set([key(p0,c0)]);
+  while(q.length){const [p,c,path]=q.shift();if(band(p)[1]===L.tgt)return path;for(let i=0;i<c.length;i++){if(!c[i])continue;const c2=c.slice();c2[i]--;const p2=step(p,L.bottles[i][0]),k=key(p2,c2);if(seen.has(k))continue;seen.add(k);q.push([p2,c2,[...path,{b:i}]]);}}return null;}
+ function tap(k){if(won)return;const i=+k.slice(1);if(!cnt[i]){SND.boing();return ui.say('That bottle is empty!');}
+  const before=Math.abs(ph-tgtMid()),bt=L.bottles[i][0];cnt[i]--;drops++;ph=step(ph,bt);ui.moved();SND.drip();render();
+  if(band(ph)[1]===L.tgt){won=true;return setTimeout(()=>ui.win(Math.max(0,drops-best)),700);}
+  if(Math.abs(ph-tgtMid())>before)ui.say(BOT[bt][2]<0?'Oops, that made it more acidic. Wrong way!':'Oops, that made it more basic. Wrong way!');
+  if(!cnt.some(Boolean))setTimeout(()=>{ui.wrong('Out of drops! Let us pour it out and start again.');setTimeout(()=>{ph=L.ph0;cnt=L.bottles.map(b=>b[1]);drops=0;render();},1500);},600);}
+ const tgtMid=()=>{const i=PHC.findIndex(b=>b[1]===L.tgt);return ((i?PHC[i-1][0]+1:1)+PHC[i][0])/2;};
+ return {render,tap,solve:()=>won?null:search(ph,cnt),apply:s=>tap('b'+s.b)};};
+
+// ----- 9. ice / water / steam -----
+const ST=['ice','water','steam'],STI={ice:'🧊',water:'💧',steam:'♨️'};
+E.state=function(L,ui){let ch=L.ch.map(c=>c.s),tools={heat:L.heat||0,freeze:L.freeze||0},tool=null,won=false,busy=false;
+ const linkOf=i=>(L.link||[]).find(p=>p.includes(i));
+ function applyTo(st,t,i){const s=st.slice(),f=j=>{const k=ST.indexOf(s[j])+(t==='heat'?1:-1);if(k>=0&&k<3)s[j]=ST[k];};const p=linkOf(i);if(p)p.forEach(f);else f(i);return s;}
+ function render(){const H=ui.hint,n=L.ch.length,wd=Math.min(170,520/n),gap=(W-n*wd)/(n+1);let h='';
+  const X=i=>gap+i*(wd+gap);(L.link||[]).forEach(([a,b])=>{h+=`<rect x="${X(a)+wd/2}" y="232" width="${X(b)-X(a)}" height="14" rx="7" fill="#9aa7c2"/>`+txt((X(a)+X(b)+wd)/2,262,'shared pipe',13,'#e8f6ff');});
+  ch.forEach((s,i)=>{const x=X(i),y=70,hh=150,nd=H&&H.step.c===i,okc=s===L.ch[i].want;
+   h+=`<g data-tap="c${i}" class="${nd?'nudge':''}"><rect x="${x}" y="${y}" width="${wd}" height="${hh}" rx="16" fill="#ffffff22" stroke="${okc?'#2fc76a':'#e8f6ff'}" stroke-width="4"/>`;
+   if(s==='ice')h+=`<rect x="${x+12}" y="${y+60}" width="${wd-24}" height="${hh-70}" rx="10" fill="#d6f3ff" stroke="#8fd3ff" stroke-width="3"/><path d="M${x+24},${y+74} l20,0" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`;
+   else if(s==='water')h+=`<path d="M${x+6},${y+90} q${wd/4},-12 ${wd/2-6},0 t${wd/2-6},0 V${y+hh-6} H${x+6} Z" fill="#4aa8ff"/>`;
+   else for(let k=0;k<5;k++)h+=`<circle class="rise" style="animation-delay:${k*.28}s" cx="${x+20+k*(wd-40)/4}" cy="${y+hh-20}" r="14" fill="#ffffffcc"/>`;
+   h+=txt(x+wd/2,y-22,`needs ${STI[L.ch[i].want]} ${L.ch[i].want}`,15)+emo(x+wd/2,y+hh+26,L.ch[i].lab,26)+`<rect class="hit" x="${x}" y="${y}" width="${wd}" height="${hh}"/></g>`;
+   if(nd&&H.mode==='ghost')h+=`<rect class="ghostf" x="${x-6}" y="${y-6}" width="${wd+12}" height="${hh+12}" rx="18"/>`+emo(x+wd/2,y+hh/2,H.step.t==='heat'?'🔥':'❄️',44);});
+  [['heat','🔥'],['freeze','❄️']].forEach(([t,e],k)=>{if(!(L[t]))return;const x=W/2+(k?70:-70),nd=H&&H.step.t===t&&H.mode!=='ghost';
+   h+=`<g data-tap="t${t}" class="${tool===t?'sel':''} ${nd?'nudge':''}"><rect x="${x-56}" y="284" width="112" height="44" rx="22" fill="${tool===t?'#ffd23b':'#fff'}"/>${emo(x-28,306,e,24)}${txt(x+16,306,'×'+tools[t],18,'#27315a')}</g>`;});
+  ui.draw(h);ui.status(tool?`Now tap a chamber`:'Pick 🔥 or ❄️, then tap a chamber');}
+ function tap(k){if(won||busy)return;if(k[0]==='t'){const t=k.slice(1);if(!tools[t])return SND.boing();tool=tool===t?null:t;SND.place();return render();}
+  if(!tool)return ui.say('First pick 🔥 heat or ❄️ cold!');const i=+k.slice(1),before=ch.slice();ch=applyTo(ch,tool,i);
+  if(ch.join()===before.join()){ui.say(tool==='heat'?'It is already steam!':'It is already ice!');return;}
+  tools[tool]--;tool=tools[tool]?tool:null;ui.moved();SND[k&&before[i]==='ice'?'splash':'puff']();render();
+  if(ch.every((s,j)=>s===L.ch[j].want)){won=true;return setTimeout(()=>ui.win(),700);}
+  if(!tools.heat&&!tools.freeze){busy=true;setTimeout(()=>{ui.wrong('Out of heat and cold! Let us start over.');setTimeout(()=>{ch=L.ch.map(c=>c.s);tools={heat:L.heat||0,freeze:L.freeze||0};tool=null;busy=false;render();},1500);},600);}}
+ function solve(){if(won||busy)return null;const key=(s,a,b)=>s.join()+'|'+a+'|'+b,q=[[ch,tools.heat,tools.freeze,[]]],seen=new Set();
+  while(q.length){const [s,a,b,p]=q.shift();if(s.every((x,j)=>x===L.ch[j].want))return p;for(const [t,c] of [['heat',a],['freeze',b]]){if(!c)continue;
+    for(let i=0;i<s.length;i++){const s2=applyTo(s,t,i);if(s2.join()===s.join())continue;const a2=t==='heat'?a-1:a,b2=t==='freeze'?b-1:b,k=key(s2,a2,b2);if(seen.has(k))continue;seen.add(k);q.push([s2,a2,b2,[...p,{t,c:i}]]);}}}return null;}
+ return {render,tap,solve,apply:s=>{tool=s.t;tap('c'+s.c);}};};
+
+// ----- 10. circuits: fill every gap with something that conducts -----
+const MAT={coin:['🪙','Copper coin',1],clip:['📎','Paper clip',1],spoon:['🥄','Metal spoon',1],pencil:['✏️','Pencil lead',1],key:['🔑','Metal key',1],
+ duck:['🦆','Rubber duck',0],stick:['🪵','Wooden stick',0],straw:['🥤','Plastic straw',0],balloon:['🎈','Balloon',0],marble:['🔮','Glass marble',0],
+ water:['💧','Plain water',0],salt:['🧂','Salt',0],saltwater:['🌊','Salt water',1]};
+E.circ=function(L,ui){let items=L.items.slice(),place=Array(L.gaps).fill(null),won=false,busy=false;
+ const gx=j=>170+j*(300/Math.max(1,L.gaps-1||1))*(L.gaps>1?1:0)+(L.gaps===1?150:0),gy=230;
+ function render(lit,bad){const H=ui.hint;let h='';const xs=[...Array(L.gaps)].map((_,j)=>gx(j));
+  let wire=`M120,${gy} L120,60 L520,60 L520,${gy}`;let px=520;for(let j=L.gaps-1;j>=0;j--){wire+=` L${xs[j]+36},${gy} M${xs[j]-36},${gy}`;px=xs[j]-36;}wire+=` L120,${gy}`;
+  h+=`<path d="${wire}" stroke="${lit?'#ffd23b':'#e8a86a'}" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+  h+=`<g><rect x="96" y="110" width="48" height="80" rx="8" fill="#2fc76a" stroke="#fff" stroke-width="3"/><rect x="110" y="102" width="20" height="10" fill="#fff"/>${txt(120,150,'+',26)}</g>`;
+  h+=`<g class="${lit?'glow':''}"><circle cx="320" cy="48" r="30" fill="${lit?'#fff36b':'#e6e6e6'}" stroke="#7d8597" stroke-width="3"/><rect x="306" y="74" width="28" height="18" rx="3" fill="#7d8597"/></g>`;
+  place.forEach((p,j)=>{const x=xs[j],nd=H&&H.mode==='ghost'&&H.step.g===j;h+=`<g data-tgt="g${j}" data-x="${x}" data-y="${gy}" class="on keep"><rect class="slot" x="${x-34}" y="${gy-30}" width="68" height="60" rx="12" style="stroke:#ffd23b"/><rect class="hit" x="${x-34}" y="${gy-30}" width="68" height="60"/></g>`;
+   if(p!=null){const m=MAT[items[p]];h+=`<g data-pick="p${j}" class="${bad===j?'shk':''}">${emo(x,gy,m[0],40)}<rect class="hit" x="${x-30}" y="${gy-30}" width="60" height="60"/></g>`;}
+   if(nd)h+=`<rect class="ghostf" x="${x-34}" y="${gy-30}" width="68" height="60" rx="12"/>`;});
+  h+=`<g data-tgt="tray" data-x="320" data-y="300" class="on keep"><rect x="20" y="270" width="600" height="62" rx="16" fill="#ffffff22"/></g>`;
+  const free=items.map((_,i)=>i).filter(i=>!place.includes(i)&&items[i]!=='used');free.forEach((i,k)=>{const x=60+k*(520/Math.max(1,free.length-1||1)),m=MAT[items[i]],nd=H&&H.step.i===i;
+   h+=`<g data-pick="i${i}" class="${nd?'nudge':''}">${emo(x,292,m[0],34)}${txt(x,322,m[1],11)}<circle class="hit" cx="${x}" cy="296" r="32"/></g>`;});
+  ui.draw(h);ui.status('Drag things into the gaps');}
+ function drop(p,t){if(won||busy)return;let i=p[0]==='p'?place[+p.slice(1)]:+p.slice(1);if(p[0]==='p')place[+p.slice(1)]=null;
+  if(t==='tray'){render();return;}
+  if(t[0]==='g'){const j=+t.slice(1);if(items[i]==='salt'){if(place[j]!=null&&items[place[j]]==='water'){items[place[j]]='saltwater';items[i]='used';SND.fizz();ui.say('Salt dissolves in the water. Salt water carries electricity!');ui.moved();render();if(place.every(v=>v!=null))test();return;}render();return ui.say('Salt alone is not a wire. Try sprinkling it into water!');}
+   if(items[i]==='used')return;place[j]=i;}
+  else if(t[0]==='w'){}
+  ui.moved();SND.place();render();if(place.every(v=>v!=null))test();}
+ function test(){busy=true;const bad=place.findIndex(i=>!MAT[items[i]][2]);setTimeout(()=>{if(bad<0){won=true;render(true);SND.ding();return setTimeout(()=>ui.win(),600);}
+  render(false,bad);SND.zap();ui.wrong(`No light! The ${MAT[items[place[bad]]][1].toLowerCase()} is an insulator: electricity cannot pass through it.`);busy=false;},400);}
+ function solve(){if(won||busy)return null;const steps=[];const pl=place.slice(),it=items.slice();
+  for(let j=0;j<pl.length;j++){if(pl[j]!=null&&MAT[it[pl[j]]][2])continue;
+   if(pl[j]!=null&&it[pl[j]]==='water'&&it.indexOf('salt')>=0){const sI=it.indexOf('salt');steps.push({i:sI,g:j,salt:1});it[pl[j]]='saltwater';it[sI]='used';continue;}
+   let c=it.findIndex((m,i)=>MAT[m]&&MAT[m][2]&&!pl.includes(i));
+   if(c<0){const w=it.findIndex((m,i)=>m==='water'&&!pl.includes(i)),s=it.indexOf('salt');if(w<0||s<0)return null;steps.push({i:w,g:j});steps.push({i:s,g:j,salt:1});it[w]='saltwater';it[s]='used';pl[j]=w;continue;}
+   steps.push({i:c,g:j});pl[j]=c;}return steps.filter(s=>it[s.i]==='saltwater'||s.salt).concat(steps.filter(s=>!(it[s.i]==='saltwater'||s.salt)));}
+ function apply(s){const at=place.indexOf(s.i);drop(at>=0?'p'+at:'i'+s.i,'g'+s.g);}
+ return {render,drop,solve,apply};};
+
+// ----- 11. mixing: pick the ingredients that make the right reaction -----
+const ING={vinegar:['🫙','Vinegar','#fff3c4'],soda:['🧁','Baking soda','#ffffff'],lemon:['🍋','Lemon juice','#ffe066'],salt:['🧂','Salt','#f4f4f4'],sugar:['🍬','Sugar','#ffd6e8'],
+ water:['💧','Water','#bfe3ff'],oil:['🫒','Cooking oil','#e3c95c'],yeast:['🍞','Yeast','#e0b77a'],peroxide:['🧴','Peroxide','#e9f7ff'],soap:['🧼','Dish soap','#bde8ff'],cabbage:['🥬','Cabbage juice','#7b4fd8']};
+function react(set){const h=k=>set.includes(k);
+ if(h('yeast')&&h('peroxide')&&h('soap'))return ['foam','A giant tower of foam! Soap traps the oxygen bubbles.'];
+ if(h('yeast')&&h('peroxide'))return ['oxy','Oxygen bubbles, but they escape. Something must trap them!'];
+ if(h('soda')&&(h('vinegar')||h('lemon')))return ['gas','Fizz! Carbon dioxide gas is made.'];
+ if(h('cabbage')&&(h('vinegar')||h('lemon')))return ['pink','The cabbage juice turned pink: that shows an acid.'];
+ if(h('cabbage')&&(h('soda')||h('soap')))return ['green','The cabbage juice turned green: that shows a base.'];
+ if(h('oil')&&h('water'))return ['layers','Oil and water do not mix. They make two layers.'];
+ if(h('water')&&(h('salt')||h('sugar')))return ['dissolve','It dissolved and disappeared into the water. No gas.'];
+ if(h('soap')&&h('water'))return ['bubbles','Soapy water, but no gas is made.'];
+ return ['none','Nothing happens. These two do not react.'];}
+E.mix=function(L,ui){let added=[],busy=false,won=false,fx=null;
+ function render(){const H=ui.hint;let h='';const fx0=fx&&fx[0];
+  h+=`<path d="M290,70 L290,140 L215,280 Q210,300 232,300 L408,300 Q430,300 425,280 L350,140 L350,70" fill="#ffffff22" stroke="#e8f6ff" stroke-width="5"/>`;
+  const cols=added.map(k=>ING[k][2]);if(cols.length){const hh=40/cols.length;cols.forEach((c,i)=>{h+=`<rect x="232" y="${258-i*28}" width="176" height="30" fill="${fx0==='pink'?'#ff5fa2':fx0==='green'?'#2fb36d':c}" opacity=".85"/>`;});}
+  h+=`<g class="${fx0==='gas'||fx0==='foam'?'pop':''}"><rect x="294" y="44" width="52" height="30" rx="6" fill="#b5835a"/></g>`;
+  if(fx0==='gas'||fx0==='oxy'||fx0==='bubbles')for(let k=0;k<8;k++)h+=`<circle class="rise" style="animation-delay:${k*.15}s" cx="${260+k*16}" cy="270" r="${5+k%3*3}" fill="#ffffffcc"/>`;
+  if(fx0==='foam')h+=`<g class="grow"><path d="M200,300 Q180,40 320,20 Q460,40 440,300 Z" fill="#fff7fb" stroke="#ffc6e0" stroke-width="5"/></g>`;
+  h+=txt(320,330,`Add ${L.k} things to the flask (${added.length}/${L.k})`,15);
+  L.ing.forEach((k,i)=>{const n=L.ing.length,x=40+i*(560/(n-1)),y=i%2?205:120,x2=i<n/2?70+i*65:W-70-(n-1-i)*65,used=added.includes(k),nd=H&&H.step.k===k,[e,nm,col]=ING[k];
+   const X=i<Math.ceil(n/2)?70:W-70,Y=60+(i%Math.ceil(n/2))*80;
+   h+=`<g data-tap="k${k}" class="${nd?'nudge':''}" opacity="${used?.3:1}"><rect x="${X-48}" y="${Y-30}" width="96" height="62" rx="16" fill="${col}" stroke="#fff" stroke-width="3"/>${emo(X,Y-6,e,26)}${txt(X,Y+20,nm,12,'#27315a')}<rect class="hit" x="${X-48}" y="${Y-30}" width="96" height="62"/></g>`;
+   if(nd&&H.mode==='ghost')h+=`<path class="ghost" d="M${X},${Y} Q${(X+320)/2},${Y-60} 320,100"/>`;});
+  ui.draw(h);ui.status(`Goal: ${L.goalText}`);}
+ function tap(t){if(busy||won)return;const k=t.slice(1);if(added.includes(k))return;added.push(k);ui.moved();SND.drip();render();
+  if(added.length<L.k)return;busy=true;const r=react(added);setTimeout(()=>{fx=r;render();r[0]==='gas'||r[0]==='foam'?SND.fizz():r[0]==='none'?SND.boing():SND.puff();
+   setTimeout(()=>{if(r[0]===L.goal){won=true;return ui.win();}ui.wrong(r[1]);setTimeout(()=>{added=[];fx=null;busy=false;render();},1700);},1300);},300);}
+ function solve(){if(busy||won)return null;const rest=L.ing.filter(k=>!added.includes(k)),need=L.k-added.length;
+  const rec=(s,kk,p)=>{if(!kk)return react([...added,...p])[0]===L.goal?p:null;for(let j=s;j<rest.length;j++){const r=rec(j+1,kk-1,[...p,rest[j]]);if(r)return r;}return null;};
+  const r=rec(0,need,[]);return r&&r.map(k=>({k}));}
+ return {render,tap,solve,apply:s=>tap('k'+s.k)};};
+
+// ================= 50 LEVELS =================
+const lv=(world,name,t,task,clue,why,o)=>Object.assign({world,name,t,task,clue,why},o);
+const LV=[
+ lv('math','Chalk Trick','match','Move ONE chalk line to make 100.','Lines can lie down too! A line lying flat is a minus sign.','111 − 11 = 100! A standing line is a 1, but the same line lying down is a minus sign.',{chalk:6,target:100,k:1}),
+ lv('math','Six Plus Four','match','Move ONE matchstick to fix the sum.','Look at the 6 and the plus. Could the 6 become a different number?','8 − 4 = 4 (or 0 + 4 = 4). One stick can change a number and a sign at the same time!',{eq:'6+4=4',k:1}),
+ lv('math','Two Becomes…','match','Move ONE matchstick to fix the sum.','1 + ? = 4. Can the 2 turn into that number?','1 + 3 = 4. A stick can move inside the same number: the 2 becomes a 3.',{eq:'1+2=4',k:1}),
+ lv('math','Three and Three','match','Move ONE matchstick to fix the sum.','What plus 3 makes 8? Change one of the 3s.','5 + 3 = 8. The 3 and the 5 use the same number of sticks, just arranged differently.',{eq:'3+3=8',k:1}),
+ lv('math','Plus or Minus?','match','Move ONE matchstick to fix the sum.','Turn the plus into a minus. Where can its spare stick go?','8 − 1 = 7 or 6 + 1 = 7. A plus has one more stick than a minus.',{eq:'9+1=7',k:1}),
+ lv('math','Small Answer','match','Move ONE matchstick to fix the sum.','The answer is small, so we need a minus sign.','9 − 7 = 2. The stick from the plus turned the 5 into a 9!',{eq:'5+7=2',k:1}),
+ lv('math','Shape Shifter','match','Move ONE matchstick to fix the sum.','Make the 3 a smaller number.','9 − 2 = 7. 3 and 2 both use five sticks, just in different places.',{eq:'9-3=7',k:1}),
+ lv('math','Zero Hero','match','Move ONE matchstick to fix the sum.','To make 0, take a number away from itself.','7 − 7 = 0. Any number minus itself is zero.',{eq:'7+1=0',k:1}),
+ lv('math','Big Chalk Trick','match','Move ONE chalk line to make 1000.','Remember the very first level? Make a minus sign!','1111 − 111 = 1000. The same trick works for bigger numbers!',{chalk:8,target:1000,k:1}),
+ lv('math','Chalkboard Boss','match','Move ONE matchstick to fix the sum.','The 0 could become another number. What is 9 + 3 − 4?','9 + 3 − 4 = 8. A stick from the 8 on the left turned the 0 into an 8 on the right.',{eq:'8+3-4=0',k:1}),
+ lv('math','Two Squares','sq','Take away 2 sticks to leave exactly 2 squares. No loose sticks!','The big outside square counts too. Break the big square apart.','A 2×2 grid has 5 squares: 4 small ones and 1 big one hiding around them!',{n:2,g:[2,2],mode:'remove',k:2,target:2}),
+ lv('math','Eight Squares','sq','Take away 2 sticks to leave exactly 8 squares.','A 3×3 grid has 14 squares! Remove sticks at a corner.','A 3×3 grid has 9 small, 4 middle-sized and 1 big square: 14 in all.',{n:3,g:[3,3],mode:'remove',k:2,target:8}),
+ lv('math','Five Squares','sq','Take away 4 sticks to leave exactly 5 squares. No loose sticks!','Try taking sticks from the middle cross.','Seeing squares inside squares trains your eyes and your brain to spot patterns.',{n:3,g:[3,3],mode:'remove',k:4,target:5}),
+ lv('math','Upside Down','flip','Turn ONE card upside down to balance the scale.','Turn 86 upside down. What number do you see?','86 upside down is 98! The 6 becomes a 9 and the digits swap places.',{L:[86],R:[98]}),
+ lv('math','Double Flip','flip','Turn ONE card upside down to balance the scale.','Add the right side first: 18 + 81.','66 upside down is 99, and 18 + 81 = 99.',{L:[66],R:[18,81]}),
+ lv('math','Sneaky Card','flip','Turn ONE card upside down to balance the scale.','18 + 68 = 86. Which card could turn into 86?','98 upside down is 86, and 18 + 68 = 86. Always check both sides!',{L:[18,68],R:[98]}),
+ lv('math','Two Moves','match','Move TWO matchsticks to fix the sum.','Make the answer 9.','0 + 9 = 9. Adding zero to a number keeps it the same.',{eq:'9-9=8',k:2}),
+ lv('math','Tricky Two','match','Move TWO matchsticks to fix the sum.','You will need a minus, and the 2 must change.','6 − 5 = 1. Two moves let you change a number and a sign.',{eq:'2+5=1',k:2}),
+ lv('math','Double Digits','match','Move TWO matchsticks to fix the sum.','Try making 18 − 10.','18 − 10 = 8. A 0 can borrow sticks to become an 8.',{eq:'10+10=8',k:2}),
+ lv('math','Square Master','sq','Move 3 sticks to make exactly 3 squares. No loose sticks!','Three squares in a row, or an L shape. Move sticks from the middle.','Moving sticks to build new shapes is how designers and engineers test ideas!',{n:3,g:[2,2,0,0],mode:'move',k:3,target:3}),
+ lv('phys','See-Saw','lever','Move the triangle so the see-saw balances.','Heavy things need a shorter arm. Move the triangle toward the rock.','Weight × distance must match on both sides: 3 × 2 = 1 × 6. That is called torque!',{ws:[{e:'🪨',w:3,x:-4},{e:'🍎',w:1,x:4}],f:0}),
+ lv('phys','Elephant & Cat','lever','Move the triangle so the see-saw balances.','The elephant is 4 times heavier, so its arm must be 4 times shorter.','4 × 2 = 1 × 8. A small cat can balance an elephant with a long enough arm!',{ws:[{e:'🐘',w:4,x:-5},{e:'🐱',w:1,x:5}],f:0}),
+ lv('phys','Seat the Cat','lever','Drag the cat to a spot that balances the see-saw.','Left side: 3 × 2 + 2 × 1 = 8. The cat weighs 2. How far out must it sit?','2 × 4 = 8 balances 3 × 2 + 2 × 1 = 8. Torques add up!',{ws:[{e:'🪨',w:3,x:-2},{e:'🍎',w:2,x:-1},{e:'🐱',w:2,x:1}],f:0,mv:2}),
+ lv('phys','Three Weights','lever','Move the triangle so the see-saw balances.','Try spots on the heavy left side.','With three weights, the balance point is where all the turning pushes cancel out.',{ws:[{e:'🪨',w:3,x:-5},{e:'🍎',w:2,x:-1},{e:'🐱',w:1,x:5}],f:0}),
+ lv('phys','First Bounce','laser','Turn the mirror so the laser hits the crystal.','The beam must go DOWN at the mirror.','Light bounces off a mirror at the same angle it hits it: angle in = angle out.',{w:6,h:4,src:[0,1,'r'],tgt:[3,3],walls:[],m:[[3,1,'f']]}),
+ lv('phys','Double Bounce','laser','Turn the mirrors so the laser hits the crystal.','Both mirrors must point the same way.','Periscopes use two mirrors like this to see over walls!',{w:7,h:4,src:[0,0,'r'],tgt:[6,3],walls:[[5,0]],m:[[3,0,'f'],[3,3,'f']]}),
+ lv('phys','Around the Wall','laser','Turn the mirrors so the laser hits the crystal.','Go up first, then across, then down.','Mirrors can steer light around things in its way.',{w:7,h:5,src:[0,4,'r'],tgt:[5,4],walls:[[4,4],[4,3]],m:[[2,4,'b'],[2,1,'f'],[5,1,'f']]}),
+ lv('phys','Laser Maze','laser','Turn the mirrors so the laser hits the crystal. Locked mirrors cannot turn.','Follow the beam from the start. Which mirror sends it the wrong way first?','Engineers plan light paths like this inside cameras, telescopes and barcode scanners.',{w:8,h:5,src:[0,2,'r'],tgt:[3,4],walls:[[4,1],[4,3],[7,2]],m:[[2,2,'b'],[2,0,'f'],[6,0,'f'],[6,4,'f',1]]}),
+ lv('phys','Crossed Belt','gear','Make the green wheel turn clockwise to lift the flag.','A crossed belt makes the next wheel spin the other way.','Gears touching each other spin in opposite directions. A crossed belt flips the direction too!',{links:[{t:'mesh'},{t:'belt',tog:1}]}),
+ lv('phys','Missing Gear','gear','Make the green wheel turn clockwise to lift the flag.','Fill the gap, then check which way the belt should be.','A small gear between two others is called an idler: it passes the turning along.',{links:[{t:'belt',cross:true,tog:1},{t:'mesh'},{t:'gap'},{t:'mesh'}]}),
+ lv('phys','Jammed!','gear','Make the green wheel turn clockwise to lift the flag.','A gear touching two others that also touch each other gets stuck.','Three gears in a triangle jam, because they try to spin two ways at once.',{links:[{t:'mesh'},{t:'belt',tog:1},{t:'mesh'},{t:'mesh'}],jams:[2]}),
+ lv('phys','Float the Key','buoy','Drop things in the tank to raise the water to the ⭐ line.','The stone sinks, so it pushes up water as big as itself.','Things that sink push the water up by their whole size. This is called displacement.',{lv0:2,tgt:4,top:4,items:[{e:'🪨',n:'Stone',v:2,d:2},{e:'🦆',n:'Toy duck',v:2,d:1,float:1},{e:'🔩',n:'Bolt',v:1,d:1}]}),
+ lv('phys','Floating Log','buoy','Raise the water exactly to the ⭐ line. Do not spill!','The big log floats, so it pushes up less water than its size.','A floating thing only pushes away water equal to its weight. That is why boats float!',{lv0:2,tgt:5,top:5,items:[{e:'🪵',n:'Big log',v:4,d:2,float:1},{e:'🔩',n:'Bolt',v:1,d:1},{e:'🎳',n:'Bowling ball',v:3,d:3},{e:'🦆',n:'Toy duck',v:2,d:1,float:1}]}),
+ lv('phys','Heavy Lifting','buoy','Raise the water exactly to the ⭐ line. Do not spill!','You need 5 more. Sinkers add their full size, floaters add less.','Archimedes found this out in his bath over 2,000 years ago. Eureka!',{lv0:1,tgt:6,top:6,items:[{e:'🎳',n:'Bowling ball',v:3,d:3},{e:'🪵',n:'Big log',v:4,d:2,float:1},{e:'🦆',n:'Toy duck',v:2,d:1,float:1},{e:'🪨',n:'Stone',v:2,d:2},{e:'🍊',n:'Orange',v:2,d:1,float:1}]}),
+ lv('phys','Physics Boss','buoy','Raise the water to the ⭐ line with as few things as you can!','Count: you need 5 more. Which two sinkers add up to 5?','Engineers use displacement to work out how much a ship can carry before it sinks.',{lv0:2,tgt:7,top:7,items:[{e:'🧊',n:'Ice cube',v:2,d:1,float:1},{e:'🪵',n:'Big log',v:4,d:2,float:1},{e:'🪨',n:'Stone',v:2,d:2},{e:'🔩',n:'Bolt',v:1,d:1},{e:'🎳',n:'Bowling ball',v:3,d:3},{e:'🦆',n:'Toy duck',v:2,d:1,float:1}]}),
+ lv('chem','Pink Potion','ph','Add drops to turn the cabbage juice PINK.','Lemon juice is an acid. Acids turn cabbage juice pink.','Red cabbage juice is a natural pH indicator: acids turn it pink and red.',{ph0:7,tgt:'pink',bottles:[['lemon',3],['soda',2]]}),
+ lv('chem','Green Potion','ph','Add drops to turn the cabbage juice GREEN.','Soap is a base. Bases turn cabbage juice green.','Bases like soap and baking soda turn cabbage juice green.',{ph0:7,tgt:'green',bottles:[['lemon',2],['soda',3],['soap',2]]}),
+ lv('chem','Just a Bit Blue','ph','Turn the juice BLUE. Careful, blue is only a tiny bit basic!','Go up a little, then down a little.','The pH scale goes from 1 (very acidic) to 14 (very basic). 7 is neutral, like pure water.',{ph0:7,tgt:'blue',bottles:[['soap',2],['lemon',2],['vinegar',1]]}),
+ lv('chem','Sunshine Yellow','ph','Turn the pink juice all the way to YELLOW.','You need a very strong base. Use lots of base drops!','Strong bases make cabbage juice yellow. Scientists use indicators to test unknown liquids.',{ph0:3,tgt:'yellow',bottles:[['soap',3],['soda',2],['vinegar',2]]}),
+ lv('chem','Melt the Ice','state','The boat needs water. Melt the ice!','Heat melts ice into water.','Heating ice gives its tiny particles energy to move, so solid ice becomes liquid water.',{ch:[{s:'ice',want:'water',lab:'🚤'}],heat:1,freeze:0}),
+ lv('chem','Steam & Bridge','state','Make steam for the turbine and an ice bridge to walk on.','Heat turns water to steam. Cold turns water to ice.','Boiling makes steam (a gas). Freezing makes ice (a solid). Same water, different states!',{ch:[{s:'water',want:'steam',lab:'⚙️'},{s:'water',want:'ice',lab:'🌉'}],heat:1,freeze:1}),
+ lv('chem','Three States','state','Get the turbine steam and the cup water.','Ice needs TWO heats to become steam.','Ice → water is melting, water → steam is boiling, steam → water is condensing.',{ch:[{s:'ice',want:'steam',lab:'⚙️'},{s:'steam',want:'water',lab:'🥤'}],heat:2,freeze:1}),
+ lv('chem','Shared Pipe','state','Linked chambers change together! Match every chamber.','One heat on a linked chamber changes both of them.','Heat travels through metal pipes. That is called conduction.',{ch:[{s:'ice',want:'water',lab:'🚤'},{s:'water',want:'steam',lab:'⚙️'},{s:'steam',want:'ice',lab:'🌉'}],heat:1,freeze:2,link:[[0,1]]}),
+ lv('chem','Light It Up','circ','Fill the gap so the bulb lights up.','Metals carry electricity. Rubber does not.','Materials that carry electricity are conductors. Ones that block it are insulators.',{gaps:1,items:['duck','coin','stick']}),
+ lv('chem','Pencil Power','circ','Fill both gaps so the bulb lights up.','Pencil "lead" is really graphite, and graphite conducts!','Graphite is carbon, and it is one of the few non-metals that conducts electricity.',{gaps:2,items:['straw','pencil','balloon','clip']}),
+ lv('chem','Three Gaps','circ','Fill all three gaps so the bulb lights up.','Only metal things will work here.','Electric wires are made of copper on the inside, wrapped in plastic insulation outside.',{gaps:3,items:['spoon','duck','coin','marble','key','stick']}),
+ lv('chem','Salty Spark','circ','Fill both gaps so the bulb lights up.','Plain water barely conducts. Sprinkle salt into it!','Salt water conducts because dissolved salt makes tiny charged particles called ions.',{gaps:2,items:['water','duck','coin','salt']}),
+ lv('chem','Pop the Cork','mix','Mix 2 things to make gas and pop the cork!','An acid and baking soda make fizzy gas.','Vinegar (an acid) and baking soda (a base) react to make carbon dioxide gas.',{goal:'gas',goalText:'make gas',k:2,ing:['salt','vinegar','water','soda']}),
+ lv('chem','Lemon Fizz','mix','Mix 2 things to make gas and pop the cork!','Lemon juice is an acid too.','Citric acid in lemons reacts with baking soda just like vinegar does. Fizz!',{goal:'gas',goalText:'make gas',k:2,ing:['sugar','lemon','oil','water','soda','salt']}),
+ lv('chem','Elephant Toothpaste','mix','Mix 3 things to make a GIANT foam tower!','Yeast breaks peroxide into oxygen. What traps the bubbles?','Yeast speeds up peroxide breaking into water and oxygen. Soap traps the oxygen as foam. Grand STEM Inventor!',{goal:'foam',goalText:'make giant foam',k:3,ing:['vinegar','yeast','water','peroxide','soda','soap']})];
+const worlds={math:{label:'Math Lab · Chalkboard Classroom',bg:['#d9f5e3','#7fcf9b'],deco:['🧮','➕','✏️','📐']},
+ phys:{label:'Physics Lab · Inventor\'s Workshop',bg:['#e3eeff','#9dbaf2'],deco:['⚙️','🔦','⚖️','🧲']},
+ chem:{label:'Chemistry Lab · Mad-Scientist Lab',bg:['#efe3ff','#b79af2'],deco:['🧪','⚗️','🫧','💡']}};
+const BADGES=[[10,'✨','Bright Spark','Levels 1-10',[1,10]],[20,'🧮','Chalkboard Wizard','Math Lab',[1,20]],[35,'⚙️','Force Master','Physics Lab',[21,35]],[50,'🧪','Potion Genius','Chemistry Lab',[36,50]],[0,'🏆','Grand STEM Inventor','All 50 levels',[1,50]]];
+const hasBadge=(b,stars)=>{for(let i=b[4][0];i<=b[4][1];i++)if(!(stars[i-1]>0))return false;return true;};
+
+// ================= level frame =================
+function build(Lm,api,stage,li){const L=LV[li],theme={math:'math',phys:'phys',chem:'chem'}[L.world];
+ let wrong=0,hintTier=0,hintsUsed=0,done=false,eng=null;
+ const root=K.h('div','ms');stage.appendChild(root);
+ const bot=K.h('div','bot','<div class="face">🤖</div><div class="sl"></div>'),face=bot.firstChild,sl=bot.lastChild;
+ const task=K.h('div','task',L.task),svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 640 340');svg.setAttribute('class','brd '+theme);
+ const g=document.createElementNS('http://www.w3.org/2000/svg','g');svg.appendChild(g);
+ const acts=K.h('div','acts'),tries=K.h('div','tries');root.append(bot,task,svg,acts,tries);
+ const status=K.h('span','pill'),hb=K.h('button','ib hint','💡 Hint'),rb=K.h('button','ib','🔄 Reset'),extra=K.h('span');acts.append(hb,rb,extra,status);
+ const gone=()=>!stage.isConnected||done;
+ const say=(t,cb)=>K.sayLine(sl,t,{},cb);
+ const ui={svg,g,hint:null,
+  draw(h){g.innerHTML=h;markTargets();},status(t){status.textContent=t;},say,after(f){requestAnimationFrame(()=>requestAnimationFrame(f));},
+  button(label,f){const b=K.h('button','ib go',label);b.onclick=()=>{K.audio();f();};extra.appendChild(b);},
+  moved(){ui.hint=null;},
+  wrong(msg,read){if(gone())return;wrong++;face.textContent=K.pick(['😵‍💫','🙃','😅','🤯']);face.classList.remove('oops');void face.offsetWidth;face.classList.add('oops');K.sfx.bad();say(msg);
+   if(read){const s=K.h('span','',esc(read)+' ❌');tries.appendChild(s);while(tries.children.length>4)tries.firstChild.remove();}setTimeout(()=>{if(!gone())face.textContent='🤖';},1600);},
+  win(extraWrong){if(gone())return;done=true;wrong+=extraWrong||0;face.textContent='🥳';face.classList.add('yay');K.confetti(120);api.progress(1,1);
+   const pen=wrong+Math.max(0,hintsUsed-1),stars=pen===0?3:pen<=2?2:1;const sv=window.__K&&__K.save,before=BADGES.filter(b=>hasBadge(b,starsArr(sv)));
+   say('You did it!',null);setTimeout(()=>{if(!stage.isConnected)return;try{MindSpark.onLevelComplete&&MindSpark.onLevelComplete(li+1);}catch(e){}api.win(stars);
+    const card=document.querySelector('.modal .card');if(!card)return;const now=BADGES.filter(b=>hasBadge(b,starsArr(sv))&&!before.includes(b));
+    card.insertBefore(K.h('div','brain',`<b>🧠 Brain Power!</b> ${esc(L.why)}`),card.querySelector('.btns'));
+    if(now.length)card.insertBefore(K.h('div','got',now.map(b=>`<div class="bdg"><b>${b[1]}</b>${b[2]}<small>${b[3]}</small></div>`).join('')),card.querySelector('.btns'));},900);}};
+ const starsArr=sv=>{const o=[];for(let i=0;i<LV.length;i++)o.push(sv&&sv.stars?sv.stars[i]||0:0);return o;};
+ // ---- drag or tap: pick a piece, then drop it on a glowing spot (snaps to the nearest one) ----
+ let sel=null,drag=null;
+ function markTargets(){const pk=sel&&g.querySelector(`[data-pick="${sel}"]`);svg.classList.toggle('picking',!!pk);if(pk)pk.classList.add('sel');else sel=null;
+  g.querySelectorAll('[data-tgt]').forEach(t=>t.classList.toggle('on',!!pk||t.dataset.tgt==='tank'||t.dataset.tgt==='tray'||t.dataset.tgt[0]==='g'&&L.t==='circ'));}
+ const P=e=>{const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());};
+ const nearest=(p)=>{let best=null,bd=60;g.querySelectorAll('[data-tgt].on').forEach(t=>{if(!t.dataset.x)return;const d=Math.hypot(t.dataset.x-p.x,t.dataset.y-p.y);if(d<bd){bd=d;best=t;}});return best;};
+ svg.addEventListener('pointerdown',e=>{if(gone())return;K.audio();const tg=e.target.closest('[data-tgt]'),pk=e.target.closest('[data-pick]'),tp=e.target.closest('[data-tap]');
+  if(sel&&tg&&tg.classList.contains('on')&&(!pk||pk.dataset.pick===sel)){const s=sel;sel=null;svg.classList.remove('picking');eng.drop&&eng.drop(s,tg.dataset.tgt);return;}
+  if(pk){e.preventDefault();if(sel===pk.dataset.pick){sel=null;eng.render();return;}sel=pk.dataset.pick;markTargets();SND.place();const p=P(e);drag={el:pk,x:p.x,y:p.y,moved:false,id:e.pointerId};try{svg.setPointerCapture(e.pointerId);}catch(_){}return;}
+  if(tp){if(sel){sel=null;svg.classList.remove('picking');}eng.tap&&eng.tap(tp.dataset.tap);return;}
+  if(sel){sel=null;eng.render();}});
+ svg.addEventListener('pointermove',e=>{if(!drag)return;const p=P(e),dx=p.x-drag.x,dy=p.y-drag.y;if(!drag.moved&&Math.hypot(dx,dy)<8)return;drag.moved=true;drag.el.setAttribute('transform',`translate(${dx},${dy})`);
+  const n=nearest(p);g.querySelectorAll('.hot').forEach(t=>t.classList.remove('hot'));if(n)n.classList.add('hot');});
+ const end=e=>{if(!drag)return;const d=drag;drag=null;if(!d.moved)return;const n=nearest(P(e));d.el.removeAttribute('transform');if(n){const s=sel;sel=null;svg.classList.remove('picking');eng.drop(s,n.dataset.tgt);}else{sel=null;eng.render();}};
+ svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);
+ // ---- hints: 1 = glow on what to change, 2 = the science clue, 3 = dotted ghost of the move ----
+ function giveHint(){if(gone())return;const steps=eng.solve();if(!steps||!steps.length)return say('Let me think… tap Reset and try again!');
+  hintTier=Math.min(3,hintTier+1);hintsUsed++;ui.hint={step:steps[0],mode:hintTier===3?'ghost':'nudge'};sel=null;eng.render();K.sfx.star();
+  hb.textContent=`💡 Hint ${hintTier}/3`;say(hintTier===1?'Look at the glowing one!':hintTier===2?L.clue:'Follow the dotted yellow ghost!');}
+ hb.onclick=()=>{K.audio();try{if(typeof MindSpark.onRewardedHintRequested==='function')MindSpark.onRewardedHintRequested(giveHint);else giveHint();}catch(e){giveHint();}};
+ function fresh(){svg.setAttribute('viewBox','0 0 640 340');extra.innerHTML='';ui.hint=null;sel=null;eng=E[L.t](L,ui);eng.render();}
+ rb.onclick=()=>{K.audio();if(done)return;SND.whoosh();fresh();};
+ window.__MS={get eng(){return eng;},L,get done(){return done;}};
+ fresh();api.progress(0,1);say(L.task);}
+function mapExtras(main,save,wrap){const st=[];for(let i=0;i<LV.length;i++)st.push(save.stars[i]||0);
+ const sh=K.h('section','shelf',`<h2>🏅 Brain Badges</h2><div class="badges">${BADGES.map(b=>`<div class="bdg${hasBadge(b,st)?'':' no'}"><b>${b[1]}</b>${b[2]}<small>${b[3]}</small></div>`).join('')}</div>`);main.insertBefore(sh,wrap);}
+K.start({id:'mindspark',title:'MindSpark',emoji:'💡',worlds,levels:LV,build,onMap:mapExtras});
+</script></body></html>
