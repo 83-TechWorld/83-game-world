@@ -79,6 +79,12 @@ export const GUIDES = {
     skills: ['Hand and eye coordination', 'Managing resources', 'Staying calm under pressure'],
     parents: 'This game contains zombies, guns and cartoon combat and is recommended for ages 10 and up. It is not meant for younger children, so please preview it first. If your child uses the naming feature, suggest invented names rather than the names of friends or classmates.',
   },
+  'sky-blaster': {
+    more: 'Every level adds two more flying zombies and makes their flight a little bouncier, so the challenge grows slowly over 15 levels and three skies. The power stars float right beside the zombies, which rewards brave but careful flying: get close enough to grab them without bumping into anyone. A combo multiplier, screen shake on big hits and a Level Up banner give the game an arcade feel, while the cartoon style keeps it light.',
+    controls: 'On a phone or tablet, drag your finger to fly; the pilot flies just ahead of your finger so you can always see it. Tap the 💨 button for a barrel-roll dash that makes you safe for a moment. On a computer, use the arrow keys or WASD, or drag with the mouse. Space shoots when auto-fire is off, Shift dashes and P pauses.',
+    skills: ['Hand and eye coordination', 'Quick decisions and risk versus reward', 'Spatial awareness while dodging'],
+    parents: 'This is a cartoon action game with blasters, recommended for ages 6 and up. Defeated zombies become little dancing ghosts and there is no blood or gore. For younger players, turn on Little Pilot mode for five hearts and slower zombies, and leave auto-fire on so they can focus on flying.',
+  },
   'rough-note-showdown': {
     more: 'This game brings a pen-and-paper school pastime to the screen. Every roll decides which row is affected, so players watch the dice, follow the rules and keep track of who is ahead. Luck plays a big part, but it is also a social game when friends or family share one device. Playing against the computer is available too, which makes it easy to learn the rules before challenging others.',
     controls: 'Set up the players, then press Start Game. Press Roll Dice on your turn and follow the messages on the page. The question mark button explains the rules at any time. It works by touch or with a mouse.',

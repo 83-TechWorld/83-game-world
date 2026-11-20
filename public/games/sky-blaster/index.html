@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<style>
+ html,body{margin:0;height:100%;background:#0b1a33;overflow:hidden;font-family:'Baloo 2','Fredoka','Chalkboard SE','Comic Sans MS','Trebuchet MS',system-ui,sans-serif;color:#1c2a55;-webkit-user-select:none;user-select:none}
+ body{display:flex;align-items:center;justify-content:center}
+ canvas#c{display:block;touch-action:none;outline:none}
+ #menu{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,25,60,.45);backdrop-filter:blur(2px);z-index:10}
+ #menu.hidden{display:none}
+ .card{width:min(860px,94vw);max-height:94vh;overflow:auto;background:#fff;border-radius:28px;padding:18px 24px 20px;box-shadow:0 10px 0 rgba(0,0,0,.18),0 30px 60px rgba(0,0,0,.35);text-align:center;box-sizing:border-box}
+ .card h1{margin:2px 0 0;font-size:clamp(26px,5vw,42px);line-height:1.05;color:#ff5a3c;text-shadow:0 3px 0 #ffd23b}
+ .card h1 small{display:block;font-size:.5em;color:#27315a;text-shadow:none;margin-top:4px}
+ .card p{margin:6px 0;font-weight:700}
+ .back{position:absolute;left:12px;top:10px;background:#fff;border-radius:999px;padding:7px 14px;font-weight:800;text-decoration:none;color:#27315a;box-shadow:0 4px 0 rgba(0,0,0,.2);font-size:14px;z-index:12}
+ .lvls{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+ .lv{border:0;border-radius:16px;padding:6px 2px;font-weight:900;font-size:20px;background:#e8f3ff;color:#27315a;box-shadow:0 4px 0 rgba(0,0,0,.15);cursor:pointer;line-height:1.1;position:relative}
+ .lv small{display:block;font-size:12px;letter-spacing:1px;min-height:14px}
+ .lv.boss{background:#ffe3d6}.lv.sel{outline:4px solid #ffb703;transform:translateY(-2px)}
+ .lv:disabled{opacity:.4;cursor:not-allowed}
+ .lv i{position:absolute;right:4px;top:2px;font-style:normal;font-size:13px}
+ .opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0 10px}
+ .tg{border:0;border-radius:999px;padding:8px 14px;font-weight:800;font-size:14px;background:#eef1f8;color:#27315a;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+ .tg.on{background:#2fc76a;color:#fff}
+ .go{border:0;border-radius:999px;padding:12px 30px;font-weight:900;font-size:22px;background:linear-gradient(#ffb03a,#ff7a1a);color:#fff;cursor:pointer;box-shadow:0 6px 0 #c2540a;margin:4px 6px}
+ .go.alt{background:#eef1f8;color:#27315a;box-shadow:0 6px 0 #c5cbe0;font-size:18px}
+ .go:active{transform:translateY(4px);box-shadow:0 2px 0 #c2540a}
+ .help{font-size:13px;font-weight:700;color:#55618a;margin-top:10px;line-height:1.4}
+ .stars{font-size:44px;letter-spacing:6px;margin:4px 0}
+ .stars span{opacity:.2;display:inline-block}.stars span.on{opacity:1;animation:pop .5s backwards}
+ @keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+ #btns{position:fixed;inset:0;pointer-events:none;z-index:5}
+ #btns.hidden{display:none}
+ #btns button{pointer-events:auto;position:absolute;border:3px solid #fff;border-radius:50%;background:rgba(20,40,90,.45);color:#fff;font-size:28px;width:74px;height:74px;touch-action:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);-webkit-tap-highlight-color:transparent;cursor:pointer}
+ #pauseB{right:max(10px,env(safe-area-inset-right));top:10px;width:48px!important;height:48px!important;font-size:20px!important}
+ #dashB{right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom))}
+ #fireB{right:max(100px,calc(env(safe-area-inset-right) + 84px));bottom:max(16px,env(safe-area-inset-bottom))}
+ #dashB.cool{opacity:.4}
+ #rot{position:fixed;left:50%;top:10px;transform:translateX(-50%);background:#fff;border-radius:999px;padding:6px 14px;font-weight:800;font-size:14px;z-index:11;display:none;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+ @media (orientation:portrait) and (pointer:coarse){#rot{display:block}}
+ @media (max-height:520px){.card{padding:10px 16px 12px;border-radius:20px}.card h1{font-size:26px}.card h1 small{display:inline;font-size:.6em;margin-left:8px}.card>p.intro,.help{display:none}
+  .lvls{grid-template-columns:repeat(8,1fr);gap:6px;margin:6px 0}.lv{font-size:16px;padding:4px 2px;border-radius:12px}.lv small{font-size:9px;min-height:11px}.lv i{font-size:10px}
+  .opts{margin:4px 0 6px}.tg{padding:6px 10px;font-size:12px}.go{padding:8px 22px;font-size:18px}.stars{font-size:32px}.card p{margin:3px 0}}
+</style>
+<script src="/games/_shared/nav.js"></script>
+    <!--SEO-->
+    <title>Sky Blaster: Zombie Flight – Free Cartoon Jetpack Shooter for Kids | Kids Games 4u</title>
+    <meta name="google-adsense-account" content="ca-pub-3661874605610386" />
+    <script src="/games/_shared/guide.js"></script>
+    <meta name="description" content="Free cartoon jetpack shooter for kids. Fly through sunny clouds, sunset canyons and starry skies, grab power stars and turn goofy flying zombies into dancing ghosts. 15 levels with Mega-Zombie bosses." />
+    <meta name="keywords" content="jetpack game, kids shooter game, flying zombie game, cartoon space shooter, side scrolling shooter for kids, free browser action game, Kids Games 4u" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#7cc6ff" />
+    <link rel="canonical" href="https://kidsgames4u.com/games/sky-blaster/index.html" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:site_name" content="Kids Games 4u" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sky Blaster: Zombie Flight – Free Cartoon Jetpack Shooter for Kids | Kids Games 4u" />
+    <meta property="og:description" content="Free cartoon jetpack shooter for kids. Fly through sunny clouds, sunset canyons and starry skies, grab power stars and turn goofy flying zombies into dancing ghosts. 15 levels with Mega-Zombie bosses." />
+    <meta property="og:url" content="https://kidsgames4u.com/games/sky-blaster/index.html" />
+    <meta property="og:image" content="https://kidsgames4u.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sky Blaster: Zombie Flight – Free Cartoon Jetpack Shooter for Kids | Kids Games 4u" />
+    <meta name="twitter:description" content="Free cartoon jetpack shooter for kids. Fly through sunny clouds, sunset canyons and starry skies, grab power stars and turn goofy flying zombies into dancing ghosts. 15 levels with Mega-Zombie bosses." />
+    <meta name="twitter:image" content="https://kidsgames4u.com/og-image.png" />
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":["VideoGame","WebApplication"],"name":"Sky Blaster: Zombie Flight","url":"https://kidsgames4u.com/games/sky-blaster/index.html","description":"Free cartoon jetpack shooter for kids. Fly through sunny clouds, sunset canyons and starry skies, grab power stars and turn goofy flying zombies into dancing ghosts. 15 levels with Mega-Zombie bosses.","applicationCategory":"GameApplication","genre":"Action","operatingSystem":"Any (web browser)","browserRequirements":"Requires JavaScript","inLanguage":"en","isAccessibleForFree":true,"isFamilyFriendly":true,"audience":{"@type":"PeopleAudience","suggestedMinAge":6},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Kids Games 4u","url":"https://kidsgames4u.com/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Kids Games 4u","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":2,"name":"Action games","item":"https://kidsgames4u.com/"},{"@type":"ListItem","position":3,"name":"Sky Blaster: Zombie Flight","item":"https://kidsgames4u.com/games/sky-blaster/index.html"}]}]</script>
+    <!--/SEO-->
+  </head>
+<body>
+    <!--SEO-BODY-->
+    <noscript><style>html,body{height:auto!important;overflow:auto!important}#game-guide{display:block!important}</style></noscript>
+    <section id="game-guide" class="about-game" hidden>
+      <h2>About Sky Blaster: Zombie Flight: a free game for ages 6+</h2>
+      <p>Sky Blaster: Zombie Flight is a bright cartoon side-scrolling shooter. A kid pilot with a jetpack and aviator goggles flies through sunny clouds, sunset canyons and a starry night, blasting goofy zombies that fly with propeller hats, balloons and jetpacks. There is no gore: every zombie turns into green smoke and a little dancing ghost.</p>
+      <p>Every level adds two more flying zombies and makes their flight a little bouncier, so the challenge grows slowly over 15 levels and three skies. The power stars float right beside the zombies, which rewards brave but careful flying: get close enough to grab them without bumping into anyone. A combo multiplier, screen shake on big hits and a Level Up banner give the game an arcade feel, while the cartoon style keeps it light.</p>
+      <h3>How to play</h3><p>Drag to fly, or use the arrow keys or WASD. Your blaster fires by itself, or turn auto-fire off and shoot with Space. Swoop close to the zombies to grab the glowing power stars: they upgrade your blaster from Pea-Shooter to Twin Laser to Super Mega-Blast. Flying close without touching gives a Close! bonus that charges your shield. Each level adds more zombies, Tank Zombies arrive from level 2 and a Mega-Zombie boss waits at levels 5, 10 and 15.</p>
+      <h3>Controls</h3><p>On a phone or tablet, drag your finger to fly; the pilot flies just ahead of your finger so you can always see it. Tap the 💨 button for a barrel-roll dash that makes you safe for a moment. On a computer, use the arrow keys or WASD, or drag with the mouse. Space shoots when auto-fire is off, Shift dashes and P pauses.</p>
+      <h3>Skills kids practise</h3><ul><li>Hand and eye coordination</li><li>Quick decisions and risk versus reward</li><li>Spatial awareness while dodging</li></ul>
+      <h3>For parents and teachers</h3><p>This is a cartoon action game with blasters, recommended for ages 6 and up. Defeated zombies become little dancing ghosts and there is no blood or gore. For younger players, turn on Little Pilot mode for five hearts and slower zombies, and leave auto-fire on so they can focus on flying.</p>
+      <h3>More free games</h3><p><a href="/games/stick-spy-ops/index.html">Stick Spy Ops</a> &middot; <a href="/games/stick-cycle-race/index.html">Stick Cycle Race</a> &middot; <a href="/games/zombie-block-siege/index.html">Zombie Block Siege</a> &middot; <a href="/games/rough-note-showdown/index.html">Rough Note Showdown</a> &middot; <a href="/">All games</a></p>
+      <p><a href="/about/index.html">About</a> &middot; <a href="/contact/index.html">Contact</a> &middot; <a href="/privacy-policy/index.html">Privacy Policy</a></p>
+    </section>
+    <!--/SEO-BODY-->
+<canvas id="c" tabindex="0"></canvas>
+<div id="rot">🔄 Turn your phone sideways for a bigger sky!</div>
+<div id="btns" class="hidden"><button id="pauseB" aria-label="Pause">⏸</button><button id="dashB" aria-label="Dash">💨</button><button id="fireB" aria-label="Fire">⚡</button></div>
+<div id="menu"><a class="back" href="/index.html">← KIDS GAMES 4U</a><div class="card" id="card"></div></div>
+<script>
+'use strict';
+// ---------- save ----------
+const MAXL=15;
+const SAVE={unlocked:1,stars:{},best:{},auto:true,easy:false,snd:true,sel:1};
+try{Object.assign(SAVE,JSON.parse(localStorage.getItem('sky_blaster_save')||'{}'));}catch(e){}
+const save=()=>{try{localStorage.setItem('sky_blaster_save',JSON.stringify(SAVE));}catch(e){}};
+const IS_TOUCH=(window.matchMedia&&matchMedia('(pointer:coarse)').matches)||'ontouchstart' in window;
+const rand=(a,b)=>a+Math.random()*(b-a),pick=a=>a[Math.random()*a.length|0],clamp=(v,a,b)=>v<a?a:v>b?b:v;
+
+// ---------- sound: soft arcade effects + a light music loop, all made on the fly ----------
+let AC=null,MG=null,mus=null;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();MG.gain.value=.7;MG.connect(AC.destination);}catch(e){return null;}}if(AC.state==='suspended')try{AC.resume();}catch(e){}return AC;}
+function note(f,d,type,v,at,f2){if(!SAVE.snd)return;const a=ac();if(!a)return;try{const t=at==null?a.currentTime:at,o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(MG);o.start(t);o.stop(t+d+.03);}catch(e){}}
+const tone=(f,d,type,v,delay,f2)=>{const a=ac();if(a)note(f,d,type,v,a.currentTime+(delay||0),f2);};
+function noise(d,f,q,v){if(!SAVE.snd)return;const a=ac();if(!a)return;try{const n=Math.floor(a.sampleRate*d),b=a.createBuffer(1,n,a.sampleRate),c=b.getChannelData(0);for(let i=0;i<n;i++)c[i]=(Math.random()*2-1)*(1-i/n);
+ const s=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain();s.buffer=b;fl.type='bandpass';fl.frequency.value=f;fl.Q.value=q;g.gain.value=v;s.connect(fl).connect(g).connect(MG);s.start();}catch(e){}}
+const S={shoot:t=>t===3?tone(420,.09,'triangle',.05,0,200):tone(t===2?1100:900,.06,'square',.018,0,1700),
+ hit:()=>tone(300,.06,'triangle',.06,0,200),pop:()=>{tone(520,.12,'sine',.12,0,1040);noise(.18,900,1,.12);},
+ big:()=>{noise(.5,220,.8,.4);tone(160,.4,'triangle',.15,0,60);},orb:()=>{tone(1320,.09,'sine',.09);tone(1760,.14,'sine',.08,.07);},
+ up:()=>[523,659,784,1046,1318].forEach((f,i)=>tone(f,.16,'triangle',.09,i*.07)),hurt:()=>{tone(330,.25,'sawtooth',.05,0,110);noise(.25,400,1,.2);},
+ dash:()=>noise(.3,1400,.7,.18),shield:()=>{tone(880,.3,'sine',.09,0,440);},near:()=>tone(1500,.05,'sine',.05,0,2100),
+ level:()=>[523,659,784,659,784,1046].forEach((f,i)=>tone(f,.2,'triangle',.1,i*.11)),boss:()=>[196,185,175,165].forEach((f,i)=>tone(f,.3,'triangle',.12,i*.25)),
+ click:()=>tone(700,.05,'sine',.06,0,1000),spit:()=>{tone(640,.12,'triangle',.07,0,230);noise(.1,1800,1,.08);}};
+function music(on){clearInterval(mus);mus=null;if(!on||!SAVE.snd)return;const a=ac();if(!a)return;const sd=60/132/2,mf=n=>440*Math.pow(2,(n-69)/12);
+ const prog=[[48,60,64,67],[45,57,60,64],[41,53,57,60],[43,55,59,62]];let step=0,next=a.currentTime+.1;
+ mus=setInterval(()=>{if(!SAVE.snd||state==='pause')return;while(next<a.currentTime+.3){const ch=prog[(step>>3)%4],i=step%8;
+  if(i%4===0)note(mf(ch[0]-12),sd*1.8,'triangle',.07,next);if(i%2===0)note(mf(ch[0]),sd*.9,'triangle',.035,next);
+  note(mf(ch[1+[0,1,2,1,0,2,1,2][i]]+12),sd*.7,'square',.012,next);step++;next+=sd;}},80);}
+
+// ---------- canvas ----------
+const cv=document.getElementById('c'),cx=cv.getContext('2d');
+let VW=960,VH=540,scale=1,dpr=1;
+function resize(){dpr=Math.min(2,window.devicePixelRatio||1);const w=innerWidth,h=innerHeight;VW=Math.round(clamp(540*w/h,760,1250));scale=Math.min(w/VW,h/VH);
+ cv.style.width=Math.round(VW*scale)+'px';cv.style.height=Math.round(VH*scale)+'px';cv.width=Math.round(VW*scale*dpr);cv.height=Math.round(VH*scale*dpr);}
+addEventListener('resize',resize);resize();
+
+// ---------- levels: 3, 5, 7 ... zombies; tank zombies from level 2; a Mega-Zombie boss every 5th level ----------
+const SKIES=[{name:'Sunny Clouds',top:'#5ec8ff',bot:'#c9f0ff',sun:'#ffe066',hill:'#7ed957',hill2:'#4fb84a',cloud:'#ffffff'},
+ {name:'Sunset Canyon',top:'#ff7b54',bot:'#ffd08a',sun:'#fff1a8',hill:'#b55239',hill2:'#7e3426',cloud:'#ffe0d0'},
+ {name:'Starry Night',top:'#0b1446',bot:'#3a2f7a',sun:'#fdf6c9',hill:'#2a2360',hill2:'#18143d',cloud:'#8c86c9'}];
+const lv=L=>({n:3+2*(L-1),tanks:L<2?0:Math.min(6,1+Math.floor((L-2)/2)),mega:L%5===0?L/5:0,speed:1+.055*(L-1),bounce:.7+.07*L,sky:Math.min(2,(L-1)/5|0)});
+
+// ---------- game state ----------
+let state='menu',G=null,P=null,en=[],bul=[],orbs=[],slime=[],parts=[],ghosts=[],texts=[],bgX=0,last=0,shake=0,banner=null;
+const keys={},ptr={active:false,x:0,y:0,type:'mouse'};let fireHeld=false;
+function newPlayer(){return {x:150,y:VH/2,r:24,vx:0,vy:0,inv:0,dash:0,dashCd:0,dvx:0,dvy:0,tier:1,orbs:0,shield:0,shieldOn:false,fireT:0,roll:0};}
+function startLevel(L){ac();G={L,cfg:lv(L),queue:[],spawnT:1.2,megaPending:0,score:0,combo:0,comboT:0,hearts:SAVE.easy?5:3,max:SAVE.easy?5:3,lost:0,t:0,clearT:0,near:0};
+ const c=G.cfg;G.megaPending=c.mega;const q=Array(c.n).fill('z');for(let k=0;k<c.tanks;k++)q.splice(Math.round(c.n*.3+(c.n*.7)*(k+1)/(c.tanks+1))+k,0,'tank');G.queue=q;
+ G.total=q.length+(c.mega?1:0);G.killed=0;P=newPlayer();en=[];bul=[];orbs=[];slime=[];parts=[];ghosts=[];texts=[];
+ banner={big:'Level '+L,small:SKIES[c.sky].name+(c.mega?' · Mega-Zombie!':''),t:2.2};state='play';
+ document.getElementById('menu').classList.add('hidden');showBtns(true);cv.focus();window.GNav&&GNav.enter(()=>showMenu());music(true);}
+function showBtns(on){const b=document.getElementById('btns');b.classList.toggle('hidden',!on);document.getElementById('dashB').style.display=IS_TOUCH?'':'none';document.getElementById('fireB').style.display=IS_TOUCH&&!SAVE.auto?'':'none';}
+
+// ---------- spawning ----------
+function spawn(type){const c=G.cfg,sp=c.speed*(SAVE.easy?.75:1),easyHp=SAVE.easy?.75:1;let e;
+ if(type==='z')e={type,kind:pick(['prop','balloon','jet']),r:26,hp:2,x:VW+40,baseY:rand(70,VH-70),vx:-rand(105,150)*sp,amp:rand(18,48)*c.bounce,freq:rand(1.6,2.8)*(.8+c.bounce*.25),t:rand(0,6),hue:pick([0,1,2])};
+ else if(type==='tank')e={type,kind:'tank',r:42,hp:Math.round((7+G.L*.6)*easyHp),x:VW+60,baseY:rand(100,VH-100),vx:-rand(62,82)*sp,amp:rand(14,32),freq:rand(1,1.5),t:0};
+ else{const st=c.mega;e={type:'mega',kind:'mega',r:62+st*8,hp:Math.round((24+st*18)*(SAVE.easy?.7:1)),x:VW+130,baseY:VH/2,vx:-110,amp:VH*.28,freq:.65+st*.12,t:0,shootT:2.2,stage:st};
+  banner={big:'MEGA-ZOMBIE!',small:'Dodge the slime bubbles!',t:2};S.boss();}
+ e.max=e.hp;e.y=e.baseY;e.flash=0;e.near=false;e.face=type==='mega'?2:Math.random()*5|0;e.charge=0;
+ // some zombies spit goo (more of them in later levels); tank zombies always do, three blobs at a time
+ if(type==='tank'||(type==='z'&&Math.random()<Math.min(.75,.3+G.L*.04)*(SAVE.easy?.6:1))){e.shooter=true;e.shootT=rand(1.6,3.4);}
+ en.push(e);
+ // power orbs float right next to the zombie's flight path: swoop close to grab them!
+ if((type==='z'&&Math.random()<.55)||(type==='tank'&&Math.random()<.8))orbs.push({follow:e,ox:rand(-8,26),oy:(Math.random()<.5?-1:1)*(e.r+30),x:e.x,y:e.y,t:rand(0,6)});}
+
+// ---------- effects ----------
+function puff(x,y,n,col,size){for(let i=0;i<n;i++){const a=rand(0,6.28),s=rand(30,120);parts.push({k:'puff',x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-20,r:rand(6,12)*(size||1),g:rand(20,40)*(size||1),life:rand(.5,.9),t:0,col:col||pick(['#9be37a','#7fd35c','#b8f29a'])});}}
+function confetti(x,y,n){for(let i=0;i<n;i++){const a=rand(0,6.28),s=rand(80,280);parts.push({k:'conf',x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-120,w:rand(4,8),h:rand(3,6),rot:rand(0,6),vr:rand(-10,10),life:rand(.8,1.4),t:0,col:pick(['#ff5a6a','#ffd23b','#3ec6ff','#7dff5a','#b46bff','#ff9a3a'])});}}
+function spark(x,y,col){for(let i=0;i<5;i++){const a=rand(0,6.28),s=rand(60,160);parts.push({k:'spark',x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.25,t:0,col});}}
+const text=(x,y,s,col,size)=>texts.push({x,y,s,col:col||'#fff',size:size||22,t:0});
+function defeat(e,byPlayer){const i=en.indexOf(e);if(i<0)return;en.splice(i,1);G.killed++;
+ puff(e.x,e.y,e.type==='z'?10:e.type==='tank'?18:34,null,e.type==='mega'?2:1);confetti(e.x,e.y,e.type==='z'?14:e.type==='tank'?26:70);
+ ghosts.push({x:e.x,y:e.y,t:0,s:e.type==='z'?1:e.type==='tank'?1.4:2.4,ph:rand(0,6)});
+ shake=Math.max(shake,e.type==='z'?3:e.type==='tank'?9:20);e.type==='z'?S.pop():S.big();
+ if(byPlayer){G.combo=G.comboT>0?G.combo+1:1;G.comboT=1.8;const mult=Math.min(5,1+Math.floor((G.combo-1)/2)),pts={z:100,tank:300,mega:2000}[e.type]*mult;G.score+=pts;
+  text(e.x,e.y-e.r-6,'+'+pts,'#fff36b',e.type==='z'?22:30);if(G.combo>=3&&mult>1)text(e.x,e.y-e.r-34,'x'+mult+' COMBO!','#ff7af0',24);}}
+function spit(e){const a0=Math.atan2(P.y-e.y,P.x-e.x)+rand(-.08,.08),sp=(185+G.L*6)*(SAVE.easy?.8:1),n=e.type==='tank'?3:1,col=pick(['#ff6ad5','#ffb02e','#58d0ff']);
+ for(let k=0;k<n;k++){const a=a0+(k-(n-1)/2)*.28;slime.push({x:e.x-e.r*.7,y:e.y+e.r*.1,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:e.type==='tank'?11:9,t:0,col});}S.spit();}
+function hurt(){if(P.inv>0||P.dash>0||state!=='play')return false;
+ if(P.shieldOn){P.shieldOn=false;P.shield=0;P.inv=1.2;S.shield();spark(P.x,P.y,'#7ff');text(P.x,P.y-40,'Shield saved you!','#9ff',22);return true;}
+ G.hearts--;G.lost++;P.inv=1.8;shake=14;S.hurt();text(P.x,P.y-40,'Ouch!','#ffb3b3',26);
+ if(!SAVE.easy&&P.tier>1){P.tier--;P.orbs=0;text(P.x,P.y-66,'Blaster power down','#ffd',18);}
+ if(G.hearts<=0)gameOver();return true;}
+function grabOrb(o){orbs.splice(orbs.indexOf(o),1);S.orb();spark(o.x,o.y,'#fff36b');
+ if(P.tier<3){P.orbs++;const need=P.tier===1?3:4;if(P.orbs>=need){P.tier++;P.orbs=0;S.up();banner={big:P.tier===2?'TWIN LASER!':'SUPER MEGA-BLAST!',small:P.tier===2?'Two blasters at once!':'One blast pops a zombie!',t:1.6};confetti(P.x,P.y,30);}
+  else text(o.x,o.y-20,'Power '+P.orbs+'/'+need,'#fff36b',18);}
+ else addShield(34);G.score+=50;}
+function addShield(v){if(P.shieldOn)return;P.shield=Math.min(100,P.shield+v);if(P.shield>=100){P.shieldOn=true;S.shield();text(P.x,P.y-46,'SHIELD ON!','#8ff',24);}}
+function dash(){if(state!=='play'||P.dashCd>0)return;let dx=P.vx,dy=P.vy;const l=Math.hypot(dx,dy);if(l<40){dx=1;dy=0;}else{dx/=l;dy/=l;}
+ P.dash=.32;P.dvx=dx*640;P.dvy=dy*640;P.inv=Math.max(P.inv,.5);P.dashCd=2.2;P.roll=0;S.dash();}
+
+// ---------- update ----------
+function update(dt){const sky=G?G.cfg.sky:0;bgX+=dt*(state==='play'||state==='clear'?140:60);
+ for(const p of parts){p.t+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.k==='conf'){p.vy+=420*dt;p.rot+=p.vr*dt;}else if(p.k==='puff'){p.vx*=.95;p.vy*=.95;p.r+=p.g*dt;}}
+ parts=parts.filter(p=>p.t<p.life);if(parts.length>500)parts.splice(0,parts.length-500);
+ for(const g of ghosts){g.t+=dt;g.y-=55*dt;g.x-=30*dt;}ghosts=ghosts.filter(g=>g.t<1.8);
+ for(const t of texts){t.t+=dt;t.y-=40*dt;}texts=texts.filter(t=>t.t<1.1);
+ if(banner){banner.t-=dt;if(banner.t<=0)banner=null;}shake=Math.max(0,shake-dt*30);
+ if(state!=='play'&&state!=='clear')return;
+ G.t+=dt;G.comboT-=dt;if(G.comboT<=0)G.combo=0;
+ // player movement: keys, or drag with finger / mouse (on touch the pilot flies just ahead of your finger so you can see it)
+ const ix=(keys.ArrowRight||keys.KeyD?1:0)-(keys.ArrowLeft||keys.KeyA?1:0),iy=(keys.ArrowDown||keys.KeyS?1:0)-(keys.ArrowUp||keys.KeyW?1:0);
+ if(ix||iy){const l=Math.hypot(ix,iy);P.vx=ix/l*360;P.vy=iy/l*360;}
+ else if(ptr.active){const tx=ptr.x+(ptr.type==='touch'?75:0),ty=ptr.y-(ptr.type==='touch'?20:0),dx=tx-P.x,dy=ty-P.y,d=Math.hypot(dx,dy),sp=Math.min(620,d*10);P.vx=d>2?dx/d*sp:0;P.vy=d>2?dy/d*sp:0;}
+ else{P.vx*=Math.pow(.02,dt);P.vy*=Math.pow(.02,dt);}
+ P.inv=Math.max(0,P.inv-dt);P.dashCd=Math.max(0,P.dashCd-dt);
+ if(P.dash>0){P.dash-=dt;P.roll+=dt/.32;P.x+=P.dvx*dt;P.y+=P.dvy*dt;}
+ P.x=clamp(P.x+P.vx*dt,34,VW-70);P.y=clamp(P.y+P.vy*dt,34,VH-34);
+ const db=document.getElementById('dashB');db.classList.toggle('cool',P.dashCd>0);
+ // firing
+ P.fireT-=dt;const firing=state==='play'&&(SAVE.auto||keys.Space||keys.KeyJ||fireHeld||(ptr.active&&ptr.type==='mouse'));
+ if(firing&&P.fireT<=0){const t=P.tier,bx=P.x+30,by=P.y+4;
+  if(t===1){bul.push({x:bx,y:by,vx:720,vy:0,r:6,dmg:1,col:'#ffe14d'});P.fireT=.24;}
+  else if(t===2){bul.push({x:bx,y:by-9,vx:760,vy:0,r:5,dmg:1,col:'#58f0ff'},{x:bx,y:by+9,vx:760,vy:0,r:5,dmg:1,col:'#58f0ff'});P.fireT=.19;}
+  else{[-.13,0,.13].forEach(a=>bul.push({x:bx,y:by,vx:Math.cos(a)*800,vy:Math.sin(a)*800,r:9,dmg:2,col:'#ff7af0',mega:1}));P.fireT=.17;}
+  S.shoot(t);}
+ for(const b of bul){b.x+=b.vx*dt;b.y+=b.vy*dt;}bul=bul.filter(b=>b.x<VW+30&&b.y>-30&&b.y<VH+30&&!b.dead);
+ // spawning
+ if(state==='play'){G.spawnT-=dt;const iv=Math.max(.45,1.5-.07*G.L)*(SAVE.easy?1.25:1);
+  if(G.queue.length&&G.spawnT<=0){spawn(G.queue.shift());G.spawnT=iv*rand(.7,1.3);}
+  if(!G.queue.length&&G.megaPending&&en.length<=2){G.megaPending=0;spawn('mega');}}
+ // zombies
+ for(const e of en){e.t+=dt;e.flash=Math.max(0,e.flash-dt);
+  if(e.shooter&&state==='play'){e.shootT-=dt;e.charge=e.shootT<.55?1:0;if(e.shootT<=0){if(e.x<VW-30&&e.x>P.x+90){spit(e);e.shootT=(e.type==='tank'?3.2:rand(2.6,3.8))*Math.max(.55,1-G.L*.03)*(SAVE.easy?1.45:1);}else{e.shootT=.6;e.charge=0;}}}
+  if(e.type==='mega'){if(e.x>VW*.74)e.x+=e.vx*dt;e.y=clamp(e.baseY+Math.sin(e.t*e.freq)*e.amp,e.r*2.1,VH-e.r*1.1);e.shootT-=dt;e.charge=e.shootT<.55?1:0;e.charge=e.shootT<.55?1:0;
+   if(e.shootT<=0&&e.x<VW*.82){e.shootT=Math.max(1.1,2.5-e.stage*.35)*(SAVE.easy?1.35:1);const a0=Math.atan2(P.y-e.y,P.x-e.x),n=e.stage,sp=150+e.stage*25;
+    for(let k=0;k<n;k++){const a=a0+(k-(n-1)/2)*.32;slime.push({x:e.x-e.r*.6,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:15,t:0});}tone(220,.2,'sine',.08,0,110);}}
+  else{e.x+=e.vx*dt;if(e.kind==='jet')e.baseY+=clamp(P.y-e.baseY,-1,1)*38*dt*G.cfg.speed;
+   e.y=clamp(e.baseY+Math.sin(e.t*e.freq)*e.amp,e.r+8,VH-e.r-8);
+   if(e.x<-e.r-30){e.x=VW+e.r+40;e.baseY=rand(70,VH-70);e.near=false;}}
+  // near miss: fly close without touching = bonus + shield charge
+  const d=Math.hypot(e.x-P.x,e.y-P.y);
+  if(d<P.r*.75+e.r*.82){if(hurt()&&e.type==='z')defeat(e,false);}
+  else if(!e.near&&d<P.r+e.r+28&&e.type!=='mega'){e.near=true;G.near++;G.score+=25;addShield(12);S.near();text(P.x,P.y-36,'Close!','#bff',18);}}
+ // bullets vs zombies and slime
+ for(const b of bul){if(b.dead)continue;
+  for(const s of slime)if(!s.dead&&Math.hypot(s.x-b.x,s.y-b.y)<s.r+b.r){s.dead=true;b.dead=true;spark(s.x,s.y,'#9be37a');break;}
+  if(b.dead)continue;
+  for(const e of en)if(Math.hypot(e.x-b.x,e.y-b.y)<e.r+b.r){b.dead=true;e.hp-=b.dmg;e.flash=.08;spark(b.x,b.y,b.col);
+   if(e.hp<=0)defeat(e,true);else{S.hit();if(e.type!=='z')shake=Math.max(shake,1.5);}break;}}
+ // slime bubbles
+ for(const s of slime){s.t+=dt;s.x+=s.vx*dt;s.y+=s.vy*dt;if(!s.dead&&Math.hypot(s.x-P.x,s.y-P.y)<s.r+P.r*.7){s.dead=true;hurt();}}
+ slime=slime.filter(s=>!s.dead&&s.x>-40&&s.x<VW+40&&s.y>-40&&s.y<VH+40);
+ // power orbs
+ for(const o of orbs){o.t+=dt;if(o.follow&&en.includes(o.follow)){o.x=o.follow.x+o.ox;o.y=clamp(o.follow.y+o.oy,20,VH-20);}else{o.follow=null;o.x-=110*dt;}
+  if(Math.hypot(o.x-P.x,o.y-P.y)<P.r+16){o.got=true;}}
+ orbs.filter(o=>o.got).forEach(grabOrb);orbs=orbs.filter(o=>!o.got&&o.x>-30);
+ // level clear
+ if(state==='play'&&!G.queue.length&&!G.megaPending&&!en.length){state='clear';G.clearT=2.4;banner={big:'LEVEL UP!',small:'All zombies are ghosts now!',t:2.3};S.level();confetti(VW/2,VH/2,120);slime=[];}
+ if(state==='clear'){G.clearT-=dt;if(G.clearT<=0)finishLevel();}}
+
+// ---------- drawing ----------
+function rr(x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath();}
+function circ(x,y,r,f){cx.beginPath();cx.arc(x,y,r,0,7);cx.fillStyle=f;cx.fill();}
+const CLOUDS=Array.from({length:14},(_,i)=>({x:rand(0,1600),y:rand(20,330),s:rand(.6,1.5),z:i%2?.35:.7}));
+const STARS=Array.from({length:90},()=>({x:rand(0,1300),y:rand(0,400),r:rand(.6,2),p:rand(0,6)}));
+function cloud(x,y,s,col){cx.fillStyle=col;cx.beginPath();[[0,0,26],[24,-12,30],[52,0,24],[26,8,26]].forEach(([a,b,r])=>{cx.moveTo(x+a*s+r*s,y+b*s);cx.arc(x+a*s,y+b*s,r*s,0,7);});cx.fill();}
+function hills(off,base,amp,col,speed){cx.fillStyle=col;cx.beginPath();cx.moveTo(0,VH);for(let x=0;x<=VW+20;x+=20){const w=(x+off*speed)/140;cx.lineTo(x,base-Math.abs(Math.sin(w))*amp-Math.sin(w*.37)*amp*.4);}cx.lineTo(VW,VH);cx.fill();}
+function mesas(off,base,col,speed){cx.fillStyle=col;cx.beginPath();cx.moveTo(0,VH);const per=260;const sh=(off*speed)%per;
+ for(let k=-1;k<VW/per+2;k++){const x0=k*per-sh,h=60+((k+Math.floor(off*speed/per))*97%5)*18;cx.lineTo(x0,base);cx.lineTo(x0+30,base-h);cx.lineTo(x0+150,base-h);cx.lineTo(x0+180,base);}cx.lineTo(VW,VH);cx.fill();}
+function drawSky(){const K=SKIES[G&&state!=='menu'?G.cfg.sky:(SAVE.sel-1)/5|0];const g=cx.createLinearGradient(0,0,0,VH);g.addColorStop(0,K.top);g.addColorStop(1,K.bot);cx.fillStyle=g;cx.fillRect(0,0,VW,VH);
+ if(K===SKIES[2]){for(const s of STARS){cx.globalAlpha=.5+.5*Math.sin(bgX*.02+s.p);circ((s.x-bgX*.05)%1300<0?(s.x-bgX*.05)%1300+1300:(s.x-bgX*.05)%1300,s.y,s.r,'#fff');}cx.globalAlpha=1;
+  circ(VW*.8,90,40,K.sun);circ(VW*.8+14,82,36,K.top);}
+ else{cx.globalAlpha=.35;circ(VW*.8,K===SKIES[1]?VH*.62:90,K===SKIES[1]?90:70,K.sun);cx.globalAlpha=1;circ(VW*.8,K===SKIES[1]?VH*.62:90,K===SKIES[1]?62:46,K.sun);}
+ for(const c of CLOUDS){if(c.z>.5)continue;let x=(c.x-bgX*c.z*.6)%1700;if(x<-150)x+=1700;cx.globalAlpha=K===SKIES[2]?.35:.75;cloud(x,c.y,c.s,K.cloud);}cx.globalAlpha=1;
+ if(K===SKIES[1]){mesas(bgX,VH-40,K.hill,.25);mesas(bgX+130,VH,K.hill2,.5);}else{hills(bgX,VH-30,60,K.hill,.25);hills(bgX+300,VH+10,50,K.hill2,.55);}
+ for(const c of CLOUDS){if(c.z<=.5)continue;let x=(c.x-bgX*c.z)%1700;if(x<-150)x+=1700;cx.globalAlpha=K===SKIES[2]?.3:.9;cloud(x,c.y+60,c.s*1.2,K.cloud);}cx.globalAlpha=1;}
+function drawPilot(p){const t=performance.now()/1000;cx.save();cx.translate(p.x,p.y);
+ if(p.dash>0)cx.scale(1,Math.cos(p.roll*Math.PI*2));cx.rotate(clamp(p.vy/1600,-.25,.25));
+ if(p.inv>0&&p.dash<=0&&Math.floor(t*14)%2)cx.globalAlpha=.45;
+ // flame
+ const fl=14+Math.sin(t*40)*5;cx.fillStyle='#ffb02e';cx.beginPath();cx.moveTo(-30,4);cx.lineTo(-30-fl-8,10);cx.lineTo(-30,16);cx.fill();cx.fillStyle='#fff3a0';cx.beginPath();cx.moveTo(-30,7);cx.lineTo(-30-fl,10);cx.lineTo(-30,13);cx.fill();
+ // jetpack
+ rr(-34,-14,16,32,6);cx.fillStyle='#9aa7c2';cx.fill();rr(-34,-14,16,8,4);cx.fillStyle='#ff5a3c';cx.fill();
+ // scarf
+ cx.strokeStyle='#ff3b5c';cx.lineWidth=6;cx.lineCap='round';cx.beginPath();cx.moveTo(-6,-6);cx.quadraticCurveTo(-24,-10+Math.sin(t*12)*5,-40,-4+Math.sin(t*12+1)*7);cx.stroke();
+ // body + legs
+ rr(-18,-6,30,24,10);cx.fillStyle='#3b82f6';cx.fill();rr(-14,14,10,12,4);cx.fillStyle='#2a5fb8';cx.fill();rr(0,14,10,12,4);cx.fill();
+ // arm + blaster
+ rr(4,2,22,8,4);cx.fillStyle='#3b82f6';cx.fill();rr(18,-1,18,12,4);cx.fillStyle='#ffd23b';cx.fill();circ(37,5,4+Math.sin(t*20),P.tier===3?'#ff7af0':P.tier===2?'#58f0ff':'#fff6a0');
+ // head, aviator cap, goggles
+ circ(0,-20,15,'#ffcfa3');cx.fillStyle='#8b5a2b';cx.beginPath();cx.arc(0,-22,15.5,Math.PI*1.05,Math.PI*1.95);cx.fill();rr(-15,-25,30,5,2);cx.fill();
+ circ(-3,-21,6.5,'#2b2d42');circ(9,-21,6.5,'#2b2d42');circ(-3,-21,4.6,'#7ff7ff');circ(9,-21,4.6,'#7ff7ff');circ(-4.5,-22.5,1.5,'#fff');circ(7.5,-22.5,1.5,'#fff');
+ cx.strokeStyle='#7a3e1d';cx.lineWidth=2;cx.beginPath();cx.arc(4,-12,4,.15,Math.PI-.15);cx.stroke();
+ if(p.shieldOn){cx.globalAlpha=.35+.15*Math.sin(t*6);circ(0,0,44,'#7ff7ff');cx.globalAlpha=1;cx.strokeStyle='#bfffff';cx.lineWidth=3;cx.beginPath();cx.arc(0,0,44,0,7);cx.stroke();}
+ cx.restore();}
+const ZC=[['#8bd36b','#6aa84f','#8e44ad'],['#a3e27a','#7cbf55','#2e86de'],['#7fd1a8','#55a985','#e67e22']];
+function drawZombie(e){const t=performance.now()/1000,s=e.r/26;cx.save();cx.translate(e.x,e.y);cx.scale(s,s);cx.rotate(Math.sin(e.t*e.freq)*.12);
+ const col=e.type==='mega'?['#9ad66b','#6aa84f','#c0392b']:e.type==='tank'?['#94d47a','#6aa84f','#556080']:ZC[e.hue||0];
+ if(e.kind==='balloon'){cx.strokeStyle='#fff';cx.lineWidth=1.5;cx.beginPath();cx.moveTo(4,-24);cx.quadraticCurveTo(10,-40,6,-56);cx.stroke();circ(6,-70,15,'#ff5a6a');circ(1,-75,4,'#ffb3ba');}
+ if(e.kind==='jet'){rr(14,-8,12,22,5);cx.fillStyle='#9aa7c2';cx.fill();const fl=8+Math.sin(t*40)*3;cx.fillStyle='#ffb02e';cx.beginPath();cx.moveTo(26,0);cx.lineTo(26+fl+6,4);cx.lineTo(26,9);cx.fill();}
+ // body with shirt, arms stretched forward (they fly left)
+ rr(-10,6,26,20,8);cx.fillStyle=col[2];cx.fill();cx.fillStyle=col[0];rr(-34,8,26,8,4);cx.fill();rr(-30,18,22,7,4);cx.fill();
+ // head
+ circ(0,-6,22,col[0]);cx.fillStyle=col[1];cx.beginPath();cx.arc(0,-6,22,.3,Math.PI-.3);cx.fill();circ(0,-9,20,col[0]);
+ drawFace(e,t);
+ if(e.kind==='prop'){rr(-14,-28,28,9,4);cx.fillStyle='#ffd23b';cx.fill();cx.fillStyle='#ff5a6a';cx.fillRect(-1,-36,3,9);const w=Math.sin(t*30)*18;cx.fillStyle='#3ec6ff';rr(-w,-38,w*2||1,4,2);cx.fill();}
+ if(e.type==='tank'||e.type==='mega'){cx.fillStyle=e.type==='mega'?'#ffcf3a':'#8d99ae';cx.beginPath();cx.arc(0,-12,26,Math.PI,0);cx.lineTo(28,-8);cx.lineTo(-28,-8);cx.closePath();cx.fill();
+  cx.fillStyle=e.type==='mega'?'#e0a800':'#6c7891';cx.fillRect(-28,-12,56,6);for(let k=-2;k<=2;k++)circ(k*10,-26+Math.abs(k)*3,2,'#dfe6ef');
+  if(e.type==='mega'){cx.fillStyle='#ffd23b';cx.beginPath();cx.moveTo(-16,-36);cx.lineTo(-10,-50);cx.lineTo(-4,-38);cx.lineTo(0,-54);cx.lineTo(4,-38);cx.lineTo(10,-50);cx.lineTo(16,-36);cx.closePath();cx.fill();circ(0,-46,2.5,'#ff3b5c');}}
+ if(e.flash>0){cx.globalAlpha=.6;circ(0,-4,26,'#fff');cx.globalAlpha=1;}
+ cx.restore();
+ if(e.charge>0&&e.type!=='mega')hudText('!',e.x-e.r-10,e.y-e.r*.6,26,'#ffd23b','center');
+ if(e.type==='tank'){const w=60;rr(e.x-w/2,e.y-e.r-18,w,7,3);cx.fillStyle='#0005';cx.fill();rr(e.x-w/2,e.y-e.r-18,w*e.hp/e.max,7,3);cx.fillStyle='#7dff5a';cx.fill();}}
+// five silly faces: crossed eyes + tongue, spinning derp eyes + buck teeth, wiggly eyebrows + big grin, wow eyes, wink.
+// Right before a goo shot the cheeks puff up and the lips pucker, so kids can see it coming.
+function drawFace(e,t){const F=e.face||0,ch=e.charge>0,blink=Math.sin(t*1.7+e.t*2.1)>.985;
+ const ln=(w)=>{cx.strokeStyle='#2b4020';cx.lineWidth=w;cx.lineCap='round';};
+ const eye=(x,y,r,px,py)=>{circ(x,y,r,'#fff');if(blink){ln(2);cx.beginPath();cx.moveTo(x-r,y);cx.lineTo(x+r,y);cx.stroke();}else{circ(x+px,y+py,r*.48,'#222');circ(x+px-r*.15,y+py-r*.2,r*.15,'#fff');}};
+ cx.globalAlpha=.55;circ(-15,-1,ch?8.5:4.5,'#ff8fb1');circ(14,0,ch?7.5:4,'#ff8fb1');cx.globalAlpha=1;
+ circ(2,-5,3,'#5f9e45');
+ if(F===0){eye(-9,-13,7.5,3,1);eye(8,-13,7.5,-3,1);}
+ else if(F===1){const a=t*6;eye(-9,-13,9,Math.cos(a)*3,Math.sin(a)*3);eye(9,-11,5,Math.cos(-a)*2,Math.sin(-a)*2);}
+ else if(F===2){eye(-8,-12,6.5,-1.5,0);eye(8,-12,6.5,-1.5,0);ln(2.5);const b=Math.sin(t*8)*2;cx.beginPath();cx.moveTo(-14,-22-b);cx.lineTo(-4,-20-b);cx.moveTo(4,-20+b);cx.lineTo(14,-22+b);cx.stroke();}
+ else if(F===3){eye(-9,-13,8.5,0,0);eye(9,-13,8.5,0,0);ln(2.5);cx.beginPath();cx.arc(-9,-24,6,3.6,5.8);cx.stroke();cx.beginPath();cx.arc(9,-24,6,3.6,5.8);cx.stroke();}
+ else{ln(2.5);cx.beginPath();cx.arc(-9,-12,5,3.5,5.9);cx.stroke();eye(9,-13,7.5,-2,1);}
+ cx.fillStyle='#4a1f2a';
+ if(ch){circ(-1,3,3.5+Math.sin(t*30)*.6,'#4a1f2a');return;}
+ if(F===0){ln(2.5);cx.beginPath();cx.arc(-1,0,8,.25,Math.PI-.25);cx.stroke();const w=Math.sin(t*7)*2;rr(-4+w*.3,5,7,8+Math.abs(w),3.5);cx.fillStyle='#ff6f91';cx.fill();}
+ else if(F===1){ln(2.5);cx.beginPath();cx.arc(-1,-1,7,.3,Math.PI-.3);cx.stroke();cx.fillStyle='#fff';cx.fillRect(-4,4,3.5,5);cx.fillRect(0,4,3.5,5);}
+ else if(F===2){cx.beginPath();cx.arc(-1,0,10,0,Math.PI);cx.closePath();cx.fill();cx.fillStyle='#fff';cx.fillRect(-10,0,18,3.5);circ(-1,7,3,'#ff6f91');}
+ else if(F===3){cx.beginPath();cx.ellipse(-1,5,4,5.5+Math.sin(t*5),0,0,7);cx.fill();}
+ else{ln(2.5);cx.beginPath();cx.arc(-1,0,8,.2,Math.PI-.2);cx.stroke();rr(3,4,6,7,3);cx.fillStyle='#ff6f91';cx.fill();}}
+function drawGhost(g){const a=1-g.t/1.8;cx.save();cx.globalAlpha=Math.max(0,a);cx.translate(g.x,g.y);cx.scale(g.s,g.s);cx.rotate(Math.sin(g.t*9+g.ph)*.35);
+ cx.fillStyle='#fff';cx.beginPath();cx.arc(0,-6,16,Math.PI,0);cx.lineTo(16,14);for(let k=0;k<4;k++)cx.quadraticCurveTo(12-k*8,22+(k%2?-4:4),8-k*8,14);cx.closePath();cx.fill();
+ circ(-6,-8,3,'#2b2d42');circ(6,-8,3,'#2b2d42');cx.fillStyle='#ff8fb1';cx.beginPath();cx.ellipse(0,1,4,3,0,0,7);cx.fill();
+ // little dancing arms
+ cx.strokeStyle='#fff';cx.lineWidth=4;cx.lineCap='round';const w=Math.sin(g.t*14)*8;cx.beginPath();cx.moveTo(-15,0);cx.lineTo(-24,-8+w);cx.moveTo(15,0);cx.lineTo(24,-8-w);cx.stroke();cx.restore();}
+function drawOrb(o){const p=1+Math.sin(o.t*6)*.15;cx.save();cx.translate(o.x,o.y);cx.rotate(o.t*2);cx.globalAlpha=.35;circ(0,0,18*p,'#fff36b');cx.globalAlpha=1;
+ cx.fillStyle='#ffd23b';cx.beginPath();for(let k=0;k<10;k++){const r=k%2?5:12,a=k*Math.PI/5;cx.lineTo(Math.cos(a)*r*p,Math.sin(a)*r*p);}cx.closePath();cx.fill();circ(0,0,3,'#fff');cx.restore();}
+function heart(x,y,s,on){cx.save();cx.translate(x,y);cx.scale(s,s);cx.fillStyle=on?'#ff3b5c':'#ffffff55';cx.beginPath();cx.moveTo(0,6);cx.bezierCurveTo(-14,-4,-8,-14,0,-7);cx.bezierCurveTo(8,-14,14,-4,0,6);cx.fill();cx.restore();}
+function hudText(s,x,y,size,col,align){cx.font=`900 ${size}px 'Baloo 2','Fredoka','Chalkboard SE','Comic Sans MS',system-ui,sans-serif`;cx.textAlign=align||'left';cx.textBaseline='middle';cx.lineWidth=Math.max(3,size/6);cx.strokeStyle='#1c2a55';cx.strokeText(s,x,y);cx.fillStyle=col||'#fff';cx.fillText(s,x,y);}
+function drawHUD(){for(let k=0;k<G.max;k++)heart(26+k*30,26,1.5,k<G.hearts);
+ rr(14,44,140,12,6);cx.fillStyle='#0006';cx.fill();rr(14,44,140*(P.shieldOn?1:P.shield/100),12,6);cx.fillStyle=P.shieldOn?'#7ff7ff':'#58b8ff';cx.fill();hudText(P.shieldOn?'SHIELD ON':'shield',160,50,13,'#cff','left');
+ const names=['Pea-Shooter','Twin Laser','Super Mega-Blast'],need=P.tier===1?3:P.tier===2?4:0;hudText('⚡ '+names[P.tier-1],14,74,17,['#fff6a0','#7ff','#ff9af0'][P.tier-1]);
+ for(let k=0;k<need;k++){cx.globalAlpha=k<P.orbs?1:.35;drawOrb({x:24+k*22,y:96,t:0});}cx.globalAlpha=1;
+ hudText('Level '+G.L,VW/2,22,22,'#fff','center');hudText('👾 '+Math.max(0,G.total-G.killed)+' left',VW/2,48,17,'#fff','center');
+ hudText(String(G.score),VW-74,24,26,'#fff36b','right');if(G.combo>=3)hudText('x'+Math.min(5,1+Math.floor((G.combo-1)/2))+' combo',VW-74,50,17,'#ff9af0','right');
+ const m=en.find(e=>e.type==='mega');if(m){const w=Math.min(420,VW*.45);rr(VW/2-w/2,VH-30,w,16,8);cx.fillStyle='#0007';cx.fill();rr(VW/2-w/2,VH-30,w*m.hp/m.max,16,8);cx.fillStyle='#ff5a6a';cx.fill();hudText('MEGA-ZOMBIE',VW/2,VH-44,16,'#fff','center');}}
+function render(){cx.setTransform(scale*dpr,0,0,scale*dpr,0,0);cx.save();if(shake>0)cx.translate(rand(-shake,shake),rand(-shake,shake));
+ drawSky();
+ if(G&&state!=='menu'){for(const o of orbs)drawOrb(o);for(const e of en)drawZombie(e);
+  for(const s of slime){const c=s.col||'#7fd35c';cx.globalAlpha=.3;circ(s.x-s.vx*.04,s.y-s.vy*.04,s.r*.75,c);cx.globalAlpha=.95;circ(s.x,s.y,s.r,c);cx.globalAlpha=1;circ(s.x-s.r*.35,s.y-s.r*.35,s.r*.3,'#fff');}
+  for(const b of bul){cx.globalAlpha=.4;circ(b.x-6,b.y,b.r*1.4,b.col);cx.globalAlpha=1;circ(b.x,b.y,b.r,b.col);circ(b.x+1,b.y-1,b.r*.45,'#fff');}
+  if(state!=='over')drawPilot(P);}
+ for(const g of ghosts)drawGhost(g);
+ for(const p of parts){const a=1-p.t/p.life;cx.globalAlpha=Math.max(0,a);if(p.k==='conf'){cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.fillStyle=p.col;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();}else circ(p.x,p.y,p.k==='spark'?3:p.r,p.col);}cx.globalAlpha=1;
+ for(const t of texts){cx.globalAlpha=Math.max(0,1-t.t/1.1);hudText(t.s,t.x,t.y,t.size,t.col,'center');}cx.globalAlpha=1;
+ cx.restore();
+ if(G&&state!=='menu'&&state!=='over')drawHUD();
+ if(banner){const a=Math.min(1,banner.t*2),sc=1+Math.max(0,banner.t-1.8)*.6;cx.save();cx.globalAlpha=a;cx.translate(VW/2,VH*.4);cx.scale(sc,sc);hudText(banner.big,0,0,54,'#ffd23b','center');if(banner.small)hudText(banner.small,0,46,22,'#fff','center');cx.restore();}
+ if(state==='pause'){cx.fillStyle='#0008';cx.fillRect(0,0,VW,VH);hudText('Paused',VW/2,VH/2-20,54,'#fff','center');hudText(IS_TOUCH?'Tap to keep flying':'Press P or click to keep flying',VW/2,VH/2+30,22,'#ffd23b','center');}}
+
+// ---------- level end ----------
+function finishLevel(){state='result';music(false);const L=G.L,stars=G.lost===0?3:G.lost===1?2:1;
+ if(stars>(SAVE.stars[L]||0))SAVE.stars[L]=stars;if(G.score>(SAVE.best[L]||0))SAVE.best[L]=G.score;SAVE.unlocked=Math.max(SAVE.unlocked,Math.min(MAXL,L+1));SAVE.sel=Math.min(MAXL,L+1);save();
+ const last=L===MAXL;card(`<h1>${last?'🏆 You saved the sky!':'Level '+L+' complete!'}</h1><div class="stars">${[1,2,3].map(k=>`<span class="${k<=stars?'on':''}" style="animation-delay:${k*.25}s">⭐</span>`).join('')}</div>
+  <p>Score <b>${G.score}</b> · Best ${SAVE.best[L]} · Close calls ${G.near}</p><p>${stars===3?'Perfect flying! No hearts lost!':'Fly without losing a heart for 3 stars!'}</p>
+  <div>${last?'':'<button class="go" id="nx">▶ Next level</button>'}<button class="go alt" id="re">🔁 Again</button><button class="go alt" id="mn">🗺 Levels</button></div>`);
+ if(!last)document.getElementById('nx').onclick=()=>{S.click();startLevel(L+1);};document.getElementById('re').onclick=()=>{S.click();startLevel(L);};document.getElementById('mn').onclick=()=>{S.click();showMenu();};}
+function gameOver(){state='over';music(false);puff(P.x,P.y,16,'#cfe8ff');confetti(P.x,P.y,20);setTimeout(()=>{if(state!=='over')return;const L=G.L;
+ card(`<h1>Oops! Out of hearts</h1><p>The zombies got a bit too close. Grab power stars and use your shield!</p><p>Score <b>${G.score}</b></p>
+  <div><button class="go" id="re">🔁 Try again</button><button class="go alt" id="mn">🗺 Levels</button></div>${SAVE.easy?'':'<p class="help">Tip: turn on Little Pilot mode for 5 hearts and slower zombies.</p>'}`);
+ document.getElementById('re').onclick=()=>{S.click();startLevel(L);};document.getElementById('mn').onclick=()=>{S.click();showMenu();};},900);}
+function card(html){showBtns(false);window.GNav&&GNav.leave();document.getElementById('card').innerHTML=html;document.getElementById('menu').classList.remove('hidden');}
+function showMenu(){state='menu';music(false);G=null;banner=null;SAVE.sel=clamp(SAVE.sel||1,1,SAVE.unlocked);
+ const tot=Object.values(SAVE.stars).reduce((a,b)=>a+b,0);
+ card(`<h1>Sky Blaster<small>Zombie Flight 🚀</small></h1><p class="intro">Fly your jetpack, blast the goofy flying zombies, and turn them into dancing ghosts!</p>
+  <div class="lvls">${Array.from({length:MAXL},(_,i)=>{const L=i+1,s=SAVE.stars[L]||0,lock=L>SAVE.unlocked;return `<button class="lv${L%5===0?' boss':''}${L===SAVE.sel?' sel':''}" data-l="${L}" ${lock?'disabled':''}>${lock?'🔒':L}<small>${'⭐'.repeat(s)}${lock?'':'☆'.repeat(3-s)}</small><i>${['☀️','🌅','🌙'][(L-1)/5|0]}${L%5===0?'👑':''}</i></button>`;}).join('')}</div>
+  <div class="opts"><button class="tg${SAVE.auto?' on':''}" id="oA">🔫 Auto-fire ${SAVE.auto?'ON':'OFF'}</button><button class="tg${SAVE.easy?' on':''}" id="oE">🧒 Little Pilot mode ${SAVE.easy?'ON':'OFF'}</button><button class="tg${SAVE.snd?' on':''}" id="oS">${SAVE.snd?'🔊 Sound ON':'🔇 Sound OFF'}</button></div>
+  <button class="go" id="play">▶ Play level ${SAVE.sel}</button><p>⭐ ${tot} / ${MAXL*3}</p>
+  <div class="help">${IS_TOUCH?'Drag your finger to fly. 💨 button = barrel roll dash (you can\'t get hurt while rolling).':'Fly with arrow keys / WASD or drag with the mouse. Space = shoot (when auto-fire is off). Shift = barrel roll dash. P = pause.'}<br>
+  Grab the ⭐ power stars that fly next to the zombies to power up: Pea-Shooter → Twin Laser → Super Mega-Blast. Fly close without touching for a "Close!" bonus that charges your shield. Watch out: when a zombie's cheeks puff up and a ❗ pops out, it's about to spit goo. Dodge it, or blast the goo!</div>`);
+ document.querySelectorAll('.lv').forEach(b=>b.onclick=()=>{ac();S.click();SAVE.sel=+b.dataset.l;save();showMenu();});
+ document.getElementById('oA').onclick=()=>{S.click();SAVE.auto=!SAVE.auto;save();showMenu();};
+ document.getElementById('oE').onclick=()=>{S.click();SAVE.easy=!SAVE.easy;save();showMenu();};
+ document.getElementById('oS').onclick=()=>{SAVE.snd=!SAVE.snd;save();ac();S.click();showMenu();};
+ document.getElementById('play').onclick=()=>{S.click();startLevel(SAVE.sel);};}
+
+// ---------- input ----------
+const toWorld=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)/scale,y:(e.clientY-r.top)/scale};};
+cv.addEventListener('pointerdown',e=>{ac();if(state==='pause'){togglePause();return;}const p=toWorld(e);ptr.active=true;ptr.x=p.x;ptr.y=p.y;ptr.type=e.pointerType==='mouse'?'mouse':'touch';try{cv.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();});
+cv.addEventListener('pointermove',e=>{if(!ptr.active)return;const p=toWorld(e);ptr.x=p.x;ptr.y=p.y;});
+const up=()=>{ptr.active=false;};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)&&state!=='menu'&&state!=='result')e.preventDefault();
+ if(['ShiftLeft','ShiftRight','KeyK','KeyX'].includes(e.code))dash();if(e.code==='KeyP'||(e.code==='Escape'&&(state==='play'||state==='pause')))togglePause();});
+addEventListener('keyup',e=>{keys[e.code]=false;});
+function togglePause(){if(state==='play'){state='pause';}else if(state==='pause'){state='play';last=performance.now();}}
+document.getElementById('pauseB').onclick=()=>{ac();togglePause();};
+const hold=(el,on,off)=>{el.addEventListener('pointerdown',e=>{e.preventDefault();ac();on();});el.addEventListener('pointerup',off);el.addEventListener('pointercancel',off);el.addEventListener('pointerleave',off);};
+hold(document.getElementById('dashB'),dash,()=>{});hold(document.getElementById('fireB'),()=>{fireHeld=true;},()=>{fireHeld=false;});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play')state='pause';});
+addEventListener('blur',()=>{for(const k in keys)keys[k]=false;ptr.active=false;fireHeld=false;});
+
+// ---------- loop ----------
+function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(state!=='pause')update(dt);render();requestAnimationFrame(frame);}
+showMenu();requestAnimationFrame(frame);
+// test hook
+window.__SB={get state(){return state;},get G(){return G;},get P(){return P;},start:startLevel,clear(){en.forEach(e=>e.hp=0);[...en].forEach(e=>defeat(e,true));if(G){G.queue=[];G.megaPending=0;}},get en(){return en;}};
+</script>
+</body>
+</html>
