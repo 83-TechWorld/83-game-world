@@ -168,7 +168,8 @@ for (const [grp, title] of SHELVES) {
     <p><b>Kids Games 4u</b> is a free collection of fun, safe browser games where children learn while they play: the alphabet and phonics, counting and adding numbers, shapes and colours, English words, the solar system and planets, and how to tell time on a clock. No sign-up and no downloads: just tap and play on a tablet, phone or computer.</p>
     <h3>Learn &amp; play games</h3><ul>${GAMES.filter(g => g.available && g.group === 'learn').map(g => `<li><a href="${g.url}">${g.emoji} ${g.title}</a> <span>${g.description}</span></li>`).join('')}</ul>
     <h3>Action games for bigger kids</h3><ul>${GAMES.filter(g => g.available && g.group === 'action').map(g => `<li><a href="${g.url}">${g.emoji} ${g.title}</a> <span>${g.description}</span></li>`).join('')}</ul>
-    <p class="links"><a href="/about/index.html">About</a> &middot; <a href="/contact/index.html">Contact</a> &middot; <a href="/privacy-policy/index.html">Privacy Policy</a></p>
+    <h3>Guides for parents &amp; teachers</h3><p>Practical articles on telling the time, kitchen science experiments, road and fire safety, screen time and more in our <a href="/parents/index.html">Parents' Corner</a>.</p>
+    <p class="links"><a href="/parents/index.html">Parents' Corner</a> &middot; <a href="/whats-new/index.html">What's New</a> &middot; <a href="/about/index.html">About</a> &middot; <a href="/contact/index.html">Contact</a> &middot; <a href="/privacy-policy/index.html">Privacy Policy</a></p>
     <p class="cp">&copy; ${new Date().getFullYear()} Kids Games 4u &middot; Free educational games for children</p>`)
   app.appendChild(f)
 })()

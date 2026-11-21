@@ -138,6 +138,7 @@ const noscript = `<!--SEO-BODY-->
         <h1>${BRAND}: free online learning games for kids</h1>
         <p>${esc(HOME.desc)}</p>
         <ul>${GAMES.map(g => `<li><a href="/games/${g.slug}/index.html">${esc(g.title)}</a>: ${esc(g.desc)}</li>`).join('')}</ul>
+        <p>Guides for parents and teachers: <a href="/parents/index.html">Parents' Corner</a>. Latest games: <a href="/whats-new/index.html">What's New</a>.</p>
         <p>Please turn on JavaScript to play.</p>
       </main>
     </noscript>
@@ -194,7 +195,7 @@ const tpl = path.join(root, 'public/games/_template/index.html')
 if (fs.existsSync(tpl)) { let s = fs.readFileSync(tpl, 'utf8'); if (!/name="robots"/.test(s)) s = s.replace(/<\/head>/i, '  <meta name="robots" content="noindex" />\n</head>'); fs.writeFileSync(tpl, s) }
 
 // ----- sitemap / robots / manifest -----
-const urls = [{ loc: SITE + '/', pr: '1.0', cf: 'weekly' }, ...GAMES.map(g => ({ loc: `${SITE}/games/${g.slug}/index.html`, pr: LEARN.includes(g.slug) ? '0.9' : '0.7', cf: 'monthly' })), ...PAGES.map(p => ({ loc: `${SITE}/${p.slug}/index.html`, pr: '0.3', cf: 'yearly' }))]
+const urls = [{ loc: SITE + '/', pr: '1.0', cf: 'weekly' }, ...GAMES.map(g => ({ loc: `${SITE}/games/${g.slug}/index.html`, pr: LEARN.includes(g.slug) ? '0.9' : '0.7', cf: 'monthly' })), ...PAGES.map(p => ({ loc: `${SITE}/${p.slug}/index.html`, pr: p.pr || '0.3', cf: p.cf || 'yearly' }))]
 fs.writeFileSync(path.join(root, 'public/sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(u => `  <url><loc>${u.loc}</loc><lastmod>${TODAY}</lastmod><changefreq>${u.cf}</changefreq><priority>${u.pr}</priority></url>`).join('\n')}\n</urlset>\n`)
 fs.writeFileSync(path.join(root, 'public/robots.txt'), `User-agent: *\nAllow: /\nDisallow: /games/_template/\n\nSitemap: ${SITE}/sitemap.xml\n`)
 fs.writeFileSync(path.join(root, 'public/manifest.webmanifest'), JSON.stringify({ name: BRAND, short_name: 'KidsGames4u', description: HOME.desc, start_url: '/', display: 'standalone', background_color: '#bfe9ff', theme_color: '#7cc6ff', categories: ['education', 'games', 'kids'],
