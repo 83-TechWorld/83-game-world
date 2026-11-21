@@ -218,4 +218,132 @@ module.exports = {
       }
     },
   },
+
+  // ---------- third batch ----------
+  'build-crew': {
+    url: '/games/build-crew/index.html',
+    storage: `localStorage.setItem('dg_build-crew',JSON.stringify({unlocked:20,stars:${stars(6)},max:60}));`,
+    async run(b) {
+      const { page, tap, mark, sleep } = b
+      await sleep(1200); mark('map')
+      await openLevel(b, 1); mark('level-house'); await sleep(3800) // the captain shows the blueprint
+      await tap(`return [...document.querySelectorAll('.btn')].find(x=>/I remember/.test(x.textContent))`); mark('remember'); await sleep(900)
+      // build the blueprint bottom-up, dragging along each row; one window is a plain one, so the storm finds a loophole
+      const plan = await page.evaluate(() => { const L = __BC.level, out = []; for (let y = L.rows - 1; y >= 0; y--) { let x = 0; while (x < L.cols) { const id = L.req[y][x]; if (!id) { x++; continue } let x2 = x; while (x2 + 1 < L.cols && L.req[y][x2 + 1] === id) x2++; out.push({ id, y, x1: x, x2 }); x = x2 + 1 } } return out })
+      let tricked = false
+      const grid = () => page.evaluate(() => { const r = document.querySelector('.grid').getBoundingClientRect(), L = __BC.level; return { x: r.left, y: r.top, w: r.width / L.cols, h: r.height / L.rows } })
+      for (const run of plan) {
+        const id = run.id === 'swin' && !tricked ? (tricked = true, 'win') : run.id
+        const name = await page.evaluate(id => P[id].n, id)
+        await tap(`return [...document.querySelectorAll('.tb')].find(x=>x.textContent.trim().endsWith(a))`, name); await sleep(160)
+        const G = await grid(), cy = G.y + (run.y + .5) * G.h, cx = x => G.x + (x + .5) * G.w
+        await page.mouse.move(cx(run.x1), cy); await page.mouse.down()
+        for (let x = run.x1 + 1; x <= run.x2; x++) { await page.mouse.move(cx(x), cy, { steps: 3 }); await sleep(35) }
+        await page.mouse.up(); mark('build'); await sleep(200)
+      }
+      await sleep(500); await tap(`return [...document.querySelectorAll('.btn')].find(x=>/Test Build/.test(x.textContent))`); mark('test')
+      await until(page, () => __BC.phase === 'xray', 20000); mark('xray'); await sleep(3800)
+      await tap(`return [...document.querySelectorAll('.btn')].find(x=>/Fix it/.test(x.textContent))`); await sleep(700)
+      await tap(`return [...document.querySelectorAll('.btn')].find(x=>/Hint/.test(x.textContent))`); mark('hint'); await sleep(2200)
+      await tap(`return document.querySelector('.c.hint')`); mark('fix'); await sleep(900)
+      await tap(`return [...document.querySelectorAll('.btn')].find(x=>/Test Build/.test(x.textContent))`); mark('test2')
+      await until(page, () => __BC.phase === 'done', 30000); mark('pass')
+      await until(page, winModal, 15000); mark('win'); await sleep(2800)
+    },
+  },
+
+  'color-grid-slide': {
+    url: '/games/color-grid-slide/index.html',
+    storage: `localStorage.setItem('dg_color-grid-slide',JSON.stringify({unlocked:20,stars:${stars(11)},max:60}));`,
+    async run(b) {
+      const { page, tap, drag, mark, sleep } = b
+      await sleep(1200); mark('map')
+      for (const [lv, label, gap] of [[0, 'intro', 700], [11, 'pad', 330], [15, 'mega', 260]]) {
+        await openLevel(b, lv); mark('level-' + label); await sleep(1500)
+        const sol = await page.evaluate(() => __CG.lv.sol)
+        for (const [f, t] of sol) {
+          // swipe the cap toward its target cell, like a finger would
+          await page.evaluate(f => { document.querySelectorAll('[data-from]').forEach(e => e.removeAttribute('data-from')); const c = [...document.querySelectorAll('.cap')].find(e => e._i === f); c && c.setAttribute('data-from', '1') }, f)
+          await drag('[data-from]', `.bd > .cell:nth-child(${t + 1})`); mark('move-' + label); await sleep(gap)
+        }
+        await until(page, winModal, 6000); mark('win-' + label); await sleep(2400)
+        if (lv !== 15) await backToMap(b)
+      }
+    },
+  },
+
+  'sky-blaster': {
+    url: '/games/sky-blaster/index.html', size: [780, 390],
+    storage: `localStorage.setItem('sky_blaster_save',JSON.stringify({unlocked:15,stars:{1:3,2:3,3:2,4:3},best:{},auto:true,easy:false,snd:false,sel:5}));`,
+    async run(b) {
+      const { page, tap, mark, sleep } = b
+      await sleep(1600); mark('menu'); await sleep(1400)
+      await tap(`return document.getElementById('play')`); mark('start')
+      await page.evaluate(() => { window.hurt = () => false }) // the recording pilot never loses a heart
+      const box = await page.evaluate(() => { const r = document.getElementById('c').getBoundingClientRect(); return { x: r.left, y: r.top, s: r.width / VW } })
+      const toScreen = (x, y) => [box.x + x * box.s, box.y + y * box.s]
+      let held = false, last = { tier: 1, killed: 0, slime: 0, boss: false }, t0 = Date.now()
+      while (Date.now() - t0 < 150000) {
+        const s = await page.evaluate(() => ({ st: state, P: P && { x: P.x, y: P.y, tier: P.tier }, en: en.map(e => ({ x: e.x, y: e.y, r: e.r, t: e.type })), orbs: orbs.map(o => ({ x: o.x, y: o.y })), slime: slime.map(o => ({ x: o.x, y: o.y })), killed: G && G.killed, banner: banner && banner.big }))
+        if (s.st === 'result') { mark('result'); await sleep(2600); break }
+        if (s.st === 'clear' && !last.clear) { last.clear = true; mark('clear') }
+        if (s.st !== 'play' && s.st !== 'clear') { await sleep(80); continue }
+        if (s.P.tier > last.tier) mark('power-' + s.P.tier); last.tier = s.P.tier
+        if (s.killed > last.killed) mark('pop'); last.killed = s.killed
+        if (s.slime.length > last.slime) mark('goo'); last.slime = s.slime.length
+        if (s.en.some(e => e.t === 'mega') && !last.boss) { last.boss = true; mark('boss') }
+        if (last.boss && !last.bossPop && !s.en.some(e => e.t === 'mega') && s.st !== 'play' || (last.boss && !s.en.length && !last.bossPop)) { last.bossPop = true; mark('boss-pop') }
+        // steer: grab a nearby power star, otherwise line up with the next zombie; slide away from goo and bodies
+        const P = s.P, orb = s.orbs.filter(o => o.x > P.x - 30 && o.x < P.x + 380).sort((a, b) => Math.hypot(a.x - P.x, a.y - P.y) - Math.hypot(b.x - P.x, b.y - P.y))[0]
+        const z = s.en.filter(e => e.x > P.x + 40).sort((a, b) => a.x - b.x)[0]
+        let tx = 170, ty = z ? z.y : 270
+        if (orb) { tx = Math.min(orb.x, 420); ty = orb.y }
+        const danger = [...s.en.map(e => ({ x: e.x, y: e.y, r: e.r + 34 })), ...s.slime.map(o => ({ x: o.x, y: o.y, r: 40 }))].filter(d => d.x > P.x - 30 && d.x < P.x + 150 && Math.abs(d.y - ty) < d.r)
+        if (danger.length) { const d = danger[0]; ty = d.y > 270 ? d.y - d.r - 30 : d.y + d.r + 30; tx = Math.min(tx, 170) }
+        ty = Math.max(40, Math.min(500, ty))
+        const [sx, sy] = toScreen(tx, ty)
+        if (!held) { const [px, py] = toScreen(P.x, P.y); await page.mouse.move(px, py); await page.mouse.down(); held = true }
+        await page.mouse.move(sx, sy, { steps: 2 }); await sleep(60)
+      }
+      if (held) await page.mouse.up()
+    },
+  },
+
+  'mindspark': {
+    url: '/games/mindspark/index.html',
+    storage: `localStorage.setItem('dg_mindspark',JSON.stringify({unlocked:50,stars:${stars(12)},max:150}));`,
+    async run(b) {
+      const { page, tap, drag, mark, sleep } = b
+      const next = async () => { const s = await page.evaluate(() => __MS.eng.solve()); return s && s[0] }
+      await sleep(1200); mark('map')
+      // the chalkboard trick: a wrong try first, then the Aha!
+      await openLevel(b, 0); mark('level-chalk'); await sleep(2600)
+      await drag('[data-pick="10:v"]', '[data-tgt="1:h"]'); mark('wrong-chalk'); await sleep(2900)
+      await drag('[data-pick="6:v"]', '[data-tgt="5:h"]'); mark('right-chalk')
+      await until(page, winModal, 6000); mark('win-chalk'); await sleep(2600); await backToMap(b)
+      // matchsticks with the 3-step hint
+      await openLevel(b, 1); mark('level-match'); await sleep(1600)
+      for (let i = 0; i < 3; i++) { await tap(`return document.querySelector('.ib.hint')`); mark('hint'); await sleep(1300) }
+      let st = await next(); await drag(`[data-pick="${st.from}"]`, `[data-tgt="${st.to}"]`); mark('right-match')
+      await until(page, winModal, 6000); mark('win-match'); await sleep(1600); await backToMap(b)
+      // see-saw: a wrong spot, then balance
+      await openLevel(b, 20); mark('level-lever'); await sleep(1500)
+      await drag('[data-pick="F"]', '[data-tgt="n2"]'); mark('wrong-lever'); await sleep(1700)
+      await drag('[data-pick="F"]', '[data-tgt="n-2"]'); mark('right-lever')
+      await until(page, winModal, 6000); mark('win-lever'); await sleep(1500); await backToMap(b)
+      // laser mirrors
+      await openLevel(b, 25); mark('level-laser'); await sleep(1500)
+      for (let i = 0; i < 2; i++) { st = await next(); if (!st) break; await tap(`return document.querySelector('[data-tap="m${st.m}"]')`); mark('tap-laser'); await sleep(900) }
+      await until(page, winModal, 6000); mark('win-laser'); await sleep(1500); await backToMap(b)
+      // cabbage-juice potion
+      await openLevel(b, 35); mark('level-ph'); await sleep(1500)
+      for (let i = 0; i < 2; i++) { await tap(`return document.querySelector('[data-tap="b0"]')`); mark('tap-ph'); await sleep(1000) }
+      await until(page, winModal, 6000); mark('win-ph'); await sleep(1500); await backToMap(b)
+      // pop the cork
+      await openLevel(b, 47); mark('level-mix'); await sleep(1500)
+      await tap(`return document.querySelector('[data-tap="kvinegar"]')`); mark('tap-mix'); await sleep(900)
+      await tap(`return document.querySelector('[data-tap="ksoda"]')`); mark('tap-mix'); await sleep(400); mark('fizz')
+      await until(page, winModal, 8000); mark('win-mix'); await sleep(2400)
+    },
+  },
 }

@@ -38,9 +38,14 @@ SAY = {  # spoken lines follow the on-screen captions; the last line plays over 
  'planet-parade': ['Can your child name all eight planets?', 'Line them up from the Sun.', 'Fun facts after every answer.', 'Hot or cold? Sixteen levels of space.'],
  'spell-gaps': ['Which letter is missing?', 'Every word is read aloud.', 'Two gaps? No problem.', 'Then spell the whole word.'],
  'where-is-kitty': ['Is Kitty in the box, or on the box?', 'Drag Kitty to the right spot.', 'Watch Kitty move, and pick the word.', 'Little words like in, on, up, and at.'],
+ 'build-crew': ['Can your kid build a house that survives a storm?', 'Remember the blueprint, then build it.', 'Then comes the two-minute disaster check!', 'X-ray mode finds the leak.', 'Twenty buildings, from a treehouse to a whole town.'],
+ 'color-grid-slide': ['Slide the caps into the right column.', 'Rainbow pads change the color!', 'Every single puzzle can be solved.', 'Then try the giant five by five grid.', 'Twenty levels, with hints.'],
+ 'sky-blaster': ['Jetpack versus goofy flying zombies!', 'Grab the stars to power up.', 'Watch out, they spit goo!', 'Then face the Mega Zombie!', 'Fifteen levels of sky blasting fun.'],
+ 'mindspark': ['Move one line to make a hundred.', 'Nope, not that one.', 'One hundred eleven, minus eleven. A hundred!', 'Balance it, bounce it,', 'and mix it! Fifty brain puzzles.'],
 }[GAME]
 NAME = {'memory-matrix': 'Memory Matrix', 'safety-scout': 'Safety Scout', 'habit-hero': 'Habit Hero', 'rough-note-showdown': 'Rough Note Showdown',
-        'tick-tock-clock': 'Tick Tock Clock', 'planet-parade': 'Planet Parade', 'spell-gaps': 'Spell Gaps', 'where-is-kitty': 'Where Is Kitty'}[GAME]
+        'tick-tock-clock': 'Tick Tock Clock', 'planet-parade': 'Planet Parade', 'spell-gaps': 'Spell Gaps', 'where-is-kitty': 'Where Is Kitty',
+        'build-crew': 'Build Crew', 'color-grid-slide': 'Color Grid Slide', 'sky-blaster': 'Sky Blaster', 'mindspark': 'MindSpark'}[GAME]
 END_LINE = 'Play free. Tap the link in bio!'  # the exact address is on screen; spoken, it sounds like a different domain
 
 def up48(x, sr):  # Kokoro speaks at 24 kHz
@@ -106,6 +111,10 @@ STYLE = {  # bpm, key (midi root), scale, chord roots, lead, extras
  'planet-parade': dict(bpm=92, key=52, minor=True, lead=bell, pads=True, claps=0, sparkle=True),
  'spell-gaps': dict(bpm=116, key=58, minor=False, lead=marimba, high=True),
  'where-is-kitty': dict(bpm=108, key=60, minor=False, lead=pluck, sparkle=True),
+ 'build-crew': dict(bpm=118, key=55, minor=False, lead=pluck, wood=True),
+ 'color-grid-slide': dict(bpm=112, key=60, minor=False, lead=marimba, sparkle=True),
+ 'sky-blaster': dict(bpm=132, key=57, minor=False, lead=pluck, claps=1.3, high=True),
+ 'mindspark': dict(bpm=104, key=53, minor=False, lead=bell, sparkle=True),
 }[GAME]
 
 def music():
@@ -168,6 +177,8 @@ def pop(): t = tt(.09); f = 520 + 480 * (t / .09); return np.sin(2*np.pi*np.cums
 def chime(): return np.concatenate([bell(mtof(84), .5)[:int(.09*SR)] * 0, np.zeros(0)]) if False else (np.pad(bell(mtof(84), .6), (0, int(.09*SR))) + np.pad(bell(mtof(88), .6), (int(.09*SR), 0))) * .5
 def whoosh():
     t = tt(.35); x = lp(noise(.35), 6); env = np.sin(np.pi * t / .35) ** 2; return hp(x) * env * .6
+def boing():
+    t = tt(.4); f = 180 + 260 * np.abs(np.sin(t * 18)) * np.exp(-t * 6); return np.sin(2*np.pi*np.cumsum(f)/SR) * np.exp(-t*5) * att(t, .004) * .8
 def sparkle(): return sum(np.pad(bell(mtof(n), .6), (int(i*.07*SR), int((3-i)*.07*SR))) for i, n in enumerate((84, 88, 91, 96))) * .35
 
 def sfx():
@@ -183,9 +194,10 @@ def sfx():
             if not (c['from'] <= e['t'] < c['from'] + c['len'] * rate): continue
             at = c['at'] + (e['t'] - c['from']) / rate
             kind = e['name'].split('-')[0]
-            if kind in ('tap', 'drag'): put(pop(), at, .35); (not has_right) and put(chime(), at + .05, .3)
-            elif kind in ('right', 'word', 'done'): put(chime(), at, .3)
-            elif kind == 'win': put(sparkle(), at, .35)
+            if kind in ('tap', 'drag', 'build', 'move', 'pop', 'fix'): put(pop(), at, .35); (not has_right and kind in ('tap', 'drag')) and put(chime(), at + .05, .3)
+            elif kind in ('right', 'word', 'done', 'pass', 'clear'): put(chime(), at, .3)
+            elif kind in ('win', 'power', 'hint'): put(sparkle(), at, .35)
+            elif kind in ('wrong', 'xray'): put(boing(), at, .4)
     for c in TL['clips'][1:]: put(whoosh(), c['at'] - .18, .45)
     put(whoosh(), END - .1, .5); put(sparkle(), END + .35, .4)
     return track[:int(DUR * SR)]

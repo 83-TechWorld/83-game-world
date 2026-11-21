@@ -157,6 +157,78 @@ Send this to a parent teaching English at home. Play at kidsgames4u.com (link in
 
 ---
 
+## 9. Build Crew (`build-crew-short.mp4`)
+
+**YouTube Shorts title:** Can your kid build a house that survives a storm? 👷 Free building game #shorts
+
+**Instagram caption:**
+
+First the blueprint, then the build, then the storm. Does the roof leak?
+
+In Build Crew, kids remember a blueprint, build it piece by piece, then watch a 2-minute disaster check with rain, wind, pipes and fire drills. If something fails, X-ray mode shows the exact leak and the captain explains why.
+
+There are 20 buildings, from a treehouse to a whole eco-smart town, with 3 hints per level.
+
+Save this for your little engineer. Play free at kidsgames4u.com (link in bio).
+
+#stemforkids #engineeringforkids #buildinggames #kidsactivities #learningthroughplay
+
+---
+
+## 10. Color Grid Slide (`color-grid-slide-short.mp4`)
+
+**YouTube Shorts title:** Slide the caps into the right column 🧩 Free puzzle for kids #shorts
+
+**Instagram caption:**
+
+Blue, yellow, red. A cap can only slide into the empty hole. How many moves will your child need?
+
+Color Grid Slide is a sliding puzzle that grows from a 3×3 board to a 5×5 mega grid, with stone blocks, one-way arrows and rainbow pads that change a cap's colour. Every cap has a shape too, so colour-blind kids can play.
+
+All 20 levels are guaranteed solvable, and the hint button lights up the next good move.
+
+Try level 1 together and race each other. Play free at kidsgames4u.com (link in bio).
+
+#logicpuzzles #brainteasersforkids #puzzlegames #kidsbraingames #spatialreasoning
+
+---
+
+## 11. Sky Blaster (`sky-blaster-short.mp4`)
+
+**YouTube Shorts title:** Jetpack vs goofy flying zombies! 🚀 Free cartoon game #shorts
+
+**Instagram caption:**
+
+A kid pilot, a jetpack and a sky full of silly zombies with propeller hats and balloons.
+
+In Sky Blaster, kids swoop close to grab power stars, upgrade their blaster to a Super Mega-Blast and dodge bubblegum goo. Every zombie turns into a dancing ghost, with no gore at all.
+
+There are 15 levels across sunny, sunset and starry skies, with a Mega-Zombie boss every 5 levels. Little Pilot mode makes it gentler for younger kids.
+
+Best for ages 6 and up. Play free at kidsgames4u.com (link in bio).
+
+#kidsgames #browsergames #arcadegames #cartoongames #gamingforkids
+
+---
+
+## 12. MindSpark (`mindspark-short.mp4`)
+
+**YouTube Shorts title:** Move ONE line to make 100 💡 50 STEM puzzles for kids #shorts
+
+**Instagram caption:**
+
+Six chalk lines. Move just one to make 100. Can your child find it? (Answer in the video.)
+
+MindSpark has 50 Aha! puzzles across a Math Lab, a Physics Lab and a Chemistry Lab: matchstick sums, see-saws, laser mirrors, cabbage-juice colours and fizzy reactions. Wrong tries are explained, and every level ends with a one-line science fact.
+
+Stuck? The lightbulb gives a nudge, then a clue, then a dotted ghost of the answer.
+
+Send this to a parent who loves brain teasers. Play free at kidsgames4u.com (link in bio).
+
+#stemforkids #brainteasers #mathpuzzles #scienceforkids #matchstickpuzzle
+
+---
+
 ## Before you post
 
 - **Instagram link:** links in captions can't be tapped, so put kidsgames4u.com in your bio.

@@ -32,7 +32,9 @@ The finished file lands in `marketing/shorts/<game>-short.mp4`. One video takes 
 
 Render one game at a time. Running several in parallel slows the recording, and the footage comes out choppy.
 
-Videos already set up: `memory-matrix`, `safety-scout`, `habit-hero`, `rough-note-showdown`, `tick-tock-clock`, `planet-parade`, `spell-gaps` and `where-is-kitty`.
+Videos already set up: `memory-matrix`, `safety-scout`, `habit-hero`, `rough-note-showdown`, `tick-tock-clock`, `planet-parade`, `spell-gaps`, `where-is-kitty`, `build-crew`, `color-grid-slide`, `sky-blaster` and `mindspark`.
+
+Sideways games: give the bot `size: [780, 390]` in `bots.cjs` and `landscape: true` in its `compose.html` entry. It is then recorded at a sideways phone size and shown in a phone turned on its side (see `sky-blaster`).
 
 ## Adding a new game
 

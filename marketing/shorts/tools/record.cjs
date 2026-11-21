@@ -1,5 +1,5 @@
 // Records real gameplay of one game as phone-sized footage: node record.cjs <game>
-// Output: out/<game>/footage.mp4 (30 fps, 780x1560) + out/<game>/events.json (seconds into the footage)
+// Output: out/<game>/footage.mp4 (30 fps, 780x1560, or 1560x780 for landscape games) + out/<game>/events.json (seconds into the footage)
 const { chromium } = require('playwright-core')
 const { spawn, execFileSync } = require('child_process')
 const fs = require('fs'), path = require('path')
@@ -17,11 +17,12 @@ const GAMES = require('./bots.cjs')
 
 ;(async () => {
   const bot = GAMES[GAME]; if (!bot) throw new Error('unknown game ' + GAME)
+  const [PW, PH] = bot.size || [390, 780] // landscape games set size: [780, 390]
   const srv = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { cwd: ROOT, stdio: 'ignore', detached: true })
   for (let i = 0; i < 60; i++) { try { await fetch(`http://localhost:${PORT}/`); break } catch { await sleep(100) } }
-  const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', args: ['--autoplay-policy=no-user-gesture-required', '--window-size=390,780', '--force-device-scale-factor=2'] })
+  const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', args: ['--autoplay-policy=no-user-gesture-required', `--window-size=${PW},${PH}`, '--force-device-scale-factor=2'] })
   try {
-    const ctx = await browser.newContext({ viewport: { width: 390, height: 780 }, deviceScaleFactor: 2 })
+    const ctx = await browser.newContext({ viewport: { width: PW, height: PH }, deviceScaleFactor: 2 })
     await ctx.addInitScript({ content: `try{localStorage.setItem('dg_muted','1');if(!sessionStorage.getItem('__seed')){sessionStorage.setItem('__seed','1');${bot.storage || ''}}}catch(e){};` + TOUCH })
     const page = await ctx.newPage()
     page.on('pageerror', e => console.log('pageerror', e.message))
@@ -36,7 +37,7 @@ const GAMES = require('./bots.cjs')
       const file = `f/${String(frames.length).padStart(5, '0')}.jpg`; fs.writeFileSync(path.join(OUT, file), Buffer.from(f.data, 'base64'))
       frames.push({ file, t: ts - t0 }); try { await cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }) } catch {}
     })
-    await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 92, maxWidth: 780, maxHeight: 1560, everyNthFrame: 1 })
+    await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 92, maxWidth: PW * 2, maxHeight: PH * 2, everyNthFrame: 1 })
     while (t0 === null) await sleep(20)
     const start = Date.now() / 1000 - (Date.now() / 1000 - t0) // wall clock and frame clock are both epoch seconds
     const events = []
@@ -60,7 +61,7 @@ const GAMES = require('./bots.cjs')
     // variable-rate frames -> constant 30 fps, short GOP so the composer can seek to any frame quickly
     const list = frames.map((f, i) => `file '${f.file}'\nduration ${Math.max(0.001, ((frames[i + 1] ? frames[i + 1].t : end) - f.t)).toFixed(4)}`).join('\n') + `\nfile '${frames[frames.length - 1].file}'\n`
     fs.writeFileSync(path.join(OUT, 'list.txt'), list)
-    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', 'list.txt', '-vf', 'fps=30,scale=780:1560:flags=lanczos,format=yuv420p', '-c:v', 'libx264', '-crf', '14', '-g', '10', '-preset', 'medium', '-movflags', '+faststart', 'footage.mp4'], { cwd: OUT })
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', 'list.txt', '-vf', `fps=30,scale=${PW * 2}:${PH * 2}:flags=lanczos,format=yuv420p`, '-c:v', 'libx264', '-crf', '14', '-g', '10', '-preset', 'medium', '-movflags', '+faststart', 'footage.mp4'], { cwd: OUT })
     fs.writeFileSync(path.join(OUT, 'events.json'), JSON.stringify({ duration: end, events }, null, 1))
     fs.rmSync(path.join(OUT, 'f'), { recursive: true })
     console.log(`footage ${end.toFixed(1)}s from ${frames.length} frames -> ${OUT}/footage.mp4`)

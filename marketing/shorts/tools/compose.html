@@ -92,6 +92,31 @@ const C={
   clips:[{at:0,len:3.6,from:'level-drag@+0.14'},{at:3.6,len:3.4,from:'right-drag#1@-2.01'},{at:7.0,len:4.4,from:'level-watch@+0.12'},{at:11.4,len:4.2,from:'level-sent@+0.04'}],
   caps:[[0.15,3.45,'Is Kitty *in* the box or *on* the box?'],[3.75,6.85,'Drag Kitty to the *right spot*'],[7.15,11.2,'Watch Kitty move, pick the *word*'],[11.55,15.4,'Little words like *in, on, up* and *at*']],
   zoom:[[0,1],[1.2,1.05],[6.8,1.05],[7,1]],transition:'bump'},
+ // ---------- third batch ----------
+ 'build-crew':{
+  name:'Build Crew',emoji:'👷',dur:20,font:"800 84px/1.04 'Baloo 2',sans-serif",ink:'#fff',accent:'#ffd23b',
+  shadow:'0 6px 0 #0d2b66,0 12px 30px rgba(5,20,60,.45)',endBg:'#1f4fa8',endInk:'#fff',pill:['#ffd23b','#0d2b66'],
+  clips:[{at:0,len:3.2,from:'level-house@+0.3'},{at:3.2,len:3.6,from:'remember@+1.0',rate:2.2},{at:6.8,len:3.0,from:'test@+0.3'},{at:9.8,len:3.0,from:'xray@-0.1'},{at:12.8,len:1.8,from:'hint@+0.1'},{at:14.6,len:1.8,from:'win@+0.1'}],
+  caps:[[0.15,3.05,'Can your kid build a house that *survives a storm?*'],[3.35,6.65,'Remember the *blueprint,* then build it'],[6.95,9.65,'The 2-minute *disaster check!*'],[9.95,12.65,'X-ray finds the *leak*'],[12.95,16.2,'*20 buildings,* treehouse to town']],
+  zoom:[[3.2,1],[4.2,1.06],[9.6,1.06],[9.8,1],[10.4,1.08],[12.6,1.08],[12.8,1]],transition:'hazard'},
+ 'color-grid-slide':{
+  name:'Color Grid Slide',emoji:'🧩',dur:20,font:"700 84px/1.06 'Fredoka',sans-serif",ink:'#1c2a55',accent:'#ef4444',
+  shadow:'0 5px 0 rgba(255,255,255,.85)',endBg:'#3b82f6',endInk:'#fff',pill:['#facc15','#1c2a55'],
+  clips:[{at:0,len:3.4,from:'level-intro@+1.2'},{at:3.4,len:4.2,from:'level-pad@+1.4',rate:2.4},{at:7.6,len:2.4,from:'win-pad@-0.6'},{at:10.0,len:4.6,from:'level-mega@+1.4',rate:3.2},{at:14.6,len:1.8,from:'win-mega@-0.5'}],
+  caps:[[0.15,3.25,'Slide the caps into the *right column*'],[3.55,7.45,'Rainbow pads *change the color!*'],[7.75,9.85,'Every puzzle is *solvable*'],[10.15,14.45,'Up to a *5 × 5* mega grid'],[14.75,16.2,'*20 levels* with hints']],
+  zoom:[[3.4,1],[4.4,1.06],[9.8,1.06],[10,1]],transition:'flip'},
+ 'sky-blaster':{
+  name:'Sky Blaster',emoji:'🚀',dur:19.6,landscape:true,font:"400 88px/1.04 'Lilita One',sans-serif",ink:'#fff',accent:'#ffd23b',
+  shadow:'0 6px 0 #1c2a55,0 12px 30px rgba(10,20,60,.4)',endBg:'#0ea5e9',endInk:'#fff',pill:['#ffd23b','#1c2a55'],
+  clips:[{at:0,len:3.2,from:'start@+1.5'},{at:3.2,len:3.0,from:'power-2@-1.2'},{at:6.2,len:3.0,from:'goo@-0.5'},{at:9.2,len:3.6,from:'boss@-0.2'},{at:12.8,len:3.0,from:'power-3@-0.4'}],
+  caps:[[0.15,3.05,'Jetpack vs *goofy flying zombies!*'],[3.35,6.05,'Grab stars to *power up*'],[6.35,9.05,'Watch out, they *spit goo!*'],[9.35,12.65,'Then face the *Mega-Zombie*'],[12.95,15.6,'*15 levels* of sky blasting']],
+  zoom:[[0,1],[1,1.04],[9,1.04],[9.2,1]],transition:'bump'},
+ 'mindspark':{
+  name:'MindSpark',emoji:'💡',dur:20,font:"700 104px/1.0 'Caveat',cursive",ink:'#fff',accent:'#ffe14d',
+  shadow:'0 4px 0 rgba(0,0,0,.35)',endBg:'#2f5d3e',endInk:'#fff',pill:['#ffe14d','#1f3d29'],
+  clips:[{at:0,len:3.0,from:'level-chalk@+0.2'},{at:3.0,len:3.4,from:'wrong-chalk@-0.3'},{at:6.4,len:2.6,from:'right-chalk@-0.4'},{at:9.0,len:2.4,from:'right-lever@-0.4'},{at:11.4,len:2.2,from:'tap-laser@-0.3'},{at:13.6,len:2.6,from:'tap-mix#1@-0.5'}],
+  caps:[[0.15,2.85,'Move *ONE* line to make 100'],[3.15,6.25,'Nope, not *that* one…'],[6.55,8.85,'*111 − 11 = 100!*'],[9.15,13.45,'Balance it, *bounce it,*'],[13.75,16.0,'*mix it!* 50 STEM puzzles']],
+  zoom:[[0,1.12],[3,1.12],[6.4,1.12],[9,1.1],[13.6,1.1],[16,1.1]],transition:'chalk'},
 }[G]
 C.clips.forEach(c=>{if(typeof c.from!=='string')return;const m=c.from.match(/^(.+?)(?:#(\d+))?@([+-][\d.]+)$/);const hits=(window.EVENTS||[]).filter(e=>e.name===m[1]);const e=hits[+(m[2]||0)];
  if(!e)throw new Error('no recorded moment '+c.from);c.from=Math.max(0,e.t+ +m[3])})
@@ -159,6 +184,44 @@ const BG={
    this.p.forEach((d,i)=>{const step=Math.floor(t/.35),k=((step-i)%16+16)%16,age=(t/.35-step)+k;const x=-80+((step-k)%16+16)%16*0+(((step-k)*72)%1300),yy=1620+(k%2)*60;
     d.style.transform=`translate(${(((step-k)*75)%1300+1300)%1300-100}px,${1640+((step-k)%2)*70}px) rotate(70deg)`;d.style.opacity=Math.max(0,1-age/9)*.55});
    this.y.style.transform=`translate(${(t*90)%1400-200}px,${1500-Math.abs(Math.sin(t*3))*60}px) rotate(${t*240}deg)`}},
+
+ 'build-crew':{init(){bg.style.background='linear-gradient(90deg,rgba(255,255,255,.12) 2px,transparent 2px) 0 0/90px 90px,linear-gradient(rgba(255,255,255,.12) 2px,transparent 2px) 0 0/90px 90px,linear-gradient(180deg,#0d2b66,#1f4fa8 45%,#3d7be0)';
+   this.ic=[...'🧱🔨🏗️🪟🔧🚧📐🪜🏠⛑️'].filter(x=>x.trim()&&x!=='\ufe0f').map((e,i)=>{const d=document.createElement('div');d.textContent=e;d.style.cssText='position:absolute;font-size:96px;opacity:.75;filter:drop-shadow(0 8px 12px rgba(0,0,0,.25))';mid.appendChild(d);return d});
+   this.hz=document.createElement('div');this.hz.style.cssText='position:absolute;top:-300px;width:700px;height:2600px;transform:skewX(-18deg);background:repeating-linear-gradient(45deg,#ffd23b 0 70px,#1c2a55 70px 140px)';fx.appendChild(this.hz)},
+  draw(t){this.ic.forEach((d,i)=>{const y=((rnd(i)*2300-t*(40+rnd(i+2)*40))%2300+2300)%2300-200;d.style.transform=`translate(${rnd(i+5)*980}px,${y}px) rotate(${Math.sin(t+i)*14}deg)`});
+   // hazard-tape wipe at every cut
+   let x=-1500;for(const c of C.clips.slice(1)){const k=clamp((t-(c.at-.2))/.42);if(k>0&&k<1)x=lerp(-1300,1600,E.inOut(k))}this.hz.style.left=x+'px'}},
+ 'color-grid-slide':{init(){bg.style.background='linear-gradient(180deg,#e0f2ff,#bfdbfe 50%,#fde68a)';
+   const cols=[['#3b82f6','<circle cx="12" cy="12" r="7.5"/>'],['#facc15','<polygon points="12,2.5 14.8,8.8 21.5,9.3 16.4,13.7 18,20.5 12,16.8 6,20.5 7.6,13.7 2.5,9.3 9.2,8.8"/>'],['#ef4444','<rect x="5" y="5" width="14" height="14" rx="2.5"/>'],['#22c55e','<polygon points="12,3.5 21,19.5 3,19.5"/>'],['#a855f7','<polygon points="12,2.5 20.5,12 12,21.5 3.5,12"/>']];
+   this.c=[...Array(20)].map((_,i)=>{const [c,sh]=cols[i%5];const d=document.createElement('div');d.innerHTML=`<svg viewBox="0 0 24 24" width="70" height="70" style="fill:${i%5===1?'#7a4a00':'#fff'}">${sh}</svg>`;
+    d.style.cssText=`position:absolute;width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,${c} 58%,rgba(0,0,0,.18) 60% 64%,${c} 66%);box-shadow:0 8px 0 rgba(0,0,0,.18)`;d._l=i%5;mid.appendChild(d);return d})},
+  draw(t){// caps slide down their color lanes, like the puzzle board
+   this.c.forEach((d,i)=>{const lane=d._l,step=Math.floor(t*1.6+rnd(i)*8),k=prog(t*1.6+rnd(i)*8-step,0,.35,'back'),row=(step+Math.floor(rnd(i+3)*16))%16,y=(row-1+k)*130-120;
+    d.style.transform=`translate(${40+lane*205}px,${y}px) rotate(${Math.sin(t*2+i)*8}deg) scale(.8)`;d.style.opacity=.55})}},
+ 'sky-blaster':{init(){this.k=[['#5ec8ff','#c9f0ff'],['#ff7b54','#ffd08a'],['#0b1446','#3a2f7a']];
+   this.cl=[...Array(9)].map((_,i)=>{const d=document.createElement('div');d.textContent='☁️';d.style.cssText=`position:absolute;font-size:${140+rnd(i)*140}px;opacity:.85`;mid.appendChild(d);return d});
+   this.st=[...Array(40)].map((_,i)=>{const d=document.createElement('div');d.textContent='✦';d.style.cssText=`position:absolute;color:#fff;font-size:${16+rnd(i)*20}px;left:${rnd(i+1)*1060}px;top:${rnd(i+2)*1900}px`;mid.appendChild(d);return d});
+   this.z=['🎈','⭐','🚀'].map(e=>{const d=document.createElement('div');d.textContent=e;d.style.cssText='position:absolute;font-size:110px';mid.appendChild(d);return d})},
+  draw(t){// the sky moves from sunny to sunset to starry night, like the game's worlds
+   const ph=clamp(t/7.5,0,2),a=Math.floor(Math.min(1.999,ph)),k=E.inOut(ph-a),mix=(x,y)=>{const p=s=>[1,3,5].map(j=>parseInt(s.slice(j,j+2),16));const A=p(x),B=p(y);return`rgb(${A.map((v,j)=>Math.round(lerp(v,B[j],k))).join()})`};
+   bg.style.background=`linear-gradient(180deg,${mix(this.k[a][0],this.k[a+1][0])},${mix(this.k[a][1],this.k[a+1][1])})`;
+   this.cl.forEach((d,i)=>{d.style.transform=`translate(${((rnd(i)*1600-t*(80+i*25))%1700+1700)%1700-300}px,${80+rnd(i+4)*1700}px)`;d.style.opacity=ph>1.6?.25:.85});
+   this.st.forEach((d,i)=>d.style.opacity=clamp(ph-1.3)*(.4+.6*Math.abs(Math.sin(t*2+i))));
+   this.z.forEach((d,i)=>{d.style.transform=`translate(${((1300-t*(150+i*60)-i*500)%1500+1500)%1500-200}px,${1450+i*120+Math.sin(t*2+i)*40}px) rotate(${Math.sin(t*3+i)*12}deg)`})}},
+ 'mindspark':{init(){bg.style.background='radial-gradient(120% 70% at 50% 40%,#3b7550,#24492f)';
+   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('width',1080);svg.setAttribute('height',1920);svg.style.position='absolute';
+   // chalk doodles that draw themselves: an equation, a see-saw, a flask, a lightbulb
+   svg.innerHTML=`<g fill="none" stroke="#f4f4e8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
+    <path class="d" d="M80 1560v110M120 1560v110M160 1560v110M200 1615h50M290 1560v110M330 1560v110M380 1600h40M380 1630h40M460 1560v110"/><path class="d" d="M520 1590a22 22 0 1 1 0 .1M590 1590a22 22 0 1 1 0 .1"/>
+    <path class="d" d="M700 1700l120-40M760 1680l-20 50h40z"/><path class="d" d="M900 1560v40l-40 90q-6 14 10 14h80q16 0 10-14l-40-90v-40"/>
+    <path class="d" d="M120 300a50 50 0 1 1 60 0v30h-60z M128 350h44"/><path class="d" d="M880 260l30 30l60-70"/></g>`;
+   mid.appendChild(svg);this.d=[...svg.querySelectorAll('.d')];this.d.forEach(p=>{const L=p.getTotalLength();p.style.strokeDasharray=L;p._L=L});
+   this.ic=['💡','⚙️','🧪','🔭','🧲'].map((e,i)=>{const d=document.createElement('div');d.textContent=e;d.style.cssText='position:absolute;font-size:90px;opacity:.8';mid.appendChild(d);return d});
+   this.dust=document.createElement('div');this.dust.style.cssText='position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.85),rgba(255,255,255,0) 60%);opacity:0';fx.appendChild(this.dust)},
+  draw(t){this.d.forEach((p,i)=>{p.style.strokeDashoffset=p._L*(1-prog(t,.3+i*.9,1.5+i*.9,'inOut'))});
+   this.ic.forEach((d,i)=>{d.style.transform=`translate(${[60,900,80,920,480][i]+Math.sin(t+i)*20}px,${[520,560,1250,1300,1780][i]+Math.cos(t*1.3+i)*24}px) rotate(${Math.sin(t+i)*16}deg)`});
+   // a puff of chalk dust at every cut
+   let o=0;for(const c of C.clips.slice(1)){const k=(t-c.at+.15)/.45;if(k>0&&k<1)o=Math.sin(k*Math.PI)*.35}this.dust.style.opacity=o}},
 }[G]
 
 // ---------------- captions ----------------
@@ -182,15 +245,18 @@ function drawCaps(t){capEls.forEach((c,ci)=>{const vis=t>=c.a-.05&&t<=c.b+.35;c.
 
 // ---------------- phone + footage ----------------
 const v=$('v'),phone=$('phone'),flash=$('flash');v.src=`out/${G}/footage.mp4`
+// landscape games (Sky Blaster) play in a phone turned sideways
+const LAND=!!C.landscape;if(LAND){phone.style.width='1000px';phone.style.height='520px';phone.style.borderRadius='64px';const sc=$('screen');sc.style.width='960px';sc.style.height='480px';sc.style.borderRadius='46px';
+ $('notch').style.cssText='position:absolute;left:28px;top:50%;width:30px;height:110px;margin-top:-55px;border-radius:20px;background:#15182b;z-index:3'}
 const clipAt=t=>{let c=null;for(const x of C.clips)if(t>=x.at)c=x;return c}
 const footT=t=>{const c=clipAt(Math.min(t,C.endAt-.001));return c.from+(Math.min(t,C.endAt)-c.at)*(c.rate||1)}
 function drawPhone(t){
  const enter=prog(t,0,1.05,'back'),leave=prog(t,C.endAt,C.endAt+.7,'inOut');
- let s=1.14*kf(t,C.zoom||[[0,1]]),x=260,y=lerp(2100,650,enter)+leave*1500,r=(1-enter)*-9+leave*12,ry=0;
+ let s=(LAND?1:1.14)*kf(t,C.zoom||[[0,1]]),x=LAND?40:260,y=lerp(2100,LAND?760:650,enter)+leave*1500,r=(1-enter)*-9+leave*12,ry=0;
  // cut transitions
  for(const c of C.clips.slice(1)){const k=(t-c.at)/.36;if(k>-1&&k<1){
    if(C.transition==='flip'){ry=k<0?E.inOut(1+k)*90:(1-E.out(k))*-90}
-   else if(C.transition==='bump'){s*=1-.05*Math.sin(clamp(k+1,0,2)*Math.PI/2*2)*(k<0?0:1);flash.style.opacity=k>0?(1-k)*.55:0}}}
+   else if(C.transition==='bump'||C.transition==='hazard'||C.transition==='chalk'){s*=1-.05*Math.sin(clamp(k+1,0,2)*Math.PI/2*2)*(k<0?0:1);flash.style.opacity=k>0?(1-k)*.55:0}}}
  if(!C.clips.slice(1).some(c=>Math.abs(t-c.at)<.36))flash.style.opacity=0
  const yOff=0;window.__ph={x,y:y+yOff,s,r}
  phone.style.transform=`translate(${x}px,${y+yOff}px) rotate(${r}deg) perspective(1600px) rotateY(${ry}deg) scale(${s})`;phone.style.transformOrigin='50% 0'}
