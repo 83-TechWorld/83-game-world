@@ -295,6 +295,7 @@ export const ARTICLES = [
 
 // Newest first. Dates come from when each game went live.
 export const UPDATES = [
+  ['2026-11-24', 'New game: <a href="/games/shape-stacker/index.html">Shape Stacker</a>, a falling-shapes geometry puzzle with 32 shapes, from triangles and hexagons to 3D nets, across 15 levels.'],
   ['2026-11-21', 'Parents\' Corner opens with six guides for families: telling the time, kitchen science, road and fire safety, screen time, prepositions and building science.'],
   ['2026-11-20', 'New game: <a href="/games/mindspark/index.html">MindSpark</a>, 50 STEM brain puzzles across a Math Lab, a Physics Lab and a Chemistry Lab.'],
   ['2026-11-20', 'New game: <a href="/games/sky-blaster/index.html">Sky Blaster: Zombie Flight</a>, a cartoon jetpack game for ages 6 and up with a gentler Little Pilot mode.'],
