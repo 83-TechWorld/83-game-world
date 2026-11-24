@@ -151,7 +151,7 @@ function build(L,api,stage,li){
   let busy=false;
   cells.forEach(c=>c.onclick=()=>{K.audio();if(busy||c.classList.contains('ok')||gone())return;
    if(items[c._i]===tg[k]){c.classList.remove('flip');c.classList.add('ok');K.sfx.ok();chips[k].classList.add('got');k++;
-    if(k===tg.length){busy=true;tools.innerHTML='';K.sayLine(ask,K.pick(['Super memory!','You found it!','Brilliant brain!','Well remembered!']),{},()=>{if(gone())return;flipAll(false);setTimeout(next,900);});}
+    if(k===tg.length){busy=true;tools.innerHTML='';K.sayLine(ask,K.pick(['Super memory!','You found it!','Brilliant brain!','Well remembered!']),{},()=>{if(gone())return;flipAll(false);K.after(next,900);});}
     else askOne();}
    else{busy=true;c.classList.remove('flip');c.classList.add('no');const was=nm(items[c._i]);
     const dead=hurt(`That was ${art(was)}. Try another door!`);setTimeout(()=>{c.classList.remove('no');if(!dead){c.classList.add('flip');busy=false;}},1100);}});
@@ -161,13 +161,13 @@ function build(L,api,stage,li){
    K.sayLine(ask,'Which picture went missing?');tools.innerHTML='';const ch=K.h('div','choices');tools.appendChild(ch);let done=false;
    K.shuffle([lost,...K.sample(POOL.filter(p=>!items.some(i=>i[0]===p[0])&&p[0]!==lost[0]),3)]).forEach(o=>{const b=K.h('button','choice pic',o[0]);b._ok=o===lost;b.onclick=()=>{K.audio();if(done||gone())return;
      if(o===lost){done=true;b.classList.add('good');setFace(cells[gi],lost);cells[gi].classList.add('ok');K.sfx.ok();
-      K.sayLine(ask,`Yes! ${art(nm(lost))} went missing.`,{},()=>{if(!gone())setTimeout(next,600);});}
+      K.sayLine(ask,`Yes! ${art(nm(lost))} went missing.`,{},()=>{if(!gone())K.after(next,600);});}
      else{b.classList.add('wrong');b.disabled=true;hurt(`Not ${art(nm(o))}. Look at the empty box. What was there?`);}};ch.appendChild(b);});});}
  // swap: a curtain drops, two pictures change places; tap both
  function swapR(){const[a,b]=K.sample([...items.keys()],2);curtain(()=>{const t=items[a];items[a]=items[b];items[b]=t;setFace(cells[a],items[a]);setFace(cells[b],items[b]);
    cells[a]._sw=cells[b]._sw=true;K.sayLine(ask,'Two pictures swapped places. Tap them both!');tools.innerHTML='';let got=0;
    cells.forEach(c=>c.onclick=()=>{K.audio();if(gone()||c.classList.contains('ok')||got>=2)return;
-    if(c._i===a||c._i===b){c.classList.add('ok');K.sfx.ok();got++;if(got===2)K.sayLine(ask,'Swap spotted! Great eyes!',{},()=>{if(!gone())setTimeout(next,600);});else K.say('One more!');}
+    if(c._i===a||c._i===b){c.classList.add('ok');K.sfx.ok();got++;if(got===2)K.sayLine(ask,'Swap spotted! Great eyes!',{},()=>{if(!gone())K.after(next,600);});else K.say('One more!');}
     else{c.classList.remove('wob');void c.offsetWidth;c.classList.add('wob');hurt('That one did not move. Look again!');}});});}
  function curtain(after){tools.innerHTML='';flipAll(false);const cu=K.h('div','curtain','🎭');gw.appendChild(cu);K.sfx.whoosh();setTimeout(()=>{if(!gone())after();},700);setTimeout(()=>cu.remove(),1400);}
  api.coach(['Look and remember!','Nice! Bigger grid now.','','','','Find two pictures!','','','','Three pictures now!','Something will go missing!','Watch for the swap!','','','Sixteen pictures!','Look-alikes! Look closely!','','Remember the order!','','Boss round! You can do it!'][li]||'Remember the pictures!',false);

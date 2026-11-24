@@ -40,9 +40,10 @@ function speakText(t){t=String(t);
  return t.replace(/[^\w\s!?.,']/g,' ').replace(/\s+/g,' ').trim();}
 let sayTok=0;const KEEP=[];
 function clearLit(){document.querySelectorAll('.lit').forEach(e=>e.classList.remove('lit'));}
-function stopVoice(){sayTok++;clearLit();try{window.speechSynthesis&&window.speechSynthesis.cancel();}catch(e){}}
+let BUSY=0;
+function stopVoice(){sayTok++;BUSY=0;clearLit();try{window.speechSynthesis&&window.speechSynthesis.cancel();}catch(e){}try{if(typeof AU!=='undefined'&&AU&&CUR){AU.onended=AU.onerror=null;AU.pause();CUR=false;}}catch(e){}}
 // speak one short piece; done(ok) is called once. onWord(charIndex) follows the voice; onTimeline(ms) is the fallback when the browser gives no word events
-function speakOne(text,o,tok,done){let fin=false,fb=0,gotB=false;const est=Math.max(600,text.length*72/(o.rate||RATE))+250;
+function ttsOne(text,o,tok,done){let fin=false,fb=0,gotB=false;const est=Math.max(600,text.length*72/(o.rate||RATE))+250;
  const end=ok=>{if(fin)return;fin=true;clearTimeout(fb);done(ok);};
  if(muted||!window.speechSynthesis||!text){if(o.onTimeline)o.onTimeline(est);fb=setTimeout(()=>end(true),text?est:50);return;}
  const s=window.speechSynthesis,u=new SpeechSynthesisUtterance(text);
@@ -53,14 +54,52 @@ function speakOne(text,o,tok,done){let fin=false,fb=0,gotB=false;const est=Math.
  KEEP.push(u);if(KEEP.length>6)KEEP.shift(); // keep references: Chrome can garbage-collect a speaking utterance and never fire onend
  try{if(s.paused)s.resume();s.speak(u);}catch(e){end(true);return;}
  fb=setTimeout(()=>end(true),est*2+3000);}
+// ---------- recorded voice: Kokoro af_heart clips in /voice/c, listed per game in /voice/<game>.json ----------
+// A line is played from one recorded clip, or joined from recorded pieces (lines built at run time, like "Tap the" + "tiger").
+// Anything never recorded (such as a name a child typed) falls back to the device voice.
+const GAME_ID=(location.pathname.match(/\/games\/([^/]+)/)||[])[1];
+let VMAN=null,VDONE=!GAME_ID;const VWAIT=[];const vReady=()=>{VDONE=true;VWAIT.splice(0).forEach(f=>f());};
+try{if(GAME_ID)fetch('/voice/'+GAME_ID+'.json').then(r=>r.ok?r.json():null).then(a=>{if(Array.isArray(a))VMAN=new Set(a);vReady();}).catch(vReady);}catch(e){VDONE=true;}
+// the first line can come before the list has loaded: wait for it a little
+function whenManifest(f){if(VDONE)return f();VWAIT.push(f);setTimeout(()=>{const i=VWAIT.indexOf(f);if(i>=0){VWAIT.splice(i,1);f();}},1500);}
+const vKey=t=>String(t).toLowerCase().replace(/[^a-z0-9']+/g,' ').split(' ').map(w=>w.replace(/^'+|'+$/g,'')).filter(Boolean).join(' ');
+function voiceId(k){let h=0x811c9dc5;for(let i=0;i<k.length;i++){h^=k.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return h.toString(36);}
+const clipUrl=k=>'/voice/c/'+voiceId(k)+'.mp3';
+// split a line into the longest recorded pieces; at = where each piece starts in the text (for word highlighting)
+function pieces(text){const words=[],re=/\S+/g;let m;while((m=re.exec(text))){for(const w of vKey(m[0]).split(' '))if(w)words.push({w,at:m.index,end:m.index+m[0].length});}
+ const out=[];let i=0;while(i<words.length){let j=words.length,hit=null;for(;j>i;j--){const k=words.slice(i,j).map(x=>x.w).join(' ');if(VMAN.has(k)){hit=k;break;}}
+  if(hit){out.push({k:hit,at:words[i].at});i=j;}else{const last=out[out.length-1];if(last&&!last.k){last.text+=' '+words[i].w;}else out.push({text:words[i].w,at:words[i].at});i++;}}
+ return out;}
+const AU=typeof Audio!=='undefined'?new Audio():null;let CUR=false;
+// iOS only lets an audio element play after a tap: start it silently on the first tap so later lines can play
+try{document.addEventListener('pointerdown',function un(){document.removeEventListener('pointerdown',un,true);if(!AU||CUR)return;AU.muted=true;AU.src=clipUrl('great job');const p=AU.play();if(p&&p.then)p.then(()=>{AU.pause();AU.muted=false;}).catch(()=>{AU.muted=false;});else AU.muted=false;},true);}catch(e){}
+function speakOne(text,o,tok,done){
+ if(muted||!text||!VMAN||!AU)return ttsOne(text,o,tok,done);
+ const segs=pieces(text);if(!segs.some(s=>s.k))return ttsOne(text,o,tok,done);
+ let fin=false,i=0;const rate=(o.rate||RATE)/RATE,end=ok=>{if(fin)return;fin=true;clearTimeout(guard);CUR=false;done(ok);};
+ const guard=setTimeout(()=>end(true),Math.max(600,text.length*90/rate)*2+4000);
+ segs.forEach(s=>{if(s.k)try{fetch(clipUrl(s.k));}catch(e){}}); // warm the cache so pieces join without gaps
+ const next=()=>{if(fin||tok!==sayTok)return;if(i>=segs.length)return end(true);const s=segs[i++];if(o.onWord)o.onWord(s.at);
+  if(!s.k)return ttsOne(s.text,o,tok,()=>next());
+  // a clip ends on 'ended', or by a timer from its length in case the browser never sends 'ended'
+  let over=false,cg=0;const clipDone=()=>{if(over)return;over=true;clearTimeout(cg);AU.onended=AU.onerror=AU.onloadedmetadata=null;if(!fin&&tok===sayTok)setTimeout(next,segs.length>1?40:0);};
+  CUR=true;AU.onended=clipDone;AU.onerror=()=>{if(over)return;over=true;clearTimeout(cg);AU.onended=AU.onerror=AU.onloadedmetadata=null;ttsOne(s.text||s.k,o,tok,()=>next());};
+  AU.onloadedmetadata=()=>{if(!isFinite(AU.duration))return;const ms=AU.duration*1000/rate;cg=setTimeout(clipDone,ms+450);if(segs.length===1&&o.onTimeline)o.onTimeline(ms);};
+  AU.src=clipUrl(s.k);AU.playbackRate=rate;try{AU.preservesPitch=true;}catch(e){}
+  const p=AU.play();if(p&&p.catch)p.catch(()=>{if(!fin&&tok===sayTok){AU.onended=AU.onerror=null;ttsOne(s.k,o,tok,()=>next());}});};
+ next();}
 // start a new voice job: stops whatever is speaking. The callback runs when the job finishes, but not if a newer line replaced it.
-function job(run,cb){stopVoice();const tok=sayTok;const fin=()=>{if(tok===sayTok){clearLit();if(cb)cb();}};
+function job(run,cb){stopVoice();const tok=sayTok;BUSY=tok;const fin=()=>{if(tok===sayTok){BUSY=0;clearLit();if(cb)cb();}};
  // Chrome drops a speak() fired right after cancel(), so wait a moment
- setTimeout(()=>{if(tok!==sayTok)return;whenVoices(()=>{if(tok===sayTok)run(tok,fin);});},120);}
+ setTimeout(()=>{if(tok!==sayTok)return;whenManifest(()=>whenVoices(()=>{if(tok===sayTok)run(tok,fin);}));},120);}
 const chunks=t=>(t.match(/[^.!?]+[.!?]*\s*/g)||[t]).map(x=>x.trim()).filter(Boolean);
 // steps: [{t:'text', el:element lit while it is spoken, rate, gap:ms pause after}]
 function runSteps(steps,tok,fin){let i=0;const next=()=>{if(tok!==sayTok)return;if(i>=steps.length)return fin();const st=steps[i++];clearLit();if(st.el)st.el.classList.add('lit');
   speakOne(speakText(st.t),{rate:st.rate},tok,ok=>{if(tok!==sayTok)return;if(st.el)st.el.classList.remove('lit');if(!ok)return fin();setTimeout(next,st.gap!=null?st.gap:90);});};next();}
+// true while a line is still being spoken
+const speaking=()=>BUSY!==0&&BUSY===sayTok;
+// run fn after at least ms, and never while the voice is still talking (so the game does not move on mid-sentence)
+function after(fn,ms){const t0=Date.now();const chk=()=>{if(speaking()&&Date.now()-t0<12000)return setTimeout(chk,100);fn();};setTimeout(()=>{if(speaking()){const w=()=>{if(speaking()&&Date.now()-t0<12000)return setTimeout(w,100);setTimeout(fn,250);};w();}else fn();},ms||0);}
 // plain speech (long text is spoken sentence by sentence so Chrome never cuts it off)
 function say(t,rate,cb){job((tok,fin)=>runSteps(chunks(String(t)).map(c=>({t:c,rate,gap:60})),tok,fin),cb);}
 // speak a list of steps in order, lighting up each step's element while it is spoken (e.g. spelling letter by letter)
@@ -145,7 +184,8 @@ function start(cfg){
       progress(d,t){hud.querySelector('.prog i').style.width=Math.round(100*d/t)+'%';},
       timer(sec,onEnd){const el=hud.querySelector('.tm');el.style.display='';let left=sec;const draw=()=>{el.textContent='⏱ '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0');el.classList.toggle('low',left<=15);};draw();stopTimer();
         timerId=setInterval(()=>{if(over)return stopTimer();left--;if(left<=15&&left>0)sfx.tick();draw();if(left<=0){stopTimer();api.lose(onEnd);}},1000);},
-      win(stars){if(over)return;over=true;stopTimer();const s=stars||(mistakes===0?3:mistakes<=3?2:1);if(s>(save.stars[i]||0))save.stars[i]=s;if(i+2>save.unlocked)save.unlocked=Math.min(cfg.levels.length,i+2);persist();refreshTot();
+      win(stars){if(over)return;over=true;stopTimer();after(()=>api._win(stars),0);},
+      _win(stars){if(!main.contains(stage))return;const s=stars||(mistakes===0?3:mistakes<=3?2:1);if(s>(save.stars[i]||0))save.stars[i]=s;if(i+2>save.unlocked)save.unlocked=Math.min(cfg.levels.length,i+2);persist();refreshTot();
         const last=i===cfg.levels.length-1;sfx.cheer();confetti(last?260:140);const pr=pick(PRAISE);say(pr+(last?' You finished every level!':''));
         const m=h('div','modal',`<div class="card"><h1>${last?'🏆 All Done!':pr}</h1><p>${s===3?'Perfect! Three stars!':s===2?'Great work! Try for three stars!':'You did it! Try again for more stars!'}</p><div class="stars">${[1,2,3].map(k=>`<span data-k="${k}">⭐</span>`).join('')}</div><div class="btns"></div></div>`);
         const bt=m.querySelector('.btns');const mk=(t,c,f)=>{const b=h('button','btn '+c,t);b.onclick=()=>{m.remove();f();};bt.appendChild(b);};
@@ -158,5 +198,5 @@ function start(cfg){
   window.__K={cfg,save,play,showMap};
   showMap();
 }
-window.K={h,shuffle,sample,pick,sfx,say,saySeq,sayLine,stopVoice,confetti,drag,placement,start,audio,PRAISE,TRY};
+window.K={h,shuffle,sample,pick,sfx,say,saySeq,sayLine,stopVoice,after,speaking,confetti,drag,placement,start,audio,PRAISE,TRY};
 })();

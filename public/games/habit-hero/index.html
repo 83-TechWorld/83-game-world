@@ -183,7 +183,7 @@ function build(L,api,stage,li){
  function feedback(ok,text,m,key){stopT();if(m)meter(m,ok);if(ok){combo++;K.sfx.ok();if(combo%3===0){K.sfx.cheer();K.confetti(50);}}else{combo=0;mistakes++;K.sfx.bad();}
   const fb=K.h('div','fb '+(ok?'good':'bad')),line=K.h('div','say-line');fb.appendChild(line);card.appendChild(fb);
   const nx=K.h('button','btn pri','Next ▶');let moved=false;const go=()=>{if(moved||gone())return;moved=true;next();};nx.onclick=()=>{K.audio();go();};fb.appendChild(nx);
-  K.sayLine(line,text,{key},()=>setTimeout(go,900));}
+  K.sayLine(line,text,{key},()=>K.after(go,900));}
  function next(){if(gone())return;stopT();if(qi>=plan.length){api.progress(1,1);try{HabitHero.onLevelComplete&&HabitHero.onLevelComplete(li+1);}catch(e){}return api.win(mistakes===0?3:mistakes<=2?2:1);}
   cur=plan[qi++];api.progress(qi-1,plan.length);card.innerHTML='';setClock(cur.clock);({pair:askPair,order:askOrder,sort:askSort,brush:askBrush,tidy:askTidy})[cur.type](cur);}
  // two picture cards side by side; the voice reads each card while it lights up, then the timer starts

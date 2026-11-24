@@ -72,7 +72,7 @@ function build(L,api,stage){
   const ctl=K.placement(box,{cell,fs:Math.round(cell*.5),slots,tiles,onCorrect:(t,s)=>{done++;api.progress(done,total);api.say(String(s.key));},onWrong:()=>api.bad('Check the order. Which number comes next?'),onDone:()=>api.win()});
   api.solve=()=>ctl.solve();if(L.time)api.timer(L.time,'Time is up! Try again, you can do it.');return;}
  let qi=0,won=false;const g=K.h('div');box.appendChild(g);
- function finish(){if(qi>=L.q){won=true;setTimeout(()=>api.win(),700);}else setTimeout(ask,950);}
+ function finish(){if(qi>=L.q){won=true;setTimeout(()=>api.win(),700);}else K.after(ask,950);}
  function choices(parent,opts,correct,tell){const c=K.h('div','choices');parent.appendChild(c);
   K.shuffle(opts).forEach(o=>{const b=K.h('button','choice',String(o));if(o===correct)b.dataset.good=1;b.onclick=()=>{K.audio();if(o===correct){b.classList.add('good');K.sfx.ok();qi++;api.progress(qi,L.q);api.coach(K.pick(K.PRAISE),false);K.say(tell);c.querySelectorAll('button').forEach(x=>x.disabled=true);finish();}else{b.classList.add('wrong');K.sfx.bad();api.bad();}};c.appendChild(b);});}
  function ask(){g.innerHTML='';

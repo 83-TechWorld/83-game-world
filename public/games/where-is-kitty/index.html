@@ -136,7 +136,7 @@ function ask(stage,box,api,qn,next){box.innerHTML='';
  const g=K.h('div','choices');box.appendChild(g);let ok=false;
  K.shuffle([w,...qn.wrong]).forEach(c=>{const b=K.h('button','choice wordc',c);b.onclick=()=>{K.audio();if(ok)return;
    if(c===w){ok=true;b.classList.add('good');K.sfx.ok();g.querySelectorAll('button').forEach(x=>x.disabled=true);
-     K.sayLine(sent,full,{key:w},()=>{if(!done(stage))setTimeout(next,350);});}
+     K.sayLine(sent,full,{key:w},()=>{if(!done(stage))K.after(next,350);});}
    else{b.classList.remove('wrong');void b.offsetWidth;b.classList.add('wrong');
      api.bad(`Not ${c}. ${P[c].mean}`+(S?' Watch Kitty again!':' Try again!'));if(S)setTimeout(()=>S.play(),300);}};g.appendChild(b);});
  const row=K.h('div','row');box.appendChild(row);
@@ -170,7 +170,7 @@ function build(L,api,stage){
    const drop=z=>{if(placed)return false;const k=z.dataset.k;sel=false;S.actor.classList.remove('sel');
     if(k!==w){api.bad(`Oops, that spot is ${k} the box. We need ${w}. ${P[w].mean}`);return false;}
     placed=true;S.actor.style.transition='none';S.actor.style.transform='';S.put(POS[k]);S.actor.classList.add('placed');zones.forEach(x=>x.remove());K.sfx.ok();r++;api.progress(r,rounds.length);
-    K.sayLine(sent,`Yes! The cat is ${w} the box.`,{key:w},()=>{if(done(stage))return;if(r===rounds.length)api.win();else setTimeout(round,300);});return true;};
+    K.sayLine(sent,`Yes! The cat is ${w} the box.`,{key:w},()=>{if(done(stage))return;if(r===rounds.length)api.win();else K.after(round,300);});return true;};
    K.drag(S.actor,{targets:()=>placed?[]:zones,onDrop:(el,z)=>drop(z),onTap:()=>{if(placed)return;sel=!sel;S.actor.classList.toggle('sel',sel);K.sfx.pop();}});
    K.sayLine(sent,`Put the cat ${w} the box.`,{key:w});};
   round();

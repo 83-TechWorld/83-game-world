@@ -296,9 +296,9 @@ E.buoy=function(L,ui){const U=24,bx=300,bw=220,by=310;let lv=L.lv0,shown=L.lv0,u
    if(nd&&H.mode==='ghost')h+=`<rect class="ghostf" x="${bx+20}" y="${by-150}" width="${bw-40}" height="60" rx="12"/>`+emo(bx+bw/2,by-120,it.e,40,'opacity=".6"');});
   ui.draw(h);ui.after(()=>{shown=lv;const w=ui.svg.querySelector('#wat');if(w)w.style.transform=`scaleY(${lv/10})`;});ui.status(`Water: ${lv} · Star line: ${L.tgt}`);}
  function drop(p){if(busy)return;const i=+p.slice(1);if(used.includes(i))return;used.push(i);lv+=L.items[i].d;ui.moved();SND.splash();render();
-  if(lv>L.top){busy=true;setTimeout(()=>{ui.wrong('Splash! The water went over the top. Let us empty the tank.');setTimeout(reset,1500);},700);return;}
+  if(lv>L.top){busy=true;setTimeout(()=>{ui.wrong('Splash! The water went over the top. Let us empty the tank.');K.after(reset,1500);},700);return;}
   if(lv>=L.tgt){busy=true;setTimeout(()=>ui.win(),900);return;}
-  if(used.length===L.items.length){busy=true;setTimeout(()=>{ui.wrong('Not high enough yet. Let us try different things.');setTimeout(reset,1500);},700);}}
+  if(used.length===L.items.length){busy=true;setTimeout(()=>{ui.wrong('Not high enough yet. Let us try different things.');K.after(reset,1500);},700);}}
  function reset(){lv=L.lv0;used=[];busy=false;render();}
  function solve(){if(busy)return null;const rest=L.items.map((_,i)=>i).filter(i=>!used.includes(i));
   for(let k=1;k<=rest.length;k++){const rec=(s,kk,p,sum)=>{if(!kk)return lv+sum>=L.tgt&&lv+sum<=L.top?p:null;for(let j=s;j<rest.length;j++){const r=rec(j+1,kk-1,[...p,rest[j]],sum+L.items[rest[j]].d);if(r)return r;}return null;};const r=rec(0,k,[],0);if(r)return r.map(i=>({i}));}return null;}

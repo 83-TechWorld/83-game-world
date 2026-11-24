@@ -132,10 +132,10 @@ function build(L,api,stage){
    // word done: spell it letter by letter (each letter lights up while it is said), then say the whole word
    busy=true;hear.disabled=true;ch.querySelectorAll('button').forEach(x=>x.disabled=true);head.textContent=it.e+' '+w;api.coach(`${it.e} ${w}!`,false);
    K.saySeq([...cells.map((el,k)=>({t:NAME[w[k]],el,rate:1,gap:60})),{t:w,el:row,gap:250}],()=>{if(gone())return;wi++;api.progress(wi,items.length);
-     if(wi===items.length){K.confetti(60);api.win();}else{K.sfx.whoosh();setTimeout(word,250);}});}
+     if(wi===items.length){K.confetti(60);api.win();}else{K.sfx.whoosh();K.after(word,250);}});}
   intro();}
  api.coach(L.mode==='listen'?'Listen and spell the whole word!':L.mode==='vowel'?'Find the missing vowels: a, e, i, o, u!':'Look, listen, and fill the gap!',false);
- setTimeout(word,200);
+ K.after(word,200);
 }
 K.start({id:'spell-gaps',title:'Spell Gaps',emoji:'✏️',worlds,levels,build});
 </script></body></html>

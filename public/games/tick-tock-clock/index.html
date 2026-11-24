@@ -104,14 +104,14 @@ function ctx(L,api,box,done){return{L,api,box,done};}
 const R={};
 function choiceRow(box,c,opts,cls){const row=K.h('div',cls||'choices');box.appendChild(row);
  K.shuffle(opts).forEach(o=>{const b=K.h('button',cls?'':'choice'+(o.cls?' '+o.cls:''),o.html);if(o.good)b.dataset.good=1;row.appendChild(b);
-  b.onclick=()=>{K.audio();if(o.good){b.classList.add('good');K.sfx.ok();row.querySelectorAll('button').forEach(x=>x.disabled=true);c.api.coach(o.tell||K.pick(K.PRAISE));setTimeout(c.done,1100);}else{b.classList.add('wrong');K.sfx.bad();c.api.bad(o.hint||'Look again at the hands!');}};});
+  b.onclick=()=>{K.audio();if(o.good){b.classList.add('good');K.sfx.ok();row.querySelectorAll('button').forEach(x=>x.disabled=true);c.api.coach(o.tell||K.pick(K.PRAISE));K.after(c.done,1100);}else{b.classList.add('wrong');K.sfx.bad();c.api.bad(o.hint||'Look again at the hands!');}};});
  c.solve=()=>{const b=box.querySelector('[data-good]:not(:disabled)');if(b)b.click();};}
 R.tap=(c)=>{const{L,api,box}=c;const t=genT(L),hs=L.hands,want=K.pick(hs);
  const desc={hour:'the short blue HOUR hand',minute:'the long green MINUTE hand',second:'the thin red SECOND hand'};
  box.appendChild(K.h('div','prompt',`Tap ${desc[want]}!`));const el=clockEl({second:hs.includes('second'),minNums:false});el.setTime(t.h,t.m,t.s);box.appendChild(el);
  api.say(`Tap ${desc[want].replace(/the|short|long|thin|blue|green|red/g,'')}`);
  el.querySelectorAll('.hand').forEach(g=>{g.classList.add('tap');g.querySelector('.hit').addEventListener('pointerdown',e=>{e.stopPropagation();K.audio();const n=g.dataset.h;
-  if(n===want){K.sfx.ok();g.classList.add('hl');api.coach({hour:'Yes! The hour hand is short. It tells the hour.',minute:'Yes! The minute hand is long. It counts minutes.',second:'Yes! The second hand is thin and fast.'}[n]);el.querySelectorAll('.hit').forEach(x=>x.style.pointerEvents='none');setTimeout(c.done,1500);}
+  if(n===want){K.sfx.ok();g.classList.add('hl');api.coach({hour:'Yes! The hour hand is short. It tells the hour.',minute:'Yes! The minute hand is long. It counts minutes.',second:'Yes! The second hand is thin and fast.'}[n]);el.querySelectorAll('.hit').forEach(x=>x.style.pointerEvents='none');K.after(c.done,1500);}
   else{K.sfx.bad();api.bad(n==='hour'?'That is the hour hand. It is short!':n==='minute'?'That is the minute hand. It is long!':'That is the second hand. It is thin!');}});});
  c.solve=()=>{const g=el.querySelector('.h-'+want+' .hit');g.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));};};
 R.read=(c)=>{const{L,api,box}=c;const t=genT(L),sec=!!L.sec;box.appendChild(K.h('div','prompt','What time does the clock show?'));
@@ -164,7 +164,7 @@ R.set=(c)=>{const{L,api,box}=c;const row=K.h('div','ckrow set');
  draw();api.say(`Set the clock to ${sayT(t,L.sec)}`);
  let ok=false;
  go.onclick=()=>{if(ok)return;K.audio();const tolH=L.tolH||14;const mOk=mv()===t.m,hOk=angDiff(ang.hour,hourAng(t.h,t.m))<=tolH,sOk=!hands.includes('second')||sv()===t.s;
-  if(mOk&&hOk&&sOk){ok=true;K.sfx.ok();api.coach(K.pick(K.PRAISE)+' '+fmtT(t,L.sec)+' is '+words(t)+'.');el.classList.add('hl');setTimeout(c.done,1300);}
+  if(mOk&&hOk&&sOk){ok=true;K.sfx.ok();api.coach(K.pick(K.PRAISE)+' '+fmtT(t,L.sec)+' is '+words(t)+'.');el.classList.add('hl');K.after(c.done,1300);}
   else{const msg=!hOk?(t.m===0?`The short hour hand should point right at ${t.h}.`:t.m===30?`At half past, the hour hand sits halfway between ${t.h} and ${t.h%12+1}.`:`Check the short hour hand near ${t.h}.`):!mOk?`Check the long minute hand. It should point to ${t.m===0?'12':t.m/5%1===0?t.m/5:'the '+t.m+' minute mark'}.`:`Check the thin second hand: ${t.s} seconds.`;api.bad(msg);}};
  c.solve=()=>{ang.hour=hourAng(t.h,t.m)%360;ang.minute=t.m*6;ang.second=t.s*6;draw();go.click();};
 };

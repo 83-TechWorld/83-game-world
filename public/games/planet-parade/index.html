@@ -128,7 +128,7 @@ function quiz(L,api,stage,gen){
   const c=K.h('div','choices');box.appendChild(c);api.say(q.prompt.replace(/[^\w\s?']/g,''));
   q.opts.forEach(o=>{const b=K.h('button','choice '+(q.pc?'pc':q.nm?'nm':''),o.html);if(o.good)b.dataset.good=1;
    b.onclick=()=>{K.audio();if(o.good){b.classList.add('good');K.sfx.ok();qi++;api.progress(qi,L.q);c.querySelectorAll('button').forEach(x=>x.disabled=true);info.textContent=q.tell;api.coach(q.tell);
-     if(qi>=L.q){won=true;setTimeout(()=>api.win(),1800);}else setTimeout(ask,2300);}else{b.classList.add('wrong');K.sfx.bad();api.bad(q.pc?'Not that one. Look again!':'Try again! Look at the planet.');}};c.appendChild(b);});}
+     if(qi>=L.q){won=true;setTimeout(()=>api.win(),1800);}else K.after(ask,2300);}else{b.classList.add('wrong');K.sfx.bad();api.bad(q.pc?'Not that one. Look again!':'Try again! Look at the planet.');}};c.appendChild(b);});}
  ask();api.solve=()=>{const t=setInterval(()=>{const b=stage.querySelector('.choice[data-good]:not(:disabled)');if(b)b.click();else if(won||document.querySelector('.modal'))clearInterval(t);},60);};
 }
 // ---------- ordering ----------

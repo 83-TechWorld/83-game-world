@@ -86,7 +86,7 @@ function build(L,api,stage){
   const qs=K.sample(AZ,L.q);let qi=0;
   function ask(){box.innerHTML='';const l=qs[qi],w=WORD[l];box.appendChild(K.h('div','big wordpop',w[1]));box.appendChild(K.h('div','prompt',`${w[0]} starts with…`));K.say(`${w[0]}. What letter does ${w[0]} start with?`);
    const opts=K.shuffle([l,...K.sample(AZ.filter(x=>x!==l),3)]),g=K.h('div','choices');box.appendChild(g);
-   opts.forEach(o=>{const b=K.h('button','choice',o);if(o===l)b.dataset.good=1;b.onclick=()=>{K.audio();if(o===l){b.classList.add('good');K.sfx.ok();praiseLetter(api,l);qi++;api.progress(qi,qs.length);g.querySelectorAll('button').forEach(x=>x.disabled=true);if(qi===qs.length)setTimeout(()=>api.win(),700);else setTimeout(ask,900);}else{b.classList.add('wrong');K.sfx.bad();api.bad();}};g.appendChild(b);});}
+   opts.forEach(o=>{const b=K.h('button','choice',o);if(o===l)b.dataset.good=1;b.onclick=()=>{K.audio();if(o===l){b.classList.add('good');K.sfx.ok();praiseLetter(api,l);qi++;api.progress(qi,qs.length);g.querySelectorAll('button').forEach(x=>x.disabled=true);if(qi===qs.length)setTimeout(()=>api.win(),700);else K.after(ask,900);}else{b.classList.add('wrong');K.sfx.bad();api.bad();}};g.appendChild(b);});}
   ask();api.solve=()=>{const t=setInterval(()=>{const b=stage.querySelector('.choice[data-good]:not(:disabled)');if(b)b.click();else if(!document.querySelector('.modal')&&qi<qs.length)return;else clearInterval(t);},70);};
  }
 }

@@ -172,7 +172,7 @@ function build(L,api,stage,li){
   else{combo=0;mistakes++;shields--;K.sfx.bad();if(s){s.textContent='😮';s.className='scout oh';}}
   draw();const fb=K.h('div','fb '+(ok?'good':'bad'));const line=K.h('div','say-line');fb.appendChild(line);card.appendChild(fb);
   const nx=K.h('button','btn pri','Next ▶');let moved=false;const go=()=>{if(moved||gone())return;moved=true;if(shields<=0)api.lose('Your safety shields are used up!');else next();};nx.onclick=()=>{K.audio();go();};fb.appendChild(nx);
-  K.sayLine(line,text,{key},()=>setTimeout(go,900));}
+  K.sayLine(line,text,{key},()=>K.after(go,900));}
  function next(){if(gone())return;stopT();if(qi>=plan.length){api.progress(1,1);return api.win(mistakes===0?3:mistakes===1?2:1);}
   const it=plan[qi++];api.progress(qi-1,plan.length);card.innerHTML='';({q:askQ,spot:askSpot,order:askOrder})[it.type](it);}
  function askQ(it){scout();card.appendChild(K.h('div','scene-e',it.e));const cap=K.h('div','say-line');card.appendChild(cap);
