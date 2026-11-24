@@ -439,6 +439,10 @@ function update(){
  // push crates
  if(p.onG&&p.hitX&&((p.hitX>0&&inp.r)||(p.hitX<0&&inp.l))){const tx=p.hitX>0?Math.floor((p.x+BW+1)/T):Math.floor((p.x-1)/T),ty=Math.floor((p.y+BH-2)/T),c=crateAt(tx,ty);
   if(c&&!c.ox&&!c.oy){if(++g.pushT>9){g.pushT=0;const nx=tx+p.hitX;if(nx>=0&&nx<g.w&&!solidAt(nx,ty)&&!crateAt(tx,ty-1)){c.tx=nx;c.ox=-p.hitX*T;rebuildCrates();sfx('push');}}}else g.pushT=0;}else g.pushT=0;
+ // hints: walking into a closed gate, or standing by a lever
+ if(p.hitX&&g.state==='play'){const tx=p.hitX>0?Math.floor((p.x+BW+1)/T):Math.floor((p.x-1)/T),c=tileAt(tx,Math.floor((p.y+BH-2)/T));
+  if('ABC'.includes(c)){const col={A:'red',B:'blue',C:'green'}[c];sayOnce('gate'+c,g.levers.some(l=>l.grp===c)?'Pull the '+col+' lever with 👊 (X key) to open this gate!':'Put a friend (🤝) or a crate on the '+col+' switch to open this gate!',true);}}
+ for(const l of g.levers)if(!l.on&&Math.abs(p.x+BW/2-(l.x*T+16))<44&&Math.abs(p.y+BH-(l.y*T+T))<20)sayOnce('lever','Press 👊 (X key) to pull the lever!');
  // buttons
  if(inp.a&&!g.pa&&g.state==='play')action();g.pa=!!inp.a;
  if(inp.f&&!g.pf&&g.state==='play')friendCmd();g.pf=!!inp.f;
